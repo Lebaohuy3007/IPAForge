@@ -30,6 +30,16 @@ private struct ProfileView: View {
                     profileRow("Anisette Server", symbol: "server.rack", destination: .anisette)
                 }
 
+                Section("Settings") {
+                    Picker("Language", selection: $environment.languagePreference) {
+                        Text("Automatic (App Store region)").tag(nil as AppLanguage?)
+                        ForEach(AppLanguage.allCases) { language in
+                            Text(LocalizedStringKey(language.titleKey)).tag(Optional(language))
+                        }
+                    }
+                    .pickerStyle(.menu)
+                }
+
                 Section("Support") {
                     profileRow("Activity Log", symbol: "text.alignleft", destination: .logs)
                 }
@@ -77,16 +87,11 @@ private struct ProfileView: View {
             }
             .padding(.vertical, 4)
 
-            Picker("Region", selection: Binding(
-                get: { environment.country.uppercased() },
-                set: { environment.setStoreCountry($0) }
-            )) {
-                ForEach(AppEnvironment.supportedStoreCountries, id: \.self) { code in
-                    Text("\(Locale.current.localizedString(forRegionCode: code) ?? code) (\(code))")
-                        .tag(code)
-                }
-            }
-            .pickerStyle(.menu)
+            let regionCode = (account.storeCountry ?? environment.country).uppercased()
+            LabeledContent(
+                "Region",
+                value: "\(regionCode) (\(Locale.current.localizedString(forRegionCode: regionCode) ?? regionCode))"
+            )
 
             if account.teams.count > 1 {
                 Picker("Developer Team", selection: Binding(

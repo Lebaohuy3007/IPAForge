@@ -35,14 +35,12 @@ jobs:
             CODE_SIGNING_ALLOWED=NO
       - name: Archive unsigned app
         run: |
-          COMMIT_HASH="$(git rev-parse --short=7 HEAD)"
           xcodebuild archive \
             -project AppStoreIPADownloader.xcodeproj \
             -scheme AppStoreIPADownloader \
             -configuration Release \
             -destination 'generic/platform=iOS' \
             -archivePath build/AppStoreIPADownloader.xcarchive \
-            IPAForgeCommitHash="$COMMIT_HASH" \
             CODE_SIGNING_ALLOWED=NO
       - name: Package archive
         run: |

@@ -1,4 +1,22 @@
 import SwiftUI
+import StoreKit
+
+enum AppLanguage: String, CaseIterable, Identifiable {
+    case vietnamese
+    case english
+
+    var id: String { rawValue }
+    var locale: Locale {
+        Locale(identifier: self == .vietnamese ? "vi" : "en")
+    }
+    var titleKey: String {
+        self == .vietnamese ? "🇻🇳 Vietnamese" : "🇺🇸 English"
+    }
+
+    static func forStorefront(countryCode: String?) -> AppLanguage {
+        countryCode?.uppercased() == "VNM" ? .vietnamese : .english
+    }
+}
 
 @MainActor
 final class AppEnvironment: ObservableObject {
@@ -15,19 +33,28 @@ final class AppEnvironment: ObservableObject {
     @Published private(set) var selectedStoredAccountID: UUID?
     @Published private(set) var activeAccount: StoredAppleAccount?
     @Published private(set) var country: String
+    @Published private(set) var appLanguage: AppLanguage
+    @Published var languagePreference: AppLanguage? {
+        didSet {
+            UserDefaults.standard.set(languagePreference?.rawValue, forKey: Self.languagePreferenceKey)
+            appLanguage = languagePreference ?? storefrontLanguage
+        }
+    }
+    private var storefrontLanguage: AppLanguage = .english {
+        didSet {
+            if languagePreference == nil { appLanguage = storefrontLanguage }
+        }
+    }
+    private static let languagePreferenceKey = "appLanguagePreference"
     private var loginAttemptID: UUID?
-    private let defaults: UserDefaults
-    private static let storeCountryKey = "appStore.country.v1"
 
-    init(
-        accountVault: AppleAccountVault = AppleAccountVault(),
-        defaults: UserDefaults = .standard
-    ) {
+    init(accountVault: AppleAccountVault = AppleAccountVault()) {
         self.accountVault = accountVault
-        self.defaults = defaults
-        let storedCountry = defaults.string(forKey: Self.storeCountryKey)
-            .flatMap(Self.normalizedStoreCountry)
-        country = storedCountry ?? Self.defaultAppStoreCountry
+        country = Self.defaultAppStoreCountry
+        let savedLanguage = UserDefaults.standard.string(forKey: Self.languagePreferenceKey)
+            .flatMap(AppLanguage.init(rawValue:))
+        languagePreference = savedLanguage
+        appLanguage = savedLanguage ?? .english
         authentication = AuthenticationService(
             vault: accountVault,
             provider: StosSignAuthenticationProvider()
@@ -45,19 +72,21 @@ final class AppEnvironment: ObservableObject {
             selectedStoredAccountID = accounts.contains(where: { $0.id == selectedID })
                 ? selectedID
                 : nil
-            if storedCountry == nil,
-               let selectedAccount = accounts.first(where: { $0.id == selectedStoredAccountID }),
+            if let selectedAccount = accounts.first(where: { $0.id == selectedStoredAccountID }),
                let region = selectedAccount.storeCountry?
                 .trimmingCharacters(in: .whitespacesAndNewlines)
-                .lowercased(),
-               Self.normalizedStoreCountry(region) != nil {
-                country = region
-                defaults.set(region, forKey: Self.storeCountryKey)
+                .uppercased(),
+               Self.supportedStoreCountries.contains(region) {
+                country = region.lowercased()
             }
         } catch {
             logger.log(.error, "Could not load encrypted Apple Account records; secure storage is unavailable.")
         }
         logger.log(.info, "Application launched.")
+        Task { [weak self] in
+            let storefront = await Storefront.current
+            self?.storefrontLanguage = AppLanguage.forStorefront(countryCode: storefront?.countryCode)
+        }
         if selectedStoredAccountID != nil {
             Task { [weak self] in
                 await self?.restoreSelectedAccount()
@@ -80,12 +109,6 @@ final class AppEnvironment: ObservableObject {
                 return firstName.localizedStandardCompare(secondName) == .orderedAscending
             }
     }()
-
-    func setStoreCountry(_ value: String) {
-        guard let country = Self.normalizedStoreCountry(value) else { return }
-        self.country = country
-        defaults.set(country, forKey: Self.storeCountryKey)
-    }
 
     private static func normalizedStoreCountry(_ value: String) -> String? {
         let country = value.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
@@ -207,5 +230,9 @@ final class AppEnvironment: ObservableObject {
         selectedStoredAccountID = restoredAccount.id
         authPhase = .signedIn
         logger.logLogin(.success, "Restored Apple session and fetched Developer Teams.")
+    }
+
+    func setAutomaticLanguage() {
+        languagePreference = nil
     }
 }

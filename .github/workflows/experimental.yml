@@ -78,7 +78,6 @@ jobs:
             '
       - name: Build unsigned application
         run: |
-          COMMIT_HASH="$(git rev-parse --short=7 HEAD)"
           set -o pipefail
           xcodebuild -quiet build \
             -project AppStoreIPADownloader.xcodeproj \
@@ -87,7 +86,6 @@ jobs:
             -destination 'generic/platform=iOS' \
             -derivedDataPath "$DERIVED_DATA_PATH" \
             CURRENT_PROJECT_VERSION="$GITHUB_RUN_NUMBER" \
-            IPAForgeCommitHash="$COMMIT_HASH" \
             CODE_SIGNING_ALLOWED=NO \
             2>&1 | awk '
               /DVTAssertions: Warning in DVTiOSFrameworks\/IDEiOSSupportCore\/DVTiPhoneSimulator\.m:661/ { suppress = 1; next }
@@ -103,11 +101,11 @@ jobs:
             build/ipa/Payload/AppStoreIPADownloader.app
           ditto -c -k --sequesterRsrc --keepParent \
             build/ipa/Payload \
-            "build/artifacts/IPAForge-1.0.0-${GITHUB_RUN_NUMBER}-unsigned.ipa"
+            "build/artifacts/IPAForge-1.0.0-unsigned.ipa"
       - uses: actions/upload-artifact@v4
         with:
-          name: IPAForge-1.0.0-${{ github.run_number }}-Unsigned
-          path: build/artifacts/IPAForge-1.0.0-${{ github.run_number }}-unsigned.ipa
+          name: IPAForge-1.0.0-Unsigned
+          path: build/artifacts/IPAForge-1.0.0-unsigned.ipa
           if-no-files-found: error
           retention-days: 14
       - name: Save build cache

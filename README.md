@@ -15,7 +15,8 @@
 
 * Giao diện SwiftUI, hỗ trợ iOS 16+ trở lên.
 * Tìm kiếm ứng dụng trên App Store theo tên hoặc App ID.
-* Chọn vùng App Store để xem kết quả theo quốc gia.
+* Hiển thị vùng App Store dạng chỉ đọc và dùng vùng đó khi tìm kiếm.
+* Chọn ngôn ngữ
 * Xem thông tin ứng dụng: icon, Bundle ID, nhà phát triển và phiên bản.
 * Quản lý và tùy chỉnh Anisette Server.
 * Đăng nhập Apple ID, hỗ trợ xác minh 2FA và chọn Developer Team.
@@ -49,7 +50,7 @@ CI cần được xác nhận bằng lần chạy workflow gần nhất trên Gi
 
 ## GitHub Actions
 
-- **Experimental Build**: tự chạy khi push lên bất kỳ branch nào, hoặc chạy thủ công qua workflow dispatch. Mặc định bỏ qua unit tests để tạo IPA nhanh; khi chạy thủ công, có thể bật input `run_tests` để chạy test Simulator. Workflow build app version `1.0.0` (build number là GitHub Actions run number) và upload artifact `IPAForge-1.0.0-<build>-Unsigned` chứa IPA unsigned cùng version. Đây chưa phải bản cài đặt đã ký.
+- **Experimental Build**: tự chạy khi push lên bất kỳ branch nào, hoặc chạy thủ công qua workflow dispatch. Mặc định bỏ qua unit tests để tạo IPA nhanh; khi chạy thủ công, có thể bật input `run_tests` để chạy test Simulator. Version trong app lấy theo `MARKETING_VERSION` khai báo trong Xcode (hiện là `1.0.0`); build number là GitHub Actions run number. Workflow upload artifact `IPAForge-1.0.0-<build>-Unsigned` chứa IPA unsigned cùng version. Đây chưa phải bản cài đặt đã ký.
 - **Release Build**: chạy khi push tag `v*` hoặc workflow dispatch với `release_tag`; test, archive Release unsigned và tạo GitHub Release. Artifact tên `AppStoreIPA-Release`, file đính kèm là unsigned `.xcarchive.zip`, không phải IPA.
 - Chưa cần certificate/secret để compile unsigned. Không thêm private key, certificate hay mật khẩu vào repository.
 

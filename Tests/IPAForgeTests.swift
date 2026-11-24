@@ -2,6 +2,18 @@ import Foundation
 import XCTest
 @testable import AppStoreIPADownloader
 
+final class AppLanguageTests: XCTestCase {
+    func testVietnameseStorefrontSelectsVietnamese() {
+        XCTAssertEqual(AppLanguage.forStorefront(countryCode: "VNM"), .vietnamese)
+        XCTAssertEqual(AppLanguage.forStorefront(countryCode: "vnm"), .vietnamese)
+    }
+
+    func testOtherAndUnknownStorefrontsDefaultToEnglish() {
+        XCTAssertEqual(AppLanguage.forStorefront(countryCode: "RUS"), .english)
+        XCTAssertEqual(AppLanguage.forStorefront(countryCode: nil), .english)
+    }
+}
+
 final class AnisetteURLValidatorTests: XCTestCase {
     func testAcceptsHTTPSURLWithoutCredentialsOrQuery() {
         XCTAssertNotNil(AnisetteURLValidator.validatedBaseURL("https://example.com/api"))
@@ -641,17 +653,17 @@ final class AppStoreServiceTests: XCTestCase {
 }
 
 final class IPAForgeVersionTests: XCTestCase {
-    func testVersionUsesShortVersionAndCommitHash() {
+    func testVersionUsesDeclaredShortVersion() {
         XCTAssertEqual(
-            IPAForgeVersion.displayValue(shortVersion: "1.0.0", commitHash: "a1b2c3d"),
-            "1.0.0 (a1b2c3d)"
+            IPAForgeVersion.displayValue(shortVersion: "2.3.4"),
+            "2.3.4"
         )
     }
 
-    func testVersionUsesFallbackWhenCommitHashIsMissing() {
+    func testVersionUsesFallbackWhenShortVersionIsMissing() {
         XCTAssertEqual(
-            IPAForgeVersion.displayValue(shortVersion: nil, commitHash: nil),
-            "1.0.0 (unknown)"
+            IPAForgeVersion.displayValue(shortVersion: nil),
+            "1.0.0"
         )
     }
 }

@@ -210,7 +210,10 @@ final class AnisetteService: AnisetteServiceProtocol {
     static let defaultURL = "https://mac-ani.jkcoxson.com"
     static let defaultServers = [
         AnisetteServer(name: "SideStore", url: "https://ani.sidestore.io", isDefault: true),
-        AnisetteServer(name: "jkcoxson", url: defaultURL, isDefault: true)
+        AnisetteServer(name: "SideStore (New)", url: "https://new.ani.sidestore.io", isDefault: true),
+        AnisetteServer(name: "jkcoxson", url: defaultURL, isDefault: true),
+        AnisetteServer(name: "iloader", url: "https://ani.iloader.app", isDefault: true),
+        AnisetteServer(name: "StikStore", url: "https://ani3.stikstore.com", isDefault: true)
     ]
 
     private let session: URLSession
@@ -357,10 +360,14 @@ extension AnisetteService {
             throw AnisetteV3Error(message: "Anisette Server does not provide v3 client information.")
         }
         return AnisetteV3ClientInfo(
-            clientInfo: clientInfo,
-            userAgent: userAgent,
+            clientInfo: Self.replacingLegacyMacOSVersion(in: clientInfo),
+            userAgent: Self.replacingLegacyMacOSVersion(in: userAgent),
             serialNumber: Self.validHeaderValue(raw["serial"] as? String) ?? "0"
         )
+    }
+
+    private static func replacingLegacyMacOSVersion(in value: String) -> String {
+        value.replacingOccurrences(of: "10.12.6", with: "27.0")
     }
 
     private func fetchHeaders(
@@ -670,9 +677,12 @@ final class AnisetteServerStore: ObservableObject {
     init(service: AnisetteServiceProtocol, defaults: UserDefaults = .standard) {
         self.service = service
         self.defaults = defaults
+        let didMigrateDefaults: Bool
         if let stored = defaults.array(forKey: serversKey) as? [[String: Any]],
            let persisted = Self.decodeServers(stored), !persisted.isEmpty {
-            servers = persisted
+            let merged = Self.mergingDefaultServers(into: persisted)
+            servers = merged
+            didMigrateDefaults = merged != persisted
         } else {
             var initialServers = AnisetteService.defaultServers
             if let legacyURL = defaults.string(forKey: "anisetteServerURL"),
@@ -686,7 +696,7 @@ final class AnisetteServerStore: ObservableObject {
                 ))
             }
             servers = initialServers
-            persistServers()
+            didMigrateDefaults = true
         }
         if let storedID = defaults.string(forKey: selectedIDKey) {
             let id = UUID(uuidString: storedID)
@@ -698,6 +708,9 @@ final class AnisetteServerStore: ObservableObject {
             }
         }
         selectSideStoreIfNeeded()
+        if didMigrateDefaults {
+            persistServers()
+        }
         for server in servers {
             probeResults[server.id] = AnisetteProbeResult(state: .unchecked, durationMilliseconds: nil)
         }
@@ -852,6 +865,30 @@ final class AnisetteServerStore: ObservableObject {
                 "isDefault": $0.isDefault
             ] as [String: Any]
         }, forKey: serversKey)
+    }
+
+    private static func mergingDefaultServers(into persisted: [AnisetteServer]) -> [AnisetteServer] {
+        let defaults = AnisetteService.defaultServers
+        let defaultURLs = Set(defaults.compactMap { AnisetteURLValidator.normalized($0.url) })
+        let builtIns = defaults.map { defaultServer in
+            guard let normalizedURL = AnisetteURLValidator.normalized(defaultServer.url),
+                  let stored = persisted.first(where: {
+                      AnisetteURLValidator.normalized($0.url) == normalizedURL
+                  }) else {
+                return defaultServer
+            }
+            return AnisetteServer(
+                id: stored.id,
+                name: defaultServer.name,
+                url: defaultServer.url,
+                isDefault: true
+            )
+        }
+        let custom = persisted.filter {
+            guard let normalizedURL = AnisetteURLValidator.normalized($0.url) else { return true }
+            return !defaultURLs.contains(normalizedURL)
+        }
+        return builtIns + custom
     }
 
     private static func decodeServers(_ stored: [[String: Any]]) -> [AnisetteServer]? {

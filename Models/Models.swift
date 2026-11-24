@@ -42,13 +42,9 @@ enum AuthPhase: Equatable {
 
 enum IPAForgeVersion {
     static func displayValue(
-        shortVersion: String? = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String,
-        commitHash: String? = Bundle.main.object(forInfoDictionaryKey: "IPAForgeCommitHash") as? String
+        shortVersion: String? = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
     ) -> String {
         let version = shortVersion?.trimmingCharacters(in: .whitespacesAndNewlines)
-        let resolvedVersion = (version?.isEmpty == false ? version! : "1.0.0")
-        let commit = commitHash?.trimmingCharacters(in: .whitespacesAndNewlines)
-        let resolvedCommit = (commit?.isEmpty == false ? commit! : "unknown")
-        return "\(resolvedVersion) (\(resolvedCommit))"
+        return version?.isEmpty == false ? version! : "1.0.0"
     }
 }

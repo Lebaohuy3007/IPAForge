@@ -1,7 +1,8 @@
 import SwiftUI
 
 struct AppDetailView: View {
-    @EnvironmentObject private var environment: AppEnvironment
+    @State private var isShowingDownloadNotice = false
+    @State private var isShowingOldVersions = false
     let app: AppRecord
 
     var body: some View {
@@ -29,26 +30,46 @@ struct AppDetailView: View {
                         value: ByteCountFormatter.string(fromByteCount: size, countStyle: .file)
                     )
                 }
-                Section("Old Version") {
-                    Text("No verified old-version metadata is available.")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
                 Button {
-                    environment.downloads.start(app: app)
+                    isShowingOldVersions = true
+                } label: {
+                    Label("Phiên bản cũ", systemImage: "clock.arrow.circlepath")
+                }
+                .buttonStyle(.bordered)
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+                Button {
+                    isShowingDownloadNotice = true
                 } label: {
                     Label("Tải xuống", systemImage: "arrow.down.to.line")
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.bordered)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                Text("Downloads require Apple Account entitlement. IPA delivery is not implemented in this build.")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
             }
             .padding()
         }
         .navigationTitle("Details")
         .navigationBarTitleDisplayMode(.inline)
+        .alert("Thông báo", isPresented: $isShowingDownloadNotice) {
+            Button("Hủy", role: .cancel) { }
+            Button("OK") { }
+        } message: {
+            Text("Chưa làm giao diện tải IPA, vui lòng đợi bản mới")
+        }
+        .sheet(isPresented: $isShowingOldVersions) {
+            NavigationStack {
+                List {
+                    Label("Chưa có dữ liệu phiên bản cũ được xác minh.", systemImage: "clock.arrow.circlepath")
+                        .foregroundStyle(.secondary)
+                }
+                .navigationTitle("Phiên bản cũ")
+                .toolbar {
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button("Đóng") { isShowingOldVersions = false }
+                    }
+                }
+            }
+        }
     }
 }
 

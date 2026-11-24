@@ -34,8 +34,10 @@ struct LoginView: View {
                                         serverID: selectedID,
                                         store: environment.anisetteServers
                                     )
-                                    if !result.state.isUsable {
-                                        Text("Server hiện không sẵn sàng.")
+                                    if result.state != .unchecked,
+                                       !result.state.isUsable,
+                                       !environment.anisetteServers.checkingIDs.contains(selectedID) {
+                                        Text("Server chưa sẵn sàng (\(result.state.title)).")
                                             .font(.caption)
                                             .foregroundStyle(.orange)
                                     }
@@ -65,6 +67,15 @@ struct LoginView: View {
                 }
 
                 Section("Apple Account") {
+                    if isSigningIn {
+                        HStack(spacing: 8) {
+                            ProgressView()
+                            Text(environment.authPhase == .waitingFor2FA
+                                 ? "Waiting for verification…"
+                                 : "Signing in…")
+                        }
+                    }
+
                     if environment.authPhase == .signedIn {
                         if let account = environment.activeAccount {
                             Label(account.appleID, systemImage: "person.crop.circle")
@@ -111,15 +122,13 @@ struct LoginView: View {
                             .disabled(!isSigningIn)
                         Button("Verify") { submitVerificationCode() }
                             .disabled(!isSigningIn)
-                        Button("Cancel Sign In", role: .cancel) {
-                            environment.cancelLogin()
-                            verificationCode = ""
-                        }
                     } else if environment.authPhase == .authenticating && !isSigningIn {
                         HStack(spacing: 8) {
                             ProgressView()
                             Text("Restoring Apple session…")
                         }
+                    } else if isSigningIn {
+                        EmptyView()
                     } else {
                         TextField("Apple ID / Email", text: $appleID)
                             .textContentType(.username)
@@ -151,17 +160,7 @@ struct LoginView: View {
                             .buttonStyle(.plain)
                             .accessibilityLabel(isPasswordVisible ? "Hide password" : "Show password")
                         }
-                        if isSigningIn {
-                            HStack(spacing: 8) {
-                                ProgressView()
-                                Text("Signing in…")
-                            }
-                            Button("Cancel Sign In", role: .cancel) {
-                                environment.cancelLogin()
-                            }
-                        } else {
-                            Button("Continue") { login() }
-                        }
+                        Button("Continue") { login() }
                     }
                     if !statusMessage.isEmpty {
                         Text(statusMessage)
@@ -187,6 +186,17 @@ struct LoginView: View {
             .navigationTitle("Apple Account")
             .onAppear {
                 environment.anisetteServers.refreshAll()
+            }
+            .task(id: environment.anisetteServers.selectedServerID) {
+                guard let selectedID = environment.anisetteServers.selectedServerID else { return }
+                while !Task.isCancelled {
+                    await environment.anisetteServers.refresh(serverID: selectedID)
+                    do {
+                        try await Task.sleep(nanoseconds: 1_000_000_000)
+                    } catch {
+                        return
+                    }
+                }
             }
             .sheet(isPresented: $showingAnisetteServers) {
                 NavigationStack {
