@@ -1,6 +1,9 @@
 name: Experimental Build
 run-name: Apple ID Test
 on:
+  push:
+    branches:
+      - '**'
   workflow_dispatch:
     inputs:
       run_tests:
@@ -29,6 +32,8 @@ jobs:
           xcode-version: "27.2"
       - name: Show Xcode version
         run: xcodebuild -version
+      - name: Remove unavailable simulator devices
+        run: xcrun simctl delete unavailable || true
       - name: Start test simulator
         id: test-simulator
         if: ${{ inputs.run_tests }}

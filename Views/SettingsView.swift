@@ -150,7 +150,7 @@ private struct AuthenticationStatusSection: View {
             } else {
                 Text(statusMessage)
                     .font(.caption)
-                    .foregroundStyle(authMessage.isEmpty ? .secondary : .orange)
+                    .foregroundStyle(authMessage.isEmpty ? Color.secondary : Color.orange)
             }
         }
     }

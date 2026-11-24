@@ -48,7 +48,7 @@ CI cần được xác nhận bằng lần chạy workflow gần nhất trên Gi
 
 ## GitHub Actions
 
-- **Experimental Build**: workflow dispatch thủ công; mặc định bỏ qua unit tests để tạo IPA nhanh. Có thể bật input `run_tests` khi cần chạy test Simulator. Workflow build app version `1.0.0` (build number là GitHub Actions run number) và upload artifact `IPAForge-1.0.0-<build>-Unsigned` chứa IPA unsigned cùng version. Đây chưa phải bản cài đặt đã ký.
+- **Experimental Build**: tự chạy khi push lên bất kỳ branch nào, hoặc chạy thủ công qua workflow dispatch. Mặc định bỏ qua unit tests để tạo IPA nhanh; khi chạy thủ công, có thể bật input `run_tests` để chạy test Simulator. Workflow build app version `1.0.0` (build number là GitHub Actions run number) và upload artifact `IPAForge-1.0.0-<build>-Unsigned` chứa IPA unsigned cùng version. Đây chưa phải bản cài đặt đã ký.
 - **Release Build**: chạy khi push tag `v*` hoặc workflow dispatch với `release_tag`; test, archive Release unsigned và tạo GitHub Release. Artifact tên `AppStoreIPA-Release`, file đính kèm là unsigned `.xcarchive.zip`, không phải IPA.
 - Chưa cần certificate/secret để compile unsigned. Không thêm private key, certificate hay mật khẩu vào repository.
 
