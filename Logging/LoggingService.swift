@@ -24,11 +24,19 @@ struct LogEntry: Identifiable, Equatable {
 @MainActor
 final class LoggingService: ObservableObject {
     @Published private(set) var entries: [LogEntry] = []
+    @Published private(set) var loginEntries: [LogEntry] = []
 
     func log(_ level: LogLevel, _ message: String) {
-        entries.append(LogEntry(date: Date(), level: level, message: LogSanitizer.sanitize(message)))
+        entries.append(makeEntry(level, message))
         if entries.count > 500 {
             entries.removeFirst(entries.count - 500)
+        }
+    }
+
+    func logLogin(_ level: LogLevel, _ message: String) {
+        loginEntries.append(makeEntry(level, message))
+        if loginEntries.count > 500 {
+            loginEntries.removeFirst(loginEntries.count - 500)
         }
     }
 
@@ -36,8 +44,16 @@ final class LoggingService: ObservableObject {
         entries.removeAll()
     }
 
+    func clearLogin() {
+        loginEntries.removeAll()
+    }
+
     var text: String {
         entries.map(\.formatted).joined(separator: "\n")
+    }
+
+    private func makeEntry(_ level: LogLevel, _ message: String) -> LogEntry {
+        LogEntry(date: Date(), level: level, message: LogSanitizer.sanitize(message))
     }
 }
 

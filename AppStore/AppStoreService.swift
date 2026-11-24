@@ -21,6 +21,22 @@ final class AppStoreService {
         if let appID = Int(trimmed), appID > 0 {
             return try await lookup(appID: appID, country: country)
         }
+        if trimmed.contains(".") {
+            var bundleComponents = URLComponents(string: "https://itunes.apple.com/lookup")!
+            bundleComponents.queryItems = [
+                URLQueryItem(name: "bundleId", value: trimmed),
+                URLQueryItem(name: "country", value: country)
+            ]
+            let (bundleData, bundleResponse) = try await session.data(from: bundleComponents.url!)
+            guard let bundleHTTP = bundleResponse as? HTTPURLResponse,
+                  (200...299).contains(bundleHTTP.statusCode) else {
+                throw AppStoreServiceError.invalidResponse
+            }
+            let bundleResults = try decode(bundleData)
+            if !bundleResults.isEmpty {
+                return bundleResults
+            }
+        }
 
         var components = URLComponents(string: "https://itunes.apple.com/search")!
         components.queryItems = [

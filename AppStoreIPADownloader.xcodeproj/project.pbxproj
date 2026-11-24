@@ -24,6 +24,11 @@
 		100000000000000000000012 = { isa = PBXBuildFile; fileRef = 110000000000000000000012; };
 		100000000000000000000013 = { isa = PBXBuildFile; fileRef = 110000000000000000000015; };
 		100000000000000000000014 = { isa = PBXBuildFile; fileRef = 110000000000000000000016; };
+		100000000000000000000015 = { isa = PBXBuildFile; fileRef = 110000000000000000000017; };
+		100000000000000000000016 = { isa = PBXBuildFile; fileRef = 110000000000000000000018; };
+		100000000000000000000017 = { isa = PBXBuildFile; productRef = 740000000000000000000001; };
+		100000000000000000000018 = { isa = PBXBuildFile; productRef = 740000000000000000000002; };
+		100000000000000000000019 = { isa = PBXBuildFile; productRef = 740000000000000000000003; };
 
 		110000000000000000000001 = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App/AppStoreIPADownloaderApp.swift; sourceTree = "<group>"; };
 		110000000000000000000002 = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models/Models.swift; sourceTree = "<group>"; };
@@ -47,6 +52,8 @@
 		110000000000000000000014 = { isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AppStoreIPADownloaderTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		110000000000000000000015 = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/DownloadDetailView.swift; sourceTree = "<group>"; };
 		110000000000000000000016 = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/AnisetteServersView.swift; sourceTree = "<group>"; };
+		110000000000000000000017 = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Authentication/AppleAccountVault.swift; sourceTree = "<group>"; };
+		110000000000000000000018 = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Authentication/StosSignAuthenticationProvider.swift; sourceTree = "<group>"; };
 
 		300000000000000000000001 = {
 			isa = PBXGroup;
@@ -59,6 +66,8 @@
 				110000000000000000000010, 110000000000000000000011, 110000000000000000000012,
 				110000000000000000000015,
 				110000000000000000000016,
+				110000000000000000000017,
+				110000000000000000000018,
 				300000000000000000000002
 			);
 			sourceTree = "<group>";
@@ -79,6 +88,11 @@
 			name = AppStoreIPADownloader;
 			productName = AppStoreIPADownloader;
 			productReference = 110000000000000000000013;
+			packageProductDependencies = (
+				740000000000000000000001,
+				740000000000000000000002,
+				740000000000000000000003
+			);
 			productType = "com.apple.product-type.application";
 		};
 		400000000000000000000002 = {
@@ -93,8 +107,8 @@
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 
-		600000000000000000000001 = { isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (100000000000000000000001, 100000000000000000000002, 100000000000000000000003, 100000000000000000000004, 100000000000000000000005, 100000000000000000000006, 100000000000000000000007, 100000000000000000000008, 100000000000000000000009, 10000000000000000000000A, 10000000000000000000000B, 10000000000000000000000C, 10000000000000000000000D, 10000000000000000000000E, 10000000000000000000000F, 100000000000000000000010, 100000000000000000000011, 100000000000000000000013, 100000000000000000000014); runOnlyForDeploymentPostprocessing = 0; };
-		600000000000000000000002 = { isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+		600000000000000000000001 = { isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (100000000000000000000001, 100000000000000000000002, 100000000000000000000003, 100000000000000000000004, 100000000000000000000005, 100000000000000000000006, 100000000000000000000007, 100000000000000000000008, 100000000000000000000009, 10000000000000000000000A, 10000000000000000000000B, 10000000000000000000000C, 10000000000000000000000D, 10000000000000000000000E, 10000000000000000000000F, 100000000000000000000010, 100000000000000000000011, 100000000000000000000013, 100000000000000000000014, 100000000000000000000015, 100000000000000000000016); runOnlyForDeploymentPostprocessing = 0; };
+		600000000000000000000002 = { isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (100000000000000000000017, 100000000000000000000018, 100000000000000000000019); runOnlyForDeploymentPostprocessing = 0; };
 		600000000000000000000003 = { isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
 		600000000000000000000004 = { isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (100000000000000000000012); runOnlyForDeploymentPostprocessing = 0; };
 		600000000000000000000005 = { isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
@@ -119,10 +133,32 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (en, Base);
 			mainGroup = 300000000000000000000001;
+			packageReferences = (730000000000000000000001);
 			productRefGroup = 300000000000000000000002;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (400000000000000000000001, 400000000000000000000002);
+		};
+
+		730000000000000000000001 = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/stossy11/StosSign";
+			requirement = { kind = revision; revision = 01dd7bc4f5084ade9e2ebbc7e338dc2e3f454d77; };
+		};
+		740000000000000000000001 = {
+			isa = XCSwiftPackageProductDependency;
+			package = 730000000000000000000001;
+			productName = StosSign_API;
+		};
+		740000000000000000000002 = {
+			isa = XCSwiftPackageProductDependency;
+			package = 730000000000000000000001;
+			productName = StosSign_Auth;
+		};
+		740000000000000000000003 = {
+			isa = XCSwiftPackageProductDependency;
+			package = 730000000000000000000001;
+			productName = StosSign_Common;
 		};
 
 		500000000000000000000001 = { isa = XCConfigurationList; buildConfigurations = (510000000000000000000001, 510000000000000000000002); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
@@ -130,8 +166,8 @@
 		500000000000000000000003 = { isa = XCConfigurationList; buildConfigurations = (510000000000000000000005, 510000000000000000000006); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
 		510000000000000000000001 = { isa = XCBuildConfiguration; buildSettings = { IPHONEOS_DEPLOYMENT_TARGET = 16.0; SDKROOT = iphoneos; SWIFT_VERSION = 5.0; }; name = Debug; };
 		510000000000000000000002 = { isa = XCBuildConfiguration; buildSettings = { IPHONEOS_DEPLOYMENT_TARGET = 16.0; SDKROOT = iphoneos; SWIFT_VERSION = 5.0; }; name = Release; };
-		510000000000000000000003 = { isa = XCBuildConfiguration; buildSettings = { CURRENT_PROJECT_VERSION = 1; ENABLE_TESTABILITY = YES; GENERATE_INFOPLIST_FILE = YES; INFOPLIST_KEY_CFBundleDisplayName = IPAForge; INFOPLIST_KEY_UILaunchScreen_Generation = YES; IPHONEOS_DEPLOYMENT_TARGET = 16.0; MARKETING_VERSION = 1.0.0; PRODUCT_BUNDLE_IDENTIFIER = com.Lebaohuy3007.ipaforge; PRODUCT_NAME = AppStoreIPADownloader; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = "1,2"; VERSIONING_SYSTEM = "apple-generic"; }; name = Debug; };
-		510000000000000000000004 = { isa = XCBuildConfiguration; buildSettings = { CURRENT_PROJECT_VERSION = 1; GENERATE_INFOPLIST_FILE = YES; INFOPLIST_KEY_CFBundleDisplayName = IPAForge; INFOPLIST_KEY_UILaunchScreen_Generation = YES; IPHONEOS_DEPLOYMENT_TARGET = 16.0; MARKETING_VERSION = 1.0.0; PRODUCT_BUNDLE_IDENTIFIER = com.Lebaohuy3007.ipaforge; PRODUCT_NAME = AppStoreIPADownloader; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = "1,2"; VERSIONING_SYSTEM = "apple-generic"; }; name = Release; };
+		510000000000000000000003 = { isa = XCBuildConfiguration; buildSettings = { CURRENT_PROJECT_VERSION = 1; ENABLE_TESTABILITY = YES; GENERATE_INFOPLIST_FILE = YES; INFOPLIST_KEY_CFBundleDisplayName = IPAForge; INFOPLIST_KEY_IPAForgeCommitHash = "$(IPAForgeCommitHash)"; INFOPLIST_KEY_UILaunchScreen_Generation = YES; IPHONEOS_DEPLOYMENT_TARGET = 16.0; MARKETING_VERSION = 1.0.0; PRODUCT_BUNDLE_IDENTIFIER = com.Lebaohuy3007.ipaforge; PRODUCT_NAME = AppStoreIPADownloader; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = "1,2"; VERSIONING_SYSTEM = "apple-generic"; }; name = Debug; };
+		510000000000000000000004 = { isa = XCBuildConfiguration; buildSettings = { CURRENT_PROJECT_VERSION = 1; GENERATE_INFOPLIST_FILE = YES; INFOPLIST_KEY_CFBundleDisplayName = IPAForge; INFOPLIST_KEY_IPAForgeCommitHash = "$(IPAForgeCommitHash)"; INFOPLIST_KEY_UILaunchScreen_Generation = YES; IPHONEOS_DEPLOYMENT_TARGET = 16.0; MARKETING_VERSION = 1.0.0; PRODUCT_BUNDLE_IDENTIFIER = com.Lebaohuy3007.ipaforge; PRODUCT_NAME = AppStoreIPADownloader; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = "1,2"; VERSIONING_SYSTEM = "apple-generic"; }; name = Release; };
 		510000000000000000000005 = { isa = XCBuildConfiguration; buildSettings = { GENERATE_INFOPLIST_FILE = YES; IPHONEOS_DEPLOYMENT_TARGET = 16.0; PRODUCT_BUNDLE_IDENTIFIER = com.Lebaohuy3007.ipaforge.tests; PRODUCT_NAME = AppStoreIPADownloaderTests; SWIFT_VERSION = 5.0; TEST_HOST = "$(BUILT_PRODUCTS_DIR)/AppStoreIPADownloader.app/AppStoreIPADownloader"; BUNDLE_LOADER = "$(TEST_HOST)"; TARGETED_DEVICE_FAMILY = "1,2"; }; name = Debug; };
 		510000000000000000000006 = { isa = XCBuildConfiguration; buildSettings = { GENERATE_INFOPLIST_FILE = YES; IPHONEOS_DEPLOYMENT_TARGET = 16.0; PRODUCT_BUNDLE_IDENTIFIER = com.Lebaohuy3007.ipaforge.tests; PRODUCT_NAME = AppStoreIPADownloaderTests; SWIFT_VERSION = 5.0; TEST_HOST = "$(BUILT_PRODUCTS_DIR)/AppStoreIPADownloader.app/AppStoreIPADownloader"; BUNDLE_LOADER = "$(TEST_HOST)"; TARGETED_DEVICE_FAMILY = "1,2"; }; name = Release; };
 	};

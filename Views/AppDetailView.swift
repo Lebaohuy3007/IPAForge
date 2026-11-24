@@ -21,7 +21,7 @@ struct AppDetailView: View {
                     }
                 }
                 DetailRow(title: "Bundle ID", value: app.bundleID)
-                DetailRow(title: "Version", value: app.version)
+                DetailRow(title: "Latest Version", value: app.version)
                 DetailRow(title: "App ID", value: String(app.id))
                 if let size = app.fileSizeBytes {
                     DetailRow(
@@ -29,7 +29,12 @@ struct AppDetailView: View {
                         value: ByteCountFormatter.string(fromByteCount: size, countStyle: .file)
                     )
                 }
-                Button("Download IPA") {
+                Section("Old Version") {
+                    Text("No verified old-version metadata is available.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                Button("Tải xuống") {
                     environment.downloads.start(app: app)
                 }
                 .buttonStyle(.borderedProminent)

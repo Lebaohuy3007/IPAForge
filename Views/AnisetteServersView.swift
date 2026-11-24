@@ -6,6 +6,9 @@ struct AnisetteServersView: View {
     @State private var editorRoute: ServerEditorRoute?
     @State private var serverToDelete: AnisetteServer?
     @State private var errorMessage: String?
+    @State private var v3ResultMessage: String?
+    @State private var isFetchingV3 = false
+    @State private var showsV3ProvisioningConfirmation = false
 
     var body: some View {
         List {
@@ -72,6 +75,28 @@ struct AnisetteServersView: View {
                 }
             }
 
+            Section("Anisette v3") {
+                Text("Máy chủ đã chọn sẽ nhận dữ liệu provisioning Anisette. Apple ID, mật khẩu và mã xác minh không được gửi.")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+                Button {
+                    showsV3ProvisioningConfirmation = true
+                } label: {
+                    if isFetchingV3 {
+                        ProgressView("Đang tạo dữ liệu Anisette v3…")
+                    } else {
+                        Label("Tạo dữ liệu Anisette v3", systemImage: "key.horizontal")
+                    }
+                }
+                .disabled(isFetchingV3 || !selectedServerSupportsV3)
+
+                if let v3ResultMessage {
+                    Text(v3ResultMessage)
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                }
+            }
+
             if let errorMessage {
                 Section {
                     Text(errorMessage)
@@ -94,6 +119,18 @@ struct AnisetteServersView: View {
         }
         .onAppear {
             environment.anisetteServers.refreshAll()
+        }
+        .confirmationDialog(
+            "Provisioning Anisette v3",
+            isPresented: $showsV3ProvisioningConfirmation,
+            titleVisibility: .visible
+        ) {
+            Button("Tiếp tục") {
+                Task { await fetchV3Data() }
+            }
+            Button("Hủy", role: .cancel) {}
+        } message: {
+            Text("Máy chủ Anisette đã chọn sẽ nhận identifier và dữ liệu provisioning Apple cần để tạo adi.pb. Không gửi thông tin đăng nhập Apple.")
         }
         .sheet(item: $editorRoute) { route in
             NavigationStack {
@@ -123,6 +160,24 @@ struct AnisetteServersView: View {
                     errorMessage = error.localizedDescription
                 }
             }
+        }
+    }
+
+    private var selectedServerSupportsV3: Bool {
+        guard let id = environment.anisetteServers.selectedServerID else { return false }
+        return environment.anisetteServers.probeResults[id]?.state == .validV3
+    }
+
+    @MainActor
+    private func fetchV3Data() async {
+        guard let server = environment.anisetteServers.selectedServer else { return }
+        isFetchingV3 = true
+        defer { isFetchingV3 = false }
+        do {
+            _ = try await environment.anisette.fetchAnisetteV3(serverURL: server.url)
+            v3ResultMessage = "Anisette v3 đã sẵn sàng cho máy chủ \(server.name)."
+        } catch {
+            v3ResultMessage = error.localizedDescription
         }
     }
 }

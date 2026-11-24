@@ -8,7 +8,6 @@ struct AppStoreIPADownloaderApp: App {
         WindowGroup {
             RootView()
                 .environmentObject(environment)
-                .preferredColorScheme(environment.colorScheme)
         }
     }
 }

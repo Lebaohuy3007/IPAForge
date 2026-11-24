@@ -11,7 +11,7 @@ struct AppStoreSearchView: View {
         NavigationStack {
             VStack {
                 HStack {
-                    TextField("App name or App ID", text: $query)
+                    TextField("Tên, Bundle ID hoặc App Store ID", text: $query)
                         .textFieldStyle(.roundedBorder)
                         .textInputAutocapitalization(.never)
                         .autocorrectionDisabled()

@@ -4,9 +4,11 @@ struct LoginView: View {
     @EnvironmentObject private var environment: AppEnvironment
     @State private var appleID = ""
     @State private var password = ""
+    @State private var verificationCode = ""
     @State private var isPasswordVisible = false
     @State private var showingAnisetteServers = false
     @State private var statusMessage = ""
+    @State private var isSigningIn = false
     @FocusState private var passwordFieldIsFocused: Bool
 
     var body: some View {
@@ -63,19 +65,60 @@ struct LoginView: View {
 
                 Section("Apple Account") {
                     if environment.authPhase == .signedIn {
-                        Label(appleID, systemImage: "person.crop.circle")
+                        if let account = environment.activeAccount {
+                            Label(account.appleID, systemImage: "person.crop.circle")
+                            if !account.teams.isEmpty {
+                                Picker("Developer Team", selection: Binding(
+                                    get: { account.selectedTeamID ?? "" },
+                                    set: { teamID in
+                                        guard !teamID.isEmpty else { return }
+                                        do {
+                                            try environment.selectDeveloperTeam(id: teamID)
+                                            statusMessage = ""
+                                        } catch {
+                                            statusMessage = error.localizedDescription
+                                        }
+                                    }
+                                )) {
+                                    Text("Select a team").tag("")
+                                    ForEach(account.teams) { team in
+                                        Text(team.name).tag(team.id)
+                                    }
+                                }
+                            }
+                        } else {
+                            ProgressView("Restoring Apple session…")
+                        }
                         Button("Đăng xuất", role: .destructive) {
                             appleID = ""
                             password = ""
+                            verificationCode = ""
                             isPasswordVisible = false
                             environment.signOut()
                             statusMessage = "Đã đăng xuất."
                         }
+                    } else if environment.authPhase == .waitingFor2FA {
+                        Text("Enter the six-digit verification code sent by Apple.")
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                        TextField("Verification code", text: $verificationCode)
+                            .keyboardType(.numberPad)
+                            .textContentType(.oneTimeCode)
+                            .disabled(!isSigningIn)
+                        Button("Verify") { submitVerificationCode() }
+                            .disabled(!isSigningIn)
+                        Button("Cancel Sign In", role: .cancel) {
+                            environment.cancelLogin()
+                            verificationCode = ""
+                        }
+                    } else if environment.authPhase == .authenticating && !isSigningIn {
+                        ProgressView("Restoring Apple session…")
                     } else {
                         TextField("Apple ID / Email", text: $appleID)
                             .textContentType(.username)
                             .textInputAutocapitalization(.never)
                             .autocorrectionDisabled()
+                            .disabled(isSigningIn)
                         HStack {
                             Group {
                                 if isPasswordVisible {
@@ -91,6 +134,7 @@ struct LoginView: View {
                                 }
                             }
                             .textContentType(.password)
+                            .disabled(isSigningIn)
                             Button {
                                 isPasswordVisible.toggle()
                             } label: {
@@ -100,17 +144,37 @@ struct LoginView: View {
                             .buttonStyle(.plain)
                             .accessibilityLabel(isPasswordVisible ? "Hide password" : "Show password")
                         }
-                        Button("Login") { login() }
+                        if isSigningIn {
+                            ProgressView("Signing in…")
+                            Button("Cancel Sign In", role: .cancel) {
+                                environment.cancelLogin()
+                            }
+                        } else {
+                            Button("Continue") { login() }
+                        }
+                    }
+                }
+
+                Section {
+                    LoginLogsView(logger: environment.logger)
+                } header: {
+                    HStack {
+                        Text("Login Logs")
+                        Spacer()
+                        Button("Clear Logs") {
+                            environment.logger.clearLogin()
+                        }
+                        .font(.caption)
+                        .disabled(environment.logger.loginEntries.isEmpty)
                     }
                 }
 
                 Section("Status") {
                     Text(statusMessage.isEmpty
-                         ? "Apple Account authentication is currently unavailable."
+                         ? (environment.authMessage.isEmpty
+                            ? "Use an Anisette v3 server to sign in to your Apple Account."
+                            : environment.authMessage)
                          : statusMessage)
-                        .foregroundStyle(.secondary)
-                    Text("IPAForge không gửi Apple ID, mật khẩu hoặc mã 2FA đến Anisette Server. Apple SRP Authentication chưa được tích hợp trong phiên bản này.")
-                        .font(.caption)
                         .foregroundStyle(.secondary)
                 }
             }
@@ -127,12 +191,94 @@ struct LoginView: View {
     }
 
     private func login() {
-        guard !appleID.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+        environment.logger.clearLogin()
+        let submittedAppleID = appleID.trimmingCharacters(in: .whitespacesAndNewlines)
+        let submittedPassword = password
+        guard !submittedAppleID.isEmpty,
               !password.isEmpty else {
             statusMessage = "Vui lòng nhập Apple ID và mật khẩu, không để trống ô nào."
+            environment.logger.logLogin(.warning, "Apple ID and password are required.")
             return
         }
-        statusMessage = AuthenticationError.unsupported.localizedDescription
-        environment.logger.log(.error, "Apple Account sign-in is unavailable.")
+
+        isSigningIn = true
+        statusMessage = ""
+        environment.logger.logLogin(.info, "Apple Account sign-in requested.")
+        password = ""
+        Task {
+            defer {
+                isSigningIn = false
+                verificationCode = ""
+            }
+            do {
+                try await environment.signIn(appleID: submittedAppleID, password: submittedPassword)
+                statusMessage = "Apple Account signed in and Developer Teams loaded."
+            } catch {
+                if error is CancellationError {
+                    statusMessage = "Sign-in cancelled."
+                } else {
+                    statusMessage = LogSanitizer.sanitize(error.localizedDescription)
+                    environment.logger.logLogin(.error, "Sign-in failed: \(error.localizedDescription)")
+                }
+            }
+        }
+    }
+
+    private func submitVerificationCode() {
+        do {
+            try environment.submitVerificationCode(verificationCode)
+            verificationCode = ""
+            statusMessage = ""
+        } catch {
+            statusMessage = error.localizedDescription
+        }
+    }
+}
+
+private struct LoginLogsView: View {
+    @ObservedObject var logger: LoggingService
+
+    var body: some View {
+        ScrollViewReader { proxy in
+            ScrollView {
+                LazyVStack(alignment: .leading, spacing: 6) {
+                    if logger.loginEntries.isEmpty {
+                        Text("Login events will appear here.")
+                            .foregroundStyle(.secondary)
+                            .id("empty-login-logs")
+                    } else {
+                        ForEach(logger.loginEntries) { entry in
+                            HStack(alignment: .firstTextBaseline, spacing: 8) {
+                                Text(entry.formatted)
+                                    .foregroundStyle(color(for: entry.level))
+                                    .textSelection(.enabled)
+                            }
+                            .font(.system(.caption, design: .monospaced))
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .id(entry.id)
+                        }
+                    }
+                }
+                .padding(.vertical, 8)
+                .padding(.horizontal, 10)
+            }
+            .frame(height: 150)
+            .background(Color(uiColor: .secondarySystemBackground), in: RoundedRectangle(cornerRadius: 8))
+            .onChange(of: logger.loginEntries.count) { _ in
+                guard let lastEntry = logger.loginEntries.last else { return }
+                withAnimation {
+                    proxy.scrollTo(lastEntry.id, anchor: .bottom)
+                }
+            }
+        }
+    }
+
+    private func color(for level: LogLevel) -> Color {
+        switch level {
+        case .info: return .primary
+        case .success: return .green
+        case .warning: return .orange
+        case .error: return .red
+        }
     }
 }

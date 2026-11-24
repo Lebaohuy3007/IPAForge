@@ -51,6 +51,7 @@ jobs:
             | xcbeautify
       - name: Build unsigned application
         run: |
+          COMMIT_HASH="$(git rev-parse --short=7 HEAD)"
           set -o pipefail
           xcodebuild build \
             -project AppStoreIPADownloader.xcodeproj \
@@ -59,6 +60,7 @@ jobs:
             -destination 'generic/platform=iOS' \
             -derivedDataPath "$DERIVED_DATA_PATH" \
             CURRENT_PROJECT_VERSION="$GITHUB_RUN_NUMBER" \
+            IPAForgeCommitHash="$COMMIT_HASH" \
             CODE_SIGNING_ALLOWED=NO \
             | xcbeautify
       - name: Package unsigned IPA
