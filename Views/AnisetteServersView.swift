@@ -27,7 +27,7 @@ struct AnisetteServersView: View {
                 }
             }
 
-            Section("Chọn Anisette Server") {
+            Section {
                 ForEach(Array(store.servers.enumerated()), id: \.element.id) { index, server in
                     HStack(spacing: 8) {
                         Button {
@@ -65,6 +65,8 @@ struct AnisetteServersView: View {
                         }
                     }
                 }
+            } header: {
+                Text("Chọn Anisette Server")
             } footer: {
                 Text("Khi chọn server, ứng dụng tự tạo dữ liệu Anisette v3. Server nhận identifier và dữ liệu provisioning Apple; Apple ID, mật khẩu và mã xác minh không được gửi.")
             }

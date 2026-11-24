@@ -1,9 +1,6 @@
 name: Experimental Build
 run-name: Test UI
 on:
-  push:
-    branches:
-      - '**'
   workflow_dispatch:
     inputs:
       run_tests:

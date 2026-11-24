@@ -1,0 +1,41 @@
+name: Upload Source
+
+on:
+  push:
+    branches:
+      - '**'
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: Branch to push (leave empty to use the selected branch)
+        required: false
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  upload-source:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.branch || github.ref_name }}
+          persist-credentials: true
+
+      - name: Push source branch
+        env:
+          BRANCH_NAME: ${{ inputs.branch || github.ref_name }}
+          REF_TYPE: ${{ github.ref_type }}
+          INPUT_BRANCH: ${{ inputs.branch }}
+        run: |
+          if [[ -z "$BRANCH_NAME" ]] || ! git check-ref-format --branch "$BRANCH_NAME" >/dev/null; then
+            echo "::error::Invalid branch name."
+            exit 1
+          fi
+          if [[ "$REF_TYPE" != "branch" && -z "$INPUT_BRANCH" ]]; then
+            echo "::error::Select a branch or provide the branch input."
+            exit 1
+          fi
+          git push origin "HEAD:refs/heads/$BRANCH_NAME"
