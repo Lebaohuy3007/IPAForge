@@ -224,20 +224,41 @@ struct AnisetteProbeStatusView: View {
                 .controlSize(.small)
                 .foregroundStyle(.secondary)
         } else if let result = store.probeResults[serverID] {
-            if let milliseconds = result.durationMilliseconds {
-                Text("\(milliseconds) ms")
-                    .font(.caption)
-                    .foregroundStyle(Color.secondary)
-            } else {
+            switch result.state {
+            case .validV3:
+                measurement(result, isSuccessful: true)
+            case .responded:
+                measurement(result, isSuccessful: false)
+            case .noResponse, .invalidURL:
                 Text(result.state.title)
                     .font(.caption)
-                    .foregroundStyle(Color.secondary)
+                    .foregroundStyle(.red)
+            case .unchecked:
+                Text(result.state.title)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
             }
         } else {
             Text("— ms")
                 .font(.caption)
                 .foregroundStyle(.secondary)
         }
+    }
+
+    private func measurement(_ result: AnisetteProbeResult, isSuccessful: Bool) -> some View {
+        HStack(spacing: 4) {
+            Text("\(result.durationMilliseconds.map(String.init) ?? "—") ms +")
+                .foregroundStyle(isSuccessful ? Color.green : Color.orange)
+            Text("HTTP \(result.httpStatusCode.map(String.init) ?? "—")")
+                .foregroundStyle(isSuccessful ? Color.green : Color.orange)
+                .padding(.horizontal, 6)
+                .padding(.vertical, 2)
+                .background(
+                    (isSuccessful ? Color.green : Color.yellow).opacity(0.2),
+                    in: Capsule()
+                )
+        }
+        .font(.caption.weight(.medium))
     }
 }
 
@@ -255,6 +276,23 @@ private enum ServerEditorRoute: Identifiable {
     }
 }
 
+enum AnisetteServerURLInput {
+    static func suffix(from value: String) -> String {
+        let trimmed = value.trimmingCharacters(in: .whitespacesAndNewlines)
+        if trimmed.lowercased().hasPrefix("https://") {
+            return String(trimmed.dropFirst("https://".count))
+        }
+        if trimmed.lowercased().hasPrefix("http://") {
+            return String(trimmed.dropFirst("http://".count))
+        }
+        return trimmed
+    }
+
+    static func fullURL(from suffix: String) -> String {
+        "https://\(self.suffix(from: suffix))"
+    }
+}
+
 private struct AnisetteServerEditorView: View {
     @EnvironmentObject private var environment: AppEnvironment
     @Environment(\.dismiss) private var dismiss
@@ -267,7 +305,7 @@ private struct AnisetteServerEditorView: View {
     init(server: AnisetteServer? = nil) {
         self.server = server
         _name = State(initialValue: server?.name ?? "")
-        _url = State(initialValue: server?.url ?? "")
+        _url = State(initialValue: AnisetteServerURLInput.suffix(from: server?.url ?? ""))
     }
 
     var body: some View {
@@ -275,10 +313,17 @@ private struct AnisetteServerEditorView: View {
             Section("Thông tin Server") {
                 TextField("Tên nguồn (không bắt buộc)", text: $name)
                     .textInputAutocapitalization(.words)
-                TextField("https://example.com", text: $url)
+                HStack(spacing: 0) {
+                    Text("https://")
+                        .foregroundStyle(.secondary)
+                    TextField("example.com", text: Binding(
+                        get: { url },
+                        set: { url = AnisetteServerURLInput.suffix(from: $0) }
+                    ))
                     .textInputAutocapitalization(.never)
                     .keyboardType(.URL)
                     .autocorrectionDisabled()
+                }
             }
             if isSaving {
                 Section {
@@ -315,10 +360,13 @@ private struct AnisetteServerEditorView: View {
                     try await environment.anisetteServers.update(
                         serverID: server.id,
                         name: name,
-                        url: url
+                        url: AnisetteServerURLInput.fullURL(from: url)
                     )
                 } else {
-                    _ = try await environment.anisetteServers.add(name: name, url: url)
+                    _ = try await environment.anisetteServers.add(
+                        name: name,
+                        url: AnisetteServerURLInput.fullURL(from: url)
+                    )
                 }
                 dismiss()
             } catch {

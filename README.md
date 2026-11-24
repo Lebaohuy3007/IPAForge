@@ -18,7 +18,7 @@ SwiftUI app for iOS 16+ to browse the App Store, configure Anisette endpoints, a
 * SwiftUI interface for iOS 16 and later.
 * Search the App Store by name or App ID.
 * Show the App Store storefront as read-only and use it for searches.
-* Choose the app language.
+* Automatically choose Vietnamese for the Vietnam App Store storefront and English for other regions; manually switch between Vietnamese and English in Settings.
 * View app icons, bundle IDs, developers, and versions.
 * Manage and customize Anisette servers.
 * Sign in with an Apple ID, complete two-factor verification, and select a Developer Team.

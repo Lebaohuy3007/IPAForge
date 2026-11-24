@@ -18,7 +18,7 @@
 * Giao diện SwiftUI, hỗ trợ iOS 16+ trở lên.
 * Tìm kiếm ứng dụng trên App Store theo tên hoặc App ID.
 * Hiển thị vùng App Store dạng chỉ đọc và dùng vùng đó khi tìm kiếm.
-* Chọn ngôn ngữ ứng dụng.
+* Tự chọn tiếng Việt khi storefront App Store là Việt Nam và tiếng Anh ở các vùng khác; có thể đổi thủ công giữa tiếng Việt và tiếng Anh trong Cài đặt.
 * Xem thông tin ứng dụng: icon, Bundle ID, nhà phát triển và phiên bản.
 * Quản lý và tùy chỉnh Anisette Server.
 * Đăng nhập Apple ID, hỗ trợ xác minh 2FA và chọn Developer Team.

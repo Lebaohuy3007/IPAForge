@@ -31,10 +31,12 @@ private struct ProfileView: View {
                 }
 
                 Section("Settings") {
-                    Picker("Language", selection: $environment.languagePreference) {
-                        Text("Automatic (App Store region)").tag(nil as AppLanguage?)
+                    Picker("Language", selection: Binding(
+                        get: { environment.languagePreference ?? environment.appLanguage },
+                        set: { environment.languagePreference = $0 }
+                    )) {
                         ForEach(AppLanguage.allCases) { language in
-                            Text(LocalizedStringKey(language.titleKey)).tag(Optional(language))
+                            Text(LocalizedStringKey(language.titleKey)).tag(language)
                         }
                     }
                     .pickerStyle(.menu)

@@ -26,6 +26,13 @@ enum AnisetteProbeState: Equatable {
 struct AnisetteProbeResult: Equatable {
     let state: AnisetteProbeState
     let durationMilliseconds: Int?
+    let httpStatusCode: Int?
+
+    init(state: AnisetteProbeState, durationMilliseconds: Int?, httpStatusCode: Int? = nil) {
+        self.state = state
+        self.durationMilliseconds = durationMilliseconds
+        self.httpStatusCode = httpStatusCode
+    }
 }
 
 struct AnisetteServer: Codable, Identifiable, Equatable {
@@ -213,7 +220,7 @@ final class AnisetteService: AnisetteServiceProtocol {
         AnisetteServer(name: "SideStore (New)", url: "https://new.ani.sidestore.io", isDefault: true),
         AnisetteServer(name: "jkcoxson", url: defaultURL, isDefault: true),
         AnisetteServer(name: "iloader", url: "https://ani.iloader.app", isDefault: true),
-        AnisetteServer(name: "StikStore", url: "https://ani3.stikstore.com", isDefault: true)
+        AnisetteServer(name: "StikStore", url: "https://ani3.stikstore.app", isDefault: true)
     ]
 
     private let session: URLSession
@@ -271,13 +278,25 @@ final class AnisetteService: AnisetteServiceProtocol {
                 return AnisetteProbeResult(state: .responded, durationMilliseconds: elapsed)
             }
             guard AnisetteURLValidator.hasSameHTTPSOrigin(http.url, request.url) else {
-                return AnisetteProbeResult(state: .responded, durationMilliseconds: elapsed)
+                return AnisetteProbeResult(
+                    state: .responded,
+                    durationMilliseconds: elapsed,
+                    httpStatusCode: http.statusCode
+                )
             }
             guard (200...299).contains(http.statusCode) else {
-                return AnisetteProbeResult(state: .responded, durationMilliseconds: elapsed)
+                return AnisetteProbeResult(
+                    state: .responded,
+                    durationMilliseconds: elapsed,
+                    httpStatusCode: http.statusCode
+                )
             }
             let state = Self.isValidV3ClientInfo(data) ? AnisetteProbeState.validV3 : .responded
-            return AnisetteProbeResult(state: state, durationMilliseconds: elapsed)
+            return AnisetteProbeResult(
+                state: state,
+                durationMilliseconds: elapsed,
+                httpStatusCode: http.statusCode
+            )
         } catch {
             return AnisetteProbeResult(state: .noResponse, durationMilliseconds: nil)
         }
@@ -869,11 +888,17 @@ final class AnisetteServerStore: ObservableObject {
 
     private static func mergingDefaultServers(into persisted: [AnisetteServer]) -> [AnisetteServer] {
         let defaults = AnisetteService.defaultServers
-        let defaultURLs = Set(defaults.compactMap { AnisetteURLValidator.normalized($0.url) })
+        let legacyStikStoreURL = AnisetteURLValidator.normalized("https://ani3.stikstore.com")
+        let defaultURLs = Set(
+            defaults.compactMap { AnisetteURLValidator.normalized($0.url) }
+                + [legacyStikStoreURL].compactMap { $0 }
+        )
         let builtIns = defaults.map { defaultServer in
             guard let normalizedURL = AnisetteURLValidator.normalized(defaultServer.url),
                   let stored = persisted.first(where: {
                       AnisetteURLValidator.normalized($0.url) == normalizedURL
+                          || (defaultServer.name == "StikStore"
+                              && AnisetteURLValidator.normalized($0.url) == legacyStikStoreURL)
                   }) else {
                 return defaultServer
             }

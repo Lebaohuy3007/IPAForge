@@ -15,6 +15,16 @@ final class AppLanguageTests: XCTestCase {
 }
 
 final class AnisetteURLValidatorTests: XCTestCase {
+    func testServerEditorKeepsHTTPSPrefixOutsideEditableText() {
+        XCTAssertEqual(AnisetteServerURLInput.suffix(from: "example.com/api"), "example.com/api")
+        XCTAssertEqual(AnisetteServerURLInput.suffix(from: "https://example.com/api"), "example.com/api")
+        XCTAssertEqual(AnisetteServerURLInput.suffix(from: "HTTP://example.com/api"), "example.com/api")
+        XCTAssertEqual(
+            AnisetteServerURLInput.fullURL(from: "https://example.com/api"),
+            "https://example.com/api"
+        )
+    }
+
     func testAcceptsHTTPSURLWithoutCredentialsOrQuery() {
         XCTAssertNotNil(AnisetteURLValidator.validatedBaseURL("https://example.com/api"))
         XCTAssertEqual(
@@ -55,6 +65,7 @@ final class AnisetteURLValidatorTests: XCTestCase {
         let result = await service.testConnection(serverURL: "https://anisette.example")
         XCTAssertEqual(result.state, .responded)
         XCTAssertNotNil(result.durationMilliseconds)
+        XCTAssertEqual(result.httpStatusCode, 200)
 
         MockURLProtocol.responseData = Data(#"{"message":"ok"}"#.utf8)
         let responseOnly = await service.testConnection(serverURL: "https://anisette.example")
@@ -81,6 +92,7 @@ final class AnisetteURLValidatorTests: XCTestCase {
         MockURLProtocol.statusCode = 503
         let httpError = await service.testConnection(serverURL: "https://anisette.example")
         XCTAssertEqual(httpError.state, .responded)
+        XCTAssertEqual(httpError.httpStatusCode, 503)
         XCTAssertFalse(httpError.state.isUsable)
     }
 
@@ -201,6 +213,31 @@ final class AnisetteURLValidatorTests: XCTestCase {
 
 @MainActor
 final class AnisetteServerStoreTests: XCTestCase {
+    func testStikStoreDefaultURLMigratesToAppDomainAndPreservesSelection() throws {
+        let (defaults, suite) = makeDefaults()
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let stikStoreID = UUID()
+        let persisted = AnisetteService.defaultServers.map { server -> [String: Any] in
+            let isStikStore = server.name == "StikStore"
+            return [
+                "id": (isStikStore ? stikStoreID : server.id).uuidString,
+                "name": server.name,
+                "url": isStikStore ? "https://ani3.stikstore.com" : server.url,
+                "isDefault": true
+            ]
+        }
+        defaults.set(persisted, forKey: "anisette.servers.v1")
+        defaults.set(stikStoreID.uuidString, forKey: "anisette.selectedServerID.v1")
+
+        let store = makeStore(defaults: defaults)
+
+        let stikStores = store.servers.filter { $0.name == "StikStore" }
+        XCTAssertEqual(stikStores.count, 1)
+        XCTAssertEqual(stikStores.first?.id, stikStoreID)
+        XCTAssertEqual(stikStores.first?.url, "https://ani3.stikstore.app")
+        XCTAssertEqual(store.selectedServerID, stikStoreID)
+    }
+
     func testSideStoreIsDefaultAndCustomSelectionPersists() async throws {
         configureValidAnisetteResponse()
         let (defaults, suite) = makeDefaults()

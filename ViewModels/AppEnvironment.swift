@@ -231,8 +231,4 @@ final class AppEnvironment: ObservableObject {
         authPhase = .signedIn
         logger.logLogin(.success, "Restored Apple session and fetched Developer Teams.")
     }
-
-    func setAutomaticLanguage() {
-        languagePreference = nil
-    }
 }
