@@ -28,9 +28,7 @@ jobs:
       - name: Restore build cache
         uses: actions/cache@v4
         with:
-          path: |
-            build/DerivedData
-            ~/Library/Caches/org.swift.swiftpm
+          path: ~/Library/Caches/org.swift.swiftpm
           key: xcode-${{ runner.os }}-27.2-${{ github.ref_name }}-${{ hashFiles('AppStoreIPADownloader.xcodeproj/**', '**/*.swift') }}
           restore-keys: |
             xcode-${{ runner.os }}-27.2-${{ github.ref_name }}-
@@ -45,6 +43,9 @@ jobs:
             -scheme AppStoreIPADownloader \
             -destination "platform=iOS Simulator,id=$DEVICE_ID" \
             -derivedDataPath "$DERIVED_DATA_PATH" \
+            -parallel-testing-enabled NO \
+            ONLY_ACTIVE_ARCH=YES \
+            ENABLE_TESTABILITY=YES \
             CODE_SIGNING_ALLOWED=NO \
             | xcbeautify
       - name: Build unsigned application
