@@ -47,7 +47,7 @@ private struct DownloadRow: View {
             ProgressView(value: task.progress)
             Text(task.errorMessage ?? "\(Int(task.progress * 100))%")
                 .font(.caption)
-                .foregroundStyle(task.errorMessage == nil ? .secondary : .red)
+                .foregroundStyle(task.errorMessage == nil ? Color.secondary : Color.red)
         }
         .padding(.vertical, 4)
     }

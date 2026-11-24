@@ -1,24 +1,642 @@
-2026-11-24T03:32:20.6221980Z ##[group]Run DEVICE_ID="$(xcrun simctl list devices available | awk -F '[()]' '/iPhone/ { print $2; exit }')"
-2026-11-24T03:32:20.6222550Z [36;1mDEVICE_ID="$(xcrun simctl list devices available | awk -F '[()]' '/iPhone/ { print $2; exit }')"[0m
-2026-11-24T03:32:20.6222930Z [36;1mtest -n "$DEVICE_ID"[0m
-2026-11-24T03:32:20.6223100Z [36;1mxcodebuild test \[0m
-2026-11-24T03:32:20.6223310Z [36;1m  -project AppStoreIPADownloader.xcodeproj \[0m
-2026-11-24T03:32:20.6223550Z [36;1m  -scheme AppStoreIPADownloader \[0m
-2026-11-24T03:32:20.6223810Z [36;1m  -destination "platform=iOS Simulator,id=$DEVICE_ID" \[0m
-2026-11-24T03:32:20.6224050Z [36;1m  CODE_SIGNING_ALLOWED=NO[0m
-2026-11-24T03:32:20.6249170Z shell: /bin/bash -e {0}
-2026-11-24T03:32:20.6249340Z env:
-2026-11-24T03:32:20.6249510Z   MD_APPLE_SDK_ROOT: /Applications/Xcode_26.3.app
-2026-11-24T03:32:20.6249720Z ##[endgroup]
-2026-11-24T03:32:25.7189830Z Command line invocation:
-2026-11-24T03:32:25.7305060Z     /Applications/Xcode_26.3.app/Contents/Developer/usr/bin/xcodebuild test -project AppStoreIPADownloader.xcodeproj -scheme AppStoreIPADownloader -destination "platform=iOS Simulator,id=DA1C9012-81EC-4C70-B52A-068AEAFBA1DE" CODE_SIGNING_ALLOWED=NO
-2026-11-24T03:32:25.7415100Z 
-2026-11-24T03:32:25.7518460Z Build settings from command line:
-2026-11-24T03:32:25.7622720Z     CODE_SIGNING_ALLOWED = NO
-2026-11-24T03:32:25.7723640Z 
-2026-11-24T03:32:26.5303420Z --- xcodebuild: WARNING: Using the first of multiple matching destinations:
-2026-11-24T03:32:26.5304460Z { platform:iOS Simulator, arch:arm64, id:DA1C9012-81EC-4C70-B52A-068AEAFBA1DE, OS:18.5, name:iPhone 16 Pro }
-2026-11-24T03:32:26.5305080Z { platform:iOS Simulator, arch:x86_64, id:DA1C9012-81EC-4C70-B52A-068AEAFBA1DE, OS:18.5, name:iPhone 16 Pro }
-2026-11-24T03:32:26.5394210Z 2026-11-24 03:32:26.539 xcodebuild[2309:11396] Writing error result bundle to /var/folders/9d/l02zfgrs7c16twd3wbpdmhkc0000gn/T/ResultBundle_2026-24-11_03-32-0026.xcresult
-2026-11-24T03:32:26.6152880Z xcodebuild: error: Failed to build project AppStoreIPADownloader with scheme AppStoreIPADownloader.: Could not find test host for AppStoreIPADownloaderTests: TEST_HOST evaluates to "/Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Products/Debug-iphonesimulator/AppStoreIPADownloader.app/AppStoreIPADownloader"
-2026-11-24T03:32:26.6194960Z ##[error]Process completed with exit code 70.
+2026-11-24T03:38:09.5552190Z ##[group]Run DEVICE_ID="$(xcrun simctl list devices available | awk -F '[()]' '/iPhone/ { print $2; exit }')"
+2026-11-24T03:38:09.5552880Z [36;1mDEVICE_ID="$(xcrun simctl list devices available | awk -F '[()]' '/iPhone/ { print $2; exit }')"[0m
+2026-11-24T03:38:09.5553390Z [36;1mtest -n "$DEVICE_ID"[0m
+2026-11-24T03:38:09.5553660Z [36;1mxcodebuild test \[0m
+2026-11-24T03:38:09.5553970Z [36;1m  -project AppStoreIPADownloader.xcodeproj \[0m
+2026-11-24T03:38:09.5554320Z [36;1m  -scheme AppStoreIPADownloader \[0m
+2026-11-24T03:38:09.5554690Z [36;1m  -destination "platform=iOS Simulator,id=$DEVICE_ID" \[0m
+2026-11-24T03:38:09.5555040Z [36;1m  CODE_SIGNING_ALLOWED=NO[0m
+2026-11-24T03:38:09.5581940Z shell: /bin/bash -e {0}
+2026-11-24T03:38:09.5582210Z env:
+2026-11-24T03:38:09.5582480Z   MD_APPLE_SDK_ROOT: /Applications/Xcode_26.3.app
+2026-11-24T03:38:09.5582800Z ##[endgroup]
+2026-11-24T03:38:14.6628830Z Command line invocation:
+2026-11-24T03:38:14.6632210Z     /Applications/Xcode_26.3.app/Contents/Developer/usr/bin/xcodebuild test -project AppStoreIPADownloader.xcodeproj -scheme AppStoreIPADownloader -destination "platform=iOS Simulator,id=DA1C9012-81EC-4C70-B52A-068AEAFBA1DE" CODE_SIGNING_ALLOWED=NO
+2026-11-24T03:38:14.6633670Z 
+2026-11-24T03:38:14.6633810Z Build settings from command line:
+2026-11-24T03:38:14.6634010Z     CODE_SIGNING_ALLOWED = NO
+2026-11-24T03:38:14.6634190Z 
+2026-11-24T03:38:15.6280610Z --- xcodebuild: WARNING: Using the first of multiple matching destinations:
+2026-11-24T03:38:15.6281410Z { platform:iOS Simulator, arch:arm64, id:DA1C9012-81EC-4C70-B52A-068AEAFBA1DE, OS:18.5, name:iPhone 16 Pro }
+2026-11-24T03:38:15.6282050Z { platform:iOS Simulator, arch:x86_64, id:DA1C9012-81EC-4C70-B52A-068AEAFBA1DE, OS:18.5, name:iPhone 16 Pro }
+2026-11-24T03:38:17.3309170Z ComputePackagePrebuildTargetDependencyGraph
+2026-11-24T03:38:17.3996640Z 
+2026-11-24T03:38:17.4019990Z Prepare packages
+2026-11-24T03:38:17.4020420Z 
+2026-11-24T03:38:17.4037380Z CreateBuildRequest
+2026-11-24T03:38:17.4037640Z 
+2026-11-24T03:38:17.4037870Z SendProjectDescription
+2026-11-24T03:38:17.4083480Z 
+2026-11-24T03:38:17.4083750Z CreateBuildOperation
+2026-11-24T03:38:17.4228350Z 
+2026-11-24T03:38:17.4245240Z ComputeTargetDependencyGraph
+2026-11-24T03:38:17.4540620Z note: Building targets in dependency order
+2026-11-24T03:38:17.4541230Z note: Target dependency graph (2 targets)
+2026-11-24T03:38:17.4541630Z     Target 'AppStoreIPADownloaderTests' in project 'AppStoreIPADownloader'
+2026-11-24T03:38:17.4542880Z         ➜ Explicit dependency on target 'AppStoreIPADownloader' in project 'AppStoreIPADownloader'
+2026-11-24T03:38:17.4543460Z     Target 'AppStoreIPADownloader' in project 'AppStoreIPADownloader' (no dependencies)
+2026-11-24T03:38:17.4559720Z 
+2026-11-24T03:38:17.4560640Z GatherProvisioningInputs
+2026-11-24T03:38:17.4562390Z 
+2026-11-24T03:38:17.4566380Z CreateBuildDescription
+2026-11-24T03:38:17.4836300Z 
+2026-11-24T03:38:17.4837840Z ExecuteExternalTool /Applications/Xcode_26.3.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -v -E -dM -isysroot /Applications/Xcode_26.3.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.2.sdk -x c -c /dev/null
+2026-11-24T03:38:17.7469440Z 
+2026-11-24T03:38:17.7470150Z ExecuteExternalTool /Applications/Xcode_26.3.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc --version
+2026-11-24T03:38:17.7470740Z 
+2026-11-24T03:38:17.7525660Z ExecuteExternalTool /Applications/Xcode_26.3.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld -version_details
+2026-11-24T03:38:17.8864620Z 
+2026-11-24T03:38:17.9168960Z Build description signature: dd6fbba151aadda06905cfac5431d691
+2026-11-24T03:38:17.9169970Z Build description path: /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/XCBuildData/dd6fbba151aadda06905cfac5431d691.xcbuilddata
+2026-11-24T03:38:17.9580350Z CreateBuildDirectory /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Products
+2026-11-24T03:38:17.9581910Z     cd /Users/runner/work/IPAForge/IPAForge/AppStoreIPADownloader.xcodeproj
+2026-11-24T03:38:17.9584320Z     builtin-create-build-directory /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Products
+2026-11-24T03:38:17.9608870Z 
+2026-11-24T03:38:17.9610990Z ClangStatCache /Applications/Xcode_26.3.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode_26.3.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.2.sdk /Users/runner/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator26.2-23C57-dc75598d0054f22ec865fa860f139d72e244bd9a5feaf902f95f61bf06266e52.sdkstatcache
+2026-11-24T03:38:17.9612830Z     cd /Users/runner/work/IPAForge/IPAForge/AppStoreIPADownloader.xcodeproj
+2026-11-24T03:38:17.9614370Z     /Applications/Xcode_26.3.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode_26.3.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.2.sdk -o /Users/runner/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator26.2-23C57-dc75598d0054f22ec865fa860f139d72e244bd9a5feaf902f95f61bf06266e52.sdkstatcache
+2026-11-24T03:38:19.3757600Z 
+2026-11-24T03:38:19.3758550Z CreateBuildDirectory /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex
+2026-11-24T03:38:19.3759420Z     cd /Users/runner/work/IPAForge/IPAForge/AppStoreIPADownloader.xcodeproj
+2026-11-24T03:38:19.3760220Z     builtin-create-build-directory /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex
+2026-11-24T03:38:19.3760850Z 
+2026-11-24T03:38:19.3761380Z CreateBuildDirectory /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Products/Debug-iphonesimulator
+2026-11-24T03:38:19.3762240Z     cd /Users/runner/work/IPAForge/IPAForge/AppStoreIPADownloader.xcodeproj
+2026-11-24T03:38:19.3762980Z     builtin-create-build-directory /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Products/Debug-iphonesimulator
+2026-11-24T03:38:19.3763630Z 
+2026-11-24T03:38:19.3764180Z CreateBuildDirectory /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules
+2026-11-24T03:38:19.3764970Z     cd /Users/runner/work/IPAForge/IPAForge/AppStoreIPADownloader.xcodeproj
+2026-11-24T03:38:19.3765870Z     builtin-create-build-directory /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules
+2026-11-24T03:38:19.3766610Z 
+2026-11-24T03:38:19.3767160Z CreateBuildDirectory /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/ExplicitPrecompiledModules
+2026-11-24T03:38:19.3767880Z     cd /Users/runner/work/IPAForge/IPAForge/AppStoreIPADownloader.xcodeproj
+2026-11-24T03:38:19.3771000Z     builtin-create-build-directory /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/ExplicitPrecompiledModules
+2026-11-24T03:38:19.3771600Z 
+2026-11-24T03:38:19.3772660Z WriteAuxiliaryFile /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader-f8a89382ce5e5669650f43f9e538948f-VFS-iphonesimulator/all-product-headers.yaml
+2026-11-24T03:38:19.3773860Z     cd /Users/runner/work/IPAForge/IPAForge/AppStoreIPADownloader.xcodeproj
+2026-11-24T03:38:19.3775160Z     write-file /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader-f8a89382ce5e5669650f43f9e538948f-VFS-iphonesimulator/all-product-headers.yaml
+2026-11-24T03:38:19.3776320Z 
+2026-11-24T03:38:19.3776800Z CreateBuildDirectory /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/EagerLinkingTBDs/Debug-iphonesimulator
+2026-11-24T03:38:19.3777610Z     cd /Users/runner/work/IPAForge/IPAForge/AppStoreIPADownloader.xcodeproj
+2026-11-24T03:38:19.3778500Z     builtin-create-build-directory /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/EagerLinkingTBDs/Debug-iphonesimulator
+2026-11-24T03:38:19.3779200Z 
+2026-11-24T03:38:19.3780210Z WriteAuxiliaryFile /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/empty-AppStoreIPADownloader.plist (in target 'AppStoreIPADownloader' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:19.3781400Z     cd /Users/runner/work/IPAForge/IPAForge
+2026-11-24T03:38:19.3782300Z     write-file /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/empty-AppStoreIPADownloader.plist
+2026-11-24T03:38:19.3783400Z 
+2026-11-24T03:38:19.3784470Z WriteAuxiliaryFile /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/Objects-normal/x86_64/AppStoreIPADownloader_const_extract_protocols.json (in target 'AppStoreIPADownloader' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:19.3786110Z     cd /Users/runner/work/IPAForge/IPAForge
+2026-11-24T03:38:19.3787110Z     write-file /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/Objects-normal/x86_64/AppStoreIPADownloader_const_extract_protocols.json
+2026-11-24T03:38:19.3788620Z 
+2026-11-24T03:38:19.3789800Z WriteAuxiliaryFile /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/Objects-normal/x86_64/AppStoreIPADownloader.LinkFileList (in target 'AppStoreIPADownloader' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:19.3791040Z     cd /Users/runner/work/IPAForge/IPAForge
+2026-11-24T03:38:19.3792200Z     write-file /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/Objects-normal/x86_64/AppStoreIPADownloader.LinkFileList
+2026-11-24T03:38:19.3793070Z 
+2026-11-24T03:38:19.3793960Z WriteAuxiliaryFile /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloaderTests.build/empty-AppStoreIPADownloaderTests.plist (in target 'AppStoreIPADownloaderTests' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:19.3795580Z     cd /Users/runner/work/IPAForge/IPAForge
+2026-11-24T03:38:19.3796410Z     write-file /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloaderTests.build/empty-AppStoreIPADownloaderTests.plist
+2026-11-24T03:38:19.3797170Z 
+2026-11-24T03:38:19.3798290Z WriteAuxiliaryFile /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloaderTests.build/Objects-normal/x86_64/AppStoreIPADownloaderTests_const_extract_protocols.json (in target 'AppStoreIPADownloaderTests' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:19.3799740Z     cd /Users/runner/work/IPAForge/IPAForge
+2026-11-24T03:38:19.3800740Z     write-file /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloaderTests.build/Objects-normal/x86_64/AppStoreIPADownloaderTests_const_extract_protocols.json
+2026-11-24T03:38:19.3801650Z 
+2026-11-24T03:38:19.3802610Z WriteAuxiliaryFile /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloaderTests.build/Objects-normal/x86_64/AppStoreIPADownloaderTests.SwiftFileList (in target 'AppStoreIPADownloaderTests' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:19.3811160Z     cd /Users/runner/work/IPAForge/IPAForge
+2026-11-24T03:38:19.3812210Z     write-file /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloaderTests.build/Objects-normal/x86_64/AppStoreIPADownloaderTests.SwiftFileList
+2026-11-24T03:38:19.3813040Z 
+2026-11-24T03:38:19.3814030Z WriteAuxiliaryFile /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloaderTests.build/Objects-normal/x86_64/AppStoreIPADownloaderTests.SwiftConstValuesFileList (in target 'AppStoreIPADownloaderTests' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:19.3815170Z     cd /Users/runner/work/IPAForge/IPAForge
+2026-11-24T03:38:19.3816190Z     write-file /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloaderTests.build/Objects-normal/x86_64/AppStoreIPADownloaderTests.SwiftConstValuesFileList
+2026-11-24T03:38:19.3817020Z 
+2026-11-24T03:38:19.3817980Z WriteAuxiliaryFile /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloaderTests.build/Objects-normal/x86_64/AppStoreIPADownloaderTests.LinkFileList (in target 'AppStoreIPADownloaderTests' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:19.3819170Z     cd /Users/runner/work/IPAForge/IPAForge
+2026-11-24T03:38:19.3820020Z     write-file /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloaderTests.build/Objects-normal/x86_64/AppStoreIPADownloaderTests.LinkFileList
+2026-11-24T03:38:19.3820940Z 
+2026-11-24T03:38:19.3822120Z WriteAuxiliaryFile /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloaderTests.build/Objects-normal/x86_64/AppStoreIPADownloaderTests-OutputFileMap.json (in target 'AppStoreIPADownloaderTests' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:19.3823270Z     cd /Users/runner/work/IPAForge/IPAForge
+2026-11-24T03:38:19.3824130Z     write-file /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloaderTests.build/Objects-normal/x86_64/AppStoreIPADownloaderTests-OutputFileMap.json
+2026-11-24T03:38:19.3824970Z 
+2026-11-24T03:38:19.3826100Z WriteAuxiliaryFile /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloaderTests.build/Objects-normal/arm64/AppStoreIPADownloaderTests.SwiftFileList (in target 'AppStoreIPADownloaderTests' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:19.3827280Z     cd /Users/runner/work/IPAForge/IPAForge
+2026-11-24T03:38:19.3828190Z     write-file /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloaderTests.build/Objects-normal/arm64/AppStoreIPADownloaderTests.SwiftFileList
+2026-11-24T03:38:19.3828990Z 
+2026-11-24T03:38:19.3829980Z WriteAuxiliaryFile /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloaderTests.build/Objects-normal/arm64/AppStoreIPADownloaderTests_const_extract_protocols.json (in target 'AppStoreIPADownloaderTests' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:19.3831240Z     cd /Users/runner/work/IPAForge/IPAForge
+2026-11-24T03:38:19.3832120Z     write-file /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloaderTests.build/Objects-normal/arm64/AppStoreIPADownloaderTests_const_extract_protocols.json
+2026-11-24T03:38:19.3833430Z 
+2026-11-24T03:38:19.3834630Z WriteAuxiliaryFile /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloaderTests.build/Objects-normal/arm64/AppStoreIPADownloaderTests.SwiftConstValuesFileList (in target 'AppStoreIPADownloaderTests' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:19.3835900Z     cd /Users/runner/work/IPAForge/IPAForge
+2026-11-24T03:38:19.3837040Z     write-file /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloaderTests.build/Objects-normal/arm64/AppStoreIPADownloaderTests.SwiftConstValuesFileList
+2026-11-24T03:38:19.3838030Z 
+2026-11-24T03:38:19.3839250Z WriteAuxiliaryFile /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloaderTests.build/Objects-normal/arm64/AppStoreIPADownloaderTests.LinkFileList (in target 'AppStoreIPADownloaderTests' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:19.3840550Z     cd /Users/runner/work/IPAForge/IPAForge
+2026-11-24T03:38:19.3841560Z     write-file /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloaderTests.build/Objects-normal/arm64/AppStoreIPADownloaderTests.LinkFileList
+2026-11-24T03:38:19.3842830Z 
+2026-11-24T03:38:19.3843960Z WriteAuxiliaryFile /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloaderTests.build/Objects-normal/arm64/AppStoreIPADownloaderTests-OutputFileMap.json (in target 'AppStoreIPADownloaderTests' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:19.3845190Z     cd /Users/runner/work/IPAForge/IPAForge
+2026-11-24T03:38:19.3846210Z     write-file /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloaderTests.build/Objects-normal/arm64/AppStoreIPADownloaderTests-OutputFileMap.json
+2026-11-24T03:38:19.3847380Z 
+2026-11-24T03:38:19.3848310Z WriteAuxiliaryFile /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloaderTests.build/AppStoreIPADownloaderTests.hmap (in target 'AppStoreIPADownloaderTests' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:19.3849380Z     cd /Users/runner/work/IPAForge/IPAForge
+2026-11-24T03:38:19.3850210Z     write-file /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloaderTests.build/AppStoreIPADownloaderTests.hmap
+2026-11-24T03:38:19.3850980Z 
+2026-11-24T03:38:19.3852010Z WriteAuxiliaryFile /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloaderTests.build/AppStoreIPADownloaderTests.DependencyStaticMetadataFileList (in target 'AppStoreIPADownloaderTests' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:19.3853270Z     cd /Users/runner/work/IPAForge/IPAForge
+2026-11-24T03:38:19.3854250Z     write-file /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloaderTests.build/AppStoreIPADownloaderTests.DependencyStaticMetadataFileList
+2026-11-24T03:38:19.3855240Z 
+2026-11-24T03:38:19.3856260Z WriteAuxiliaryFile /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloaderTests.build/AppStoreIPADownloaderTests.DependencyMetadataFileList (in target 'AppStoreIPADownloaderTests' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:19.3857680Z     cd /Users/runner/work/IPAForge/IPAForge
+2026-11-24T03:38:19.3858680Z     write-file /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloaderTests.build/AppStoreIPADownloaderTests.DependencyMetadataFileList
+2026-11-24T03:38:19.3859520Z 
+2026-11-24T03:38:19.3860560Z WriteAuxiliaryFile /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloaderTests.build/AppStoreIPADownloaderTests-project-headers.hmap (in target 'AppStoreIPADownloaderTests' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:19.3861680Z     cd /Users/runner/work/IPAForge/IPAForge
+2026-11-24T03:38:19.3862720Z     write-file /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloaderTests.build/AppStoreIPADownloaderTests-project-headers.hmap
+2026-11-24T03:38:19.3863700Z 
+2026-11-24T03:38:19.3864960Z WriteAuxiliaryFile /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloaderTests.build/AppStoreIPADownloaderTests-own-target-headers.hmap (in target 'AppStoreIPADownloaderTests' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:19.3866540Z     cd /Users/runner/work/IPAForge/IPAForge
+2026-11-24T03:38:19.3867490Z     write-file /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloaderTests.build/AppStoreIPADownloaderTests-own-target-headers.hmap
+2026-11-24T03:38:19.3868520Z 
+2026-11-24T03:38:19.3869570Z WriteAuxiliaryFile /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloaderTests.build/AppStoreIPADownloaderTests-generated-files.hmap (in target 'AppStoreIPADownloaderTests' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:19.3871150Z     cd /Users/runner/work/IPAForge/IPAForge
+2026-11-24T03:38:19.3872230Z     write-file /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloaderTests.build/AppStoreIPADownloaderTests-generated-files.hmap
+2026-11-24T03:38:19.3873290Z 
+2026-11-24T03:38:19.3874550Z WriteAuxiliaryFile /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloaderTests.build/AppStoreIPADownloaderTests-all-target-headers.hmap (in target 'AppStoreIPADownloaderTests' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:19.3875840Z     cd /Users/runner/work/IPAForge/IPAForge
+2026-11-24T03:38:19.3876820Z     write-file /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloaderTests.build/AppStoreIPADownloaderTests-all-target-headers.hmap
+2026-11-24T03:38:19.3877820Z 
+2026-11-24T03:38:19.3879130Z WriteAuxiliaryFile /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloaderTests.build/AppStoreIPADownloaderTests-all-non-framework-target-headers.hmap (in target 'AppStoreIPADownloaderTests' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:19.3880590Z     cd /Users/runner/work/IPAForge/IPAForge
+2026-11-24T03:38:19.3881670Z     write-file /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloaderTests.build/AppStoreIPADownloaderTests-all-non-framework-target-headers.hmap
+2026-11-24T03:38:19.3882560Z 
+2026-11-24T03:38:19.3883500Z WriteAuxiliaryFile /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/Objects-normal/x86_64/AppStoreIPADownloader.SwiftFileList (in target 'AppStoreIPADownloader' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:19.3884580Z     cd /Users/runner/work/IPAForge/IPAForge
+2026-11-24T03:38:19.3885430Z     write-file /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/Objects-normal/x86_64/AppStoreIPADownloader.SwiftFileList
+2026-11-24T03:38:19.3886230Z 
+2026-11-24T03:38:19.3887220Z WriteAuxiliaryFile /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/Objects-normal/x86_64/AppStoreIPADownloader.SwiftConstValuesFileList (in target 'AppStoreIPADownloader' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:19.3888510Z     cd /Users/runner/work/IPAForge/IPAForge
+2026-11-24T03:38:19.3889560Z     write-file /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/Objects-normal/x86_64/AppStoreIPADownloader.SwiftConstValuesFileList
+2026-11-24T03:38:19.3890540Z 
+2026-11-24T03:38:19.3891620Z WriteAuxiliaryFile /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/Objects-normal/x86_64/AppStoreIPADownloader-OutputFileMap.json (in target 'AppStoreIPADownloader' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:19.3892870Z     cd /Users/runner/work/IPAForge/IPAForge
+2026-11-24T03:38:19.3893940Z     write-file /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/Objects-normal/x86_64/AppStoreIPADownloader-OutputFileMap.json
+2026-11-24T03:38:19.3894960Z 
+2026-11-24T03:38:19.3895960Z WriteAuxiliaryFile /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/Objects-normal/arm64/AppStoreIPADownloader_const_extract_protocols.json (in target 'AppStoreIPADownloader' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:19.3897060Z     cd /Users/runner/work/IPAForge/IPAForge
+2026-11-24T03:38:19.3898110Z     write-file /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/Objects-normal/arm64/AppStoreIPADownloader_const_extract_protocols.json
+2026-11-24T03:38:19.3899000Z 
+2026-11-24T03:38:19.3900100Z WriteAuxiliaryFile /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/Objects-normal/arm64/AppStoreIPADownloader.SwiftFileList (in target 'AppStoreIPADownloader' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:19.3901320Z     cd /Users/runner/work/IPAForge/IPAForge
+2026-11-24T03:38:19.3902190Z     write-file /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/Objects-normal/arm64/AppStoreIPADownloader.SwiftFileList
+2026-11-24T03:38:19.3903270Z 
+2026-11-24T03:38:19.3904420Z WriteAuxiliaryFile /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/Objects-normal/arm64/AppStoreIPADownloader.SwiftConstValuesFileList (in target 'AppStoreIPADownloader' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:19.3905720Z     cd /Users/runner/work/IPAForge/IPAForge
+2026-11-24T03:38:19.3906650Z     write-file /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/Objects-normal/arm64/AppStoreIPADownloader.SwiftConstValuesFileList
+2026-11-24T03:38:19.3907590Z 
+2026-11-24T03:38:19.3908710Z WriteAuxiliaryFile /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/Objects-normal/arm64/AppStoreIPADownloader.LinkFileList (in target 'AppStoreIPADownloader' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:19.3910030Z     cd /Users/runner/work/IPAForge/IPAForge
+2026-11-24T03:38:19.3911020Z     write-file /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/Objects-normal/arm64/AppStoreIPADownloader.LinkFileList
+2026-11-24T03:38:19.3911830Z 
+2026-11-24T03:38:19.3912930Z WriteAuxiliaryFile /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/Objects-normal/arm64/AppStoreIPADownloader-OutputFileMap.json (in target 'AppStoreIPADownloader' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:19.3914310Z     cd /Users/runner/work/IPAForge/IPAForge
+2026-11-24T03:38:19.3915290Z     write-file /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/Objects-normal/arm64/AppStoreIPADownloader-OutputFileMap.json
+2026-11-24T03:38:19.3916190Z 
+2026-11-24T03:38:19.3917060Z WriteAuxiliaryFile /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/AppStoreIPADownloader.hmap (in target 'AppStoreIPADownloader' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:19.3918130Z     cd /Users/runner/work/IPAForge/IPAForge
+2026-11-24T03:38:19.3919000Z     write-file /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/AppStoreIPADownloader.hmap
+2026-11-24T03:38:19.3919780Z 
+2026-11-24T03:38:19.3920740Z WriteAuxiliaryFile /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/AppStoreIPADownloader.DependencyStaticMetadataFileList (in target 'AppStoreIPADownloader' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:19.3921920Z     cd /Users/runner/work/IPAForge/IPAForge
+2026-11-24T03:38:19.3922880Z     write-file /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/AppStoreIPADownloader.DependencyStaticMetadataFileList
+2026-11-24T03:38:19.3923700Z 
+2026-11-24T03:38:19.3924710Z WriteAuxiliaryFile /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/AppStoreIPADownloader.DependencyMetadataFileList (in target 'AppStoreIPADownloader' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:19.3925930Z     cd /Users/runner/work/IPAForge/IPAForge
+2026-11-24T03:38:19.3926810Z     write-file /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/AppStoreIPADownloader.DependencyMetadataFileList
+2026-11-24T03:38:19.3927670Z 
+2026-11-24T03:38:19.3928620Z WriteAuxiliaryFile /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/AppStoreIPADownloader-project-headers.hmap (in target 'AppStoreIPADownloader' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:19.3930310Z     cd /Users/runner/work/IPAForge/IPAForge
+2026-11-24T03:38:19.3931280Z     write-file /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/AppStoreIPADownloader-project-headers.hmap
+2026-11-24T03:38:19.3932060Z 
+2026-11-24T03:38:19.3933010Z WriteAuxiliaryFile /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/AppStoreIPADownloader-own-target-headers.hmap (in target 'AppStoreIPADownloader' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:19.3934320Z     cd /Users/runner/work/IPAForge/IPAForge
+2026-11-24T03:38:19.3935260Z     write-file /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/AppStoreIPADownloader-own-target-headers.hmap
+2026-11-24T03:38:19.3936100Z 
+2026-11-24T03:38:19.3937070Z WriteAuxiliaryFile /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/AppStoreIPADownloader-generated-files.hmap (in target 'AppStoreIPADownloader' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:19.3938160Z     cd /Users/runner/work/IPAForge/IPAForge
+2026-11-24T03:38:19.3939130Z     write-file /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/AppStoreIPADownloader-generated-files.hmap
+2026-11-24T03:38:19.3940000Z 
+2026-11-24T03:38:19.3941010Z WriteAuxiliaryFile /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/AppStoreIPADownloader-all-target-headers.hmap (in target 'AppStoreIPADownloader' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:19.3942160Z     cd /Users/runner/work/IPAForge/IPAForge
+2026-11-24T03:38:19.3943120Z     write-file /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/AppStoreIPADownloader-all-target-headers.hmap
+2026-11-24T03:38:19.3943920Z 
+2026-11-24T03:38:19.3944890Z WriteAuxiliaryFile /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/AppStoreIPADownloader-all-non-framework-target-headers.hmap (in target 'AppStoreIPADownloader' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:19.3946110Z     cd /Users/runner/work/IPAForge/IPAForge
+2026-11-24T03:38:19.3947130Z     write-file /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/AppStoreIPADownloader-all-non-framework-target-headers.hmap
+2026-11-24T03:38:19.3947980Z 
+2026-11-24T03:38:19.3948740Z MkDir /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Products/Debug-iphonesimulator/AppStoreIPADownloader.app/PlugIns/AppStoreIPADownloaderTests.xctest (in target 'AppStoreIPADownloaderTests' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:19.3949760Z     cd /Users/runner/work/IPAForge/IPAForge
+2026-11-24T03:38:19.3950570Z     /bin/mkdir -p /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Products/Debug-iphonesimulator/AppStoreIPADownloader.app/PlugIns/AppStoreIPADownloaderTests.xctest
+2026-11-24T03:38:19.3951320Z 
+2026-11-24T03:38:19.3952040Z MkDir /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Products/Debug-iphonesimulator/AppStoreIPADownloader.app/PlugIns (in target 'AppStoreIPADownloader' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:19.3952950Z     cd /Users/runner/work/IPAForge/IPAForge
+2026-11-24T03:38:19.3953650Z     /bin/mkdir -p /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Products/Debug-iphonesimulator/AppStoreIPADownloader.app/PlugIns
+2026-11-24T03:38:19.3954260Z 
+2026-11-24T03:38:19.3955010Z MkDir /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Products/Debug-iphonesimulator/AppStoreIPADownloader.app/Frameworks (in target 'AppStoreIPADownloader' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:19.3956110Z     cd /Users/runner/work/IPAForge/IPAForge
+2026-11-24T03:38:19.3956840Z     /bin/mkdir -p /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Products/Debug-iphonesimulator/AppStoreIPADownloader.app/Frameworks
+2026-11-24T03:38:19.3957440Z 
+2026-11-24T03:38:19.3958070Z MkDir /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Products/Debug-iphonesimulator/AppStoreIPADownloader.app (in target 'AppStoreIPADownloader' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:19.3958990Z     cd /Users/runner/work/IPAForge/IPAForge
+2026-11-24T03:38:19.3959580Z     /bin/mkdir -p /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Products/Debug-iphonesimulator/AppStoreIPADownloader.app
+2026-11-24T03:38:19.3960190Z 
+2026-11-24T03:38:19.3961340Z Copy /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Products/Debug-iphonesimulator/AppStoreIPADownloader.app/Frameworks/libXCTestSwiftSupport.dylib /Applications/Xcode_26.3.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib/libXCTestSwiftSupport.dylib (in target 'AppStoreIPADownloader' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:19.3962710Z     cd /Users/runner/work/IPAForge/IPAForge
+2026-11-24T03:38:19.3968760Z     builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -exclude Headers -exclude PrivateHeaders -exclude Modules -exclude \*.tbd -strip-unsigned-binaries -strip-deterministic -strip-tool /Applications/Xcode_26.3.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/strip -resolve-src-symlinks /Applications/Xcode_26.3.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib/libXCTestSwiftSupport.dylib /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Products/Debug-iphonesimulator/AppStoreIPADownloader.app/Frameworks
+2026-11-24T03:38:19.3971210Z warning: not stripping binary because it is signed: /Applications/Xcode_26.3.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib/libXCTestSwiftSupport.dylib (in target 'AppStoreIPADownloader' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:19.3971940Z 
+2026-11-24T03:38:19.3973040Z Copy /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Products/Debug-iphonesimulator/AppStoreIPADownloader.app/Frameworks/libXCTestBundleInject.dylib /Applications/Xcode_26.3.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib/libXCTestBundleInject.dylib (in target 'AppStoreIPADownloader' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:19.3974240Z     cd /Users/runner/work/IPAForge/IPAForge
+2026-11-24T03:38:19.3976080Z     builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -exclude Headers -exclude PrivateHeaders -exclude Modules -exclude \*.tbd -strip-unsigned-binaries -strip-deterministic -strip-tool /Applications/Xcode_26.3.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/strip -resolve-src-symlinks /Applications/Xcode_26.3.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib/libXCTestBundleInject.dylib /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Products/Debug-iphonesimulator/AppStoreIPADownloader.app/Frameworks
+2026-11-24T03:38:19.3978590Z warning: not stripping binary because it is signed: /Applications/Xcode_26.3.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib/libXCTestBundleInject.dylib (in target 'AppStoreIPADownloader' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:19.3979390Z 
+2026-11-24T03:38:19.3980470Z Copy /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Products/Debug-iphonesimulator/AppStoreIPADownloader.app/Frameworks/XCUnit.framework /Applications/Xcode_26.3.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/PrivateFrameworks/XCUnit.framework (in target 'AppStoreIPADownloader' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:19.3981690Z     cd /Users/runner/work/IPAForge/IPAForge
+2026-11-24T03:38:19.3983550Z     builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -exclude Headers -exclude PrivateHeaders -exclude Modules -exclude \*.tbd -strip-unsigned-binaries -strip-deterministic -strip-tool /Applications/Xcode_26.3.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/strip -resolve-src-symlinks /Applications/Xcode_26.3.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/PrivateFrameworks/XCUnit.framework /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Products/Debug-iphonesimulator/AppStoreIPADownloader.app/Frameworks
+2026-11-24T03:38:19.3986010Z warning: not stripping binary because it is signed: /Applications/Xcode_26.3.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/PrivateFrameworks/XCUnit.framework/XCUnit (in target 'AppStoreIPADownloader' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:19.3986760Z 
+2026-11-24T03:38:19.3988160Z ProcessInfoPlistFile /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Products/Debug-iphonesimulator/AppStoreIPADownloader.app/Info.plist /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/empty-AppStoreIPADownloader.plist (in target 'AppStoreIPADownloader' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:19.3989740Z     cd /Users/runner/work/IPAForge/IPAForge
+2026-11-24T03:38:19.3991970Z     builtin-infoPlistUtility /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/empty-AppStoreIPADownloader.plist -producttype com.apple.product-type.application -genpkginfo /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Products/Debug-iphonesimulator/AppStoreIPADownloader.app/PkgInfo -expandbuildsettings -format binary -platform iphonesimulator -o /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Products/Debug-iphonesimulator/AppStoreIPADownloader.app/Info.plist
+2026-11-24T03:38:19.3994190Z 
+2026-11-24T03:38:19.3995310Z Copy /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Products/Debug-iphonesimulator/AppStoreIPADownloader.app/Frameworks/XCUIAutomation.framework /Applications/Xcode_26.3.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCUIAutomation.framework (in target 'AppStoreIPADownloader' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:19.3996680Z     cd /Users/runner/work/IPAForge/IPAForge
+2026-11-24T03:38:19.3998490Z     builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -exclude Headers -exclude PrivateHeaders -exclude Modules -exclude \*.tbd -strip-unsigned-binaries -strip-deterministic -strip-tool /Applications/Xcode_26.3.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/strip -resolve-src-symlinks /Applications/Xcode_26.3.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCUIAutomation.framework /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Products/Debug-iphonesimulator/AppStoreIPADownloader.app/Frameworks
+2026-11-24T03:38:19.4000980Z warning: not stripping binary because it is signed: /Applications/Xcode_26.3.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCUIAutomation.framework/XCUIAutomation (in target 'AppStoreIPADownloader' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:19.4001740Z 
+2026-11-24T03:38:19.4002840Z Copy /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Products/Debug-iphonesimulator/AppStoreIPADownloader.app/Frameworks/XCTestSupport.framework /Applications/Xcode_26.3.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/PrivateFrameworks/XCTestSupport.framework (in target 'AppStoreIPADownloader' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:19.4004070Z     cd /Users/runner/work/IPAForge/IPAForge
+2026-11-24T03:38:19.4005900Z     builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -exclude Headers -exclude PrivateHeaders -exclude Modules -exclude \*.tbd -strip-unsigned-binaries -strip-deterministic -strip-tool /Applications/Xcode_26.3.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/strip -resolve-src-symlinks /Applications/Xcode_26.3.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/PrivateFrameworks/XCTestSupport.framework /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Products/Debug-iphonesimulator/AppStoreIPADownloader.app/Frameworks
+2026-11-24T03:38:19.4008350Z warning: not stripping binary because it is signed: /Applications/Xcode_26.3.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/PrivateFrameworks/XCTestSupport.framework/XCTestSupport (in target 'AppStoreIPADownloader' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:19.4009110Z 
+2026-11-24T03:38:19.4010190Z Copy /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Products/Debug-iphonesimulator/AppStoreIPADownloader.app/Frameworks/XCTestCore.framework /Applications/Xcode_26.3.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/PrivateFrameworks/XCTestCore.framework (in target 'AppStoreIPADownloader' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:19.4011400Z     cd /Users/runner/work/IPAForge/IPAForge
+2026-11-24T03:38:19.4013210Z     builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -exclude Headers -exclude PrivateHeaders -exclude Modules -exclude \*.tbd -strip-unsigned-binaries -strip-deterministic -strip-tool /Applications/Xcode_26.3.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/strip -resolve-src-symlinks /Applications/Xcode_26.3.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/PrivateFrameworks/XCTestCore.framework /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Products/Debug-iphonesimulator/AppStoreIPADownloader.app/Frameworks
+2026-11-24T03:38:19.4015640Z warning: not stripping binary because it is signed: /Applications/Xcode_26.3.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/PrivateFrameworks/XCTestCore.framework/XCTestCore (in target 'AppStoreIPADownloader' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:19.4016490Z 
+2026-11-24T03:38:19.4017530Z Copy /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Products/Debug-iphonesimulator/AppStoreIPADownloader.app/Frameworks/XCTest.framework /Applications/Xcode_26.3.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCTest.framework (in target 'AppStoreIPADownloader' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:19.4018700Z     cd /Users/runner/work/IPAForge/IPAForge
+2026-11-24T03:38:19.4020480Z     builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -exclude Headers -exclude PrivateHeaders -exclude Modules -exclude \*.tbd -strip-unsigned-binaries -strip-deterministic -strip-tool /Applications/Xcode_26.3.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/strip -resolve-src-symlinks /Applications/Xcode_26.3.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCTest.framework /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Products/Debug-iphonesimulator/AppStoreIPADownloader.app/Frameworks
+2026-11-24T03:38:19.4022940Z warning: not stripping binary because it is signed: /Applications/Xcode_26.3.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCTest.framework/XCTest (in target 'AppStoreIPADownloader' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:19.4023690Z 
+2026-11-24T03:38:19.4024990Z Copy /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Products/Debug-iphonesimulator/AppStoreIPADownloader.app/Frameworks/XCTAutomationSupport.framework /Applications/Xcode_26.3.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/PrivateFrameworks/XCTAutomationSupport.framework (in target 'AppStoreIPADownloader' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:19.4026540Z     cd /Users/runner/work/IPAForge/IPAForge
+2026-11-24T03:38:19.4029060Z     builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -exclude Headers -exclude PrivateHeaders -exclude Modules -exclude \*.tbd -strip-unsigned-binaries -strip-deterministic -strip-tool /Applications/Xcode_26.3.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/strip -resolve-src-symlinks /Applications/Xcode_26.3.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/PrivateFrameworks/XCTAutomationSupport.framework /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Products/Debug-iphonesimulator/AppStoreIPADownloader.app/Frameworks
+2026-11-24T03:38:19.4032240Z warning: not stripping binary because it is signed: /Applications/Xcode_26.3.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/PrivateFrameworks/XCTAutomationSupport.framework/XCTAutomationSupport (in target 'AppStoreIPADownloader' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:19.4033210Z 
+2026-11-24T03:38:19.4034370Z Copy /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Products/Debug-iphonesimulator/AppStoreIPADownloader.app/Frameworks/Testing.framework /Applications/Xcode_26.3.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/Testing.framework (in target 'AppStoreIPADownloader' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:19.4035560Z     cd /Users/runner/work/IPAForge/IPAForge
+2026-11-24T03:38:19.4037390Z     builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -exclude Headers -exclude PrivateHeaders -exclude Modules -exclude \*.tbd -strip-unsigned-binaries -strip-deterministic -strip-tool /Applications/Xcode_26.3.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/strip -resolve-src-symlinks /Applications/Xcode_26.3.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/Testing.framework /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Products/Debug-iphonesimulator/AppStoreIPADownloader.app/Frameworks
+2026-11-24T03:38:19.4039950Z warning: not stripping binary because it is signed: /Applications/Xcode_26.3.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/Testing.framework/Testing (in target 'AppStoreIPADownloader' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:19.4040660Z 
+2026-11-24T03:38:19.4041020Z SwiftDriver AppStoreIPADownloader normal arm64 com.apple.xcode.tools.swift.compiler (in target 'AppStoreIPADownloader' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:19.4041670Z     cd /Users/runner/work/IPAForge/IPAForge
+2026-11-24T03:38:19.4057800Z     builtin-SwiftDriver -- /Applications/Xcode_26.3.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name AppStoreIPADownloader -O -enforce-exclusivity\=checked @/Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/Objects-normal/arm64/AppStoreIPADownloader.SwiftFileList -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode_26.3.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.2.sdk -target arm64-apple-ios16.0-simulator -g -module-cache-path /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -swift-version 5 -I /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Products/Debug-iphonesimulator -F /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Products/Debug-iphonesimulator -c -j5 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/runner/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator26.2-23C57-dc75598d0054f22ec865fa860f139d72e244bd9a5feaf902f95f61bf06266e52.sdkstatcache -output-file-map /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/Objects-normal/arm64/AppStoreIPADownloader-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -sdk-module-cache-path /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/Objects-normal/arm64/AppStoreIPADownloader.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/Objects-normal/arm64/AppStoreIPADownloader_const_extract_protocols.json -Xcc -iquote -Xcc /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/AppStoreIPADownloader-generated-files.hmap -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/AppStoreIPADownloader-own-target-headers.hmap -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/AppStoreIPADownloader-all-target-headers.hmap -Xcc -iquote -Xcc /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/AppStoreIPADownloader-project-headers.hmap -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/DerivedSources-normal/arm64 -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/DerivedSources/arm64 -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/DerivedSources -emit-objc-header -emit-objc-header-path /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/Objects-normal/arm64/AppStoreIPADownloader-Swift.h -working-directory /Users/runner/work/IPAForge/IPAForge -experimental-emit-module-separately -disable-cmo
+2026-11-24T03:38:20.4643600Z 
+2026-11-24T03:38:20.4644440Z SwiftDriver AppStoreIPADownloader normal x86_64 com.apple.xcode.tools.swift.compiler (in target 'AppStoreIPADownloader' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:20.4645060Z     cd /Users/runner/work/IPAForge/IPAForge
+2026-11-24T03:38:20.4662870Z     builtin-SwiftDriver -- /Applications/Xcode_26.3.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name AppStoreIPADownloader -O -enforce-exclusivity\=checked @/Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/Objects-normal/x86_64/AppStoreIPADownloader.SwiftFileList -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode_26.3.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.2.sdk -target x86_64-apple-ios16.0-simulator -g -module-cache-path /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -swift-version 5 -I /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Products/Debug-iphonesimulator -F /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Products/Debug-iphonesimulator -c -j5 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/runner/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator26.2-23C57-dc75598d0054f22ec865fa860f139d72e244bd9a5feaf902f95f61bf06266e52.sdkstatcache -output-file-map /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/Objects-normal/x86_64/AppStoreIPADownloader-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -sdk-module-cache-path /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/Objects-normal/x86_64/AppStoreIPADownloader.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/Objects-normal/x86_64/AppStoreIPADownloader_const_extract_protocols.json -Xcc -iquote -Xcc /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/AppStoreIPADownloader-generated-files.hmap -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/AppStoreIPADownloader-own-target-headers.hmap -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/AppStoreIPADownloader-all-target-headers.hmap -Xcc -iquote -Xcc /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/AppStoreIPADownloader-project-headers.hmap -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/DerivedSources-normal/x86_64 -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/DerivedSources/x86_64 -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/DerivedSources -emit-objc-header -emit-objc-header-path /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/Objects-normal/x86_64/AppStoreIPADownloader-Swift.h -working-directory /Users/runner/work/IPAForge/IPAForge -experimental-emit-module-separately -disable-cmo
+2026-11-24T03:38:20.4682300Z 
+2026-11-24T03:38:20.4919700Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/_AvailabilityInternal-5S052CEHT4AHAB6Z9DD5VHMDG.pcm
+2026-11-24T03:38:20.5901710Z 
+2026-11-24T03:38:20.5903350Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/DeveloperToolsSupport-DW4LWYSEP1EGBFL5E8IDOH0CH.pcm
+2026-11-24T03:38:20.5904370Z 
+2026-11-24T03:38:20.5909750Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/ptrcheck-5WESSLRIU33EY4A83YCU3UGUV.pcm
+2026-11-24T03:38:20.5912420Z 
+2026-11-24T03:38:20.5938500Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/ptrauth-4YABN6UWYJTWOL7Y4S6LN7AMF.pcm
+2026-11-24T03:38:20.5947890Z 
+2026-11-24T03:38:20.5948530Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/SwiftShims-7T4C53GEF7LR2BLXO67GEW83.pcm
+2026-11-24T03:38:20.5972850Z 
+2026-11-24T03:38:20.6083310Z SwiftExplicitDependencyGeneratePcm x86_64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/ptrauth-DH3SGE3MYZFZX3QELWOCR4HGA.pcm
+2026-11-24T03:38:20.6343100Z 
+2026-11-24T03:38:20.6343720Z SwiftExplicitDependencyGeneratePcm x86_64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/ptrcheck-CH3ZHAQ2CG2BAVYAA0HSLHZW.pcm
+2026-11-24T03:38:20.6344590Z 
+2026-11-24T03:38:20.6346550Z SwiftExplicitDependencyGeneratePcm x86_64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/_Builtin_stddef-2YRBE7ARMGJ9B08W07EX3GSON.pcm
+2026-11-24T03:38:20.6348820Z 
+2026-11-24T03:38:20.6349360Z SwiftExplicitDependencyGeneratePcm x86_64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/_SwiftConcurrencyShims-6T0T48UMNO1PHS47PBM2AO6Q2.pcm
+2026-11-24T03:38:20.6350440Z 
+2026-11-24T03:38:20.6357560Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/_DarwinFoundation1-7N7IOW63E30LDUMWDMMYJR7JR.pcm
+2026-11-24T03:38:20.6570690Z 
+2026-11-24T03:38:20.6579460Z SwiftExplicitDependencyGeneratePcm x86_64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/_AvailabilityInternal-6BZIEG8MYDFWXMA5SNDCR4N4A.pcm
+2026-11-24T03:38:20.6710080Z 
+2026-11-24T03:38:20.6813330Z SwiftExplicitDependencyGeneratePcm x86_64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/_Builtin_float-7JZCWU6G3JAZ52AT53CNU1CJG.pcm
+2026-11-24T03:38:20.6890130Z 
+2026-11-24T03:38:20.6916410Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/_Builtin_float-3GIXQ0ZUPMHJPDBJQUZAMIBG0.pcm
+2026-11-24T03:38:20.6921890Z 
+2026-11-24T03:38:20.6922620Z SwiftExplicitDependencyGeneratePcm x86_64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/_Builtin_stdbool-2VUE38GWYAE2KYR7KHHCALF1.pcm
+2026-11-24T03:38:20.6923500Z 
+2026-11-24T03:38:20.6924300Z SwiftExplicitDependencyGeneratePcm x86_64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/SwiftShims-BT6SJ98UY2J8UL69R93S6EQT1.pcm
+2026-11-24T03:38:20.6924890Z 
+2026-11-24T03:38:20.6931490Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/_Builtin_limits-7F44IPVL0Q921ESZWSMLI140K.pcm
+2026-11-24T03:38:20.6992200Z 
+2026-11-24T03:38:20.6996120Z SwiftExplicitDependencyGeneratePcm x86_64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/_Builtin_stdarg-1XIGVQNYBOZG57JBEZFQTMELL.pcm
+2026-11-24T03:38:20.7008610Z 
+2026-11-24T03:38:20.7009230Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/_Builtin_stddef-DT2B4A95OZ0MICRQDCWAV13IH.pcm
+2026-11-24T03:38:20.7009900Z 
+2026-11-24T03:38:20.7010460Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/_Builtin_stdbool-DOT6MM8AB1ZVG4K03TB8L4I1V.pcm
+2026-11-24T03:38:20.7011280Z 
+2026-11-24T03:38:20.7011820Z SwiftExplicitDependencyGeneratePcm x86_64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/_DarwinFoundation1-EJMS6HQ40YUCFW0SGDO83QKX8.pcm
+2026-11-24T03:38:20.7342060Z 
+2026-11-24T03:38:20.7342950Z SwiftExplicitDependencyGeneratePcm x86_64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/DeveloperToolsSupport-F01UY34IQWESN3AY2GD8UR7GG.pcm
+2026-11-24T03:38:20.7343480Z 
+2026-11-24T03:38:20.7344310Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/_SwiftConcurrencyShims-DT942XMJXR1EO052VQ6NGF502.pcm
+2026-11-24T03:38:20.7344830Z 
+2026-11-24T03:38:20.7345210Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/_Builtin_stdarg-3SJJXS58EP51DZ4C2Z2PO3YCT.pcm
+2026-11-24T03:38:20.7345830Z 
+2026-11-24T03:38:20.7346320Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/_DarwinFoundation2-EUW734TSWMYJPMJHIXJ2B6HLJ.pcm
+2026-11-24T03:38:20.7910370Z 
+2026-11-24T03:38:20.7913320Z SwiftExplicitDependencyGeneratePcm x86_64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/_DarwinFoundation2-BWM7DH1G5G7HM6F0CFJP2N3PA.pcm
+2026-11-24T03:38:20.8014060Z 
+2026-11-24T03:38:20.8089700Z SwiftExplicitDependencyGeneratePcm x86_64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/_Builtin_limits-3DFUTEUHB4KOHMPELTWO0LX4O.pcm
+2026-11-24T03:38:20.8108270Z 
+2026-11-24T03:38:20.8108890Z SwiftExplicitDependencyGeneratePcm x86_64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/_Builtin_tgmath-5E8N327ZNYX9ILPVNOUA7H290.pcm
+2026-11-24T03:38:20.8212020Z 
+2026-11-24T03:38:20.8218170Z SwiftExplicitDependencyGeneratePcm x86_64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/sys_types-6VDO2ZLYV1D278PL0PHJWBUUZ.pcm
+2026-11-24T03:38:20.8218970Z 
+2026-11-24T03:38:20.8219700Z SwiftExplicitDependencyGeneratePcm x86_64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/_Builtin_stdint-BL0VPKOZBTPW22FKVR1IU7VHU.pcm
+2026-11-24T03:38:20.8224160Z 
+2026-11-24T03:38:20.8225640Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/sys_types-3EVGP9RCD7BUJPYV18ZXSOJLC.pcm
+2026-11-24T03:38:20.8233110Z 
+2026-11-24T03:38:20.8233680Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/_Builtin_tgmath-654WPRIGQIKY7606HF8LZRQLK.pcm
+2026-11-24T03:38:20.8234170Z 
+2026-11-24T03:38:20.8234560Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/_Builtin_stdint-9F0257H46TSODX3WA4LILVO4A.pcm
+2026-11-24T03:38:20.8523180Z 
+2026-11-24T03:38:20.8524980Z SwiftExplicitDependencyGeneratePcm x86_64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/_DarwinFoundation3-5QMPUMVDNRYHKX3VJPUFWJOU5.pcm
+2026-11-24T03:38:20.8780870Z 
+2026-11-24T03:38:20.8783450Z SwiftExplicitDependencyGeneratePcm x86_64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/_Builtin_stdatomic-427MB53UZTHPM1TLN88VB0A34.pcm
+2026-11-24T03:38:20.8784520Z 
+2026-11-24T03:38:20.8786500Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/_Builtin_intrinsics-5NCW10Q8CDR1XKH7GOASNJV55.pcm
+2026-11-24T03:38:21.0048580Z 
+2026-11-24T03:38:21.0050680Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/_DarwinFoundation3-9L4T4X8IKSZ8NNJLDI28EO5T6.pcm
+2026-11-24T03:38:21.0051550Z 
+2026-11-24T03:38:21.0052240Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/_Builtin_stdatomic-5N8X2NEOY7JVWARLR0YR4JLIO.pcm
+2026-11-24T03:38:21.0052900Z 
+2026-11-24T03:38:21.0053430Z SwiftExplicitDependencyGeneratePcm x86_64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/_Builtin_inttypes-1R48ZVHXV36NEOIUPNBSKMOQX.pcm
+2026-11-24T03:38:21.0054410Z 
+2026-11-24T03:38:21.0054930Z SwiftExplicitDependencyGeneratePcm x86_64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/_Builtin_intrinsics-D97LA6SYFT4Z5OXL0BUQNJ4ES.pcm
+2026-11-24T03:38:21.1569060Z 
+2026-11-24T03:38:21.1701720Z SwiftExplicitDependencyGeneratePcm x86_64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Darwin-9KK9SXLTQWYTPW0WINYTXFCQ1.pcm
+2026-11-24T03:38:21.1772770Z 
+2026-11-24T03:38:21.1773750Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/_Builtin_inttypes-F1R01PGJOMYAA9VMDL3G0Z7O9.pcm
+2026-11-24T03:38:21.1810900Z 
+2026-11-24T03:38:21.1812320Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Darwin-7CVPVWJF98C9DOOE8TQ1ZU7VB.pcm
+2026-11-24T03:38:21.1856370Z 
+2026-11-24T03:38:21.1878770Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/simd-7NJ1887SSFYF232283233W6K5.pcm
+2026-11-24T03:38:21.3733870Z 
+2026-11-24T03:38:21.3835050Z SwiftExplicitDependencyGeneratePcm x86_64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/MachO-EBAB0FE5QD3XUAKBDCF3X8WHN.pcm
+2026-11-24T03:38:21.3944110Z 
+2026-11-24T03:38:21.3974900Z SwiftExplicitDependencyGeneratePcm x86_64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/ObjectiveC-9JTHLPP8M7M96AFH0XH8MY9F8.pcm
+2026-11-24T03:38:21.3975600Z 
+2026-11-24T03:38:21.3976080Z SwiftExplicitDependencyGeneratePcm x86_64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/simd-4VKOS02TZN7LH9NNTNUA84H1V.pcm
+2026-11-24T03:38:21.4958160Z 
+2026-11-24T03:38:21.5011700Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/ObjectiveC-5JW0M9VU6WGPWA9I9MY5ODTW9.pcm
+2026-11-24T03:38:21.5015860Z 
+2026-11-24T03:38:21.5017420Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/MachO-8G64O8L3MSTM1EFBGCD8G4QOX.pcm
+2026-11-24T03:38:21.5118430Z 
+2026-11-24T03:38:21.5183210Z SwiftExplicitDependencyGeneratePcm x86_64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/os_object-5FHMSK5C2NPCL2YMKYA0FJVP9.pcm
+2026-11-24T03:38:21.5184250Z 
+2026-11-24T03:38:21.5184790Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/os_object-DBA2AQRUCYEOK1HS378DY1JWA.pcm
+2026-11-24T03:38:21.5187670Z 
+2026-11-24T03:38:21.5188290Z SwiftExplicitDependencyGeneratePcm x86_64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/os_workgroup-4MJVXD5CEG85F30GEVUXOGEHJ.pcm
+2026-11-24T03:38:21.5188850Z 
+2026-11-24T03:38:21.5189520Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/os_workgroup-96ANXT09N2D4J2TZ7FI783ZSL.pcm
+2026-11-24T03:38:21.5190110Z 
+2026-11-24T03:38:21.5191220Z SwiftExplicitDependencyGeneratePcm x86_64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Dispatch-C7QCI8VAKLHREDGNOPWG96OAK.pcm
+2026-11-24T03:38:21.5203810Z 
+2026-11-24T03:38:21.5205830Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Dispatch-54RUYLU9E7XFDBA86Q831R8XI.pcm
+2026-11-24T03:38:21.5216290Z 
+2026-11-24T03:38:21.5258550Z SwiftExplicitDependencyGeneratePcm x86_64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/XPC-AOLTA55CPM2DB5JBOPOI539WM.pcm
+2026-11-24T03:38:21.5359400Z 
+2026-11-24T03:38:21.5461130Z SwiftExplicitDependencyGeneratePcm x86_64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/CoreFoundation-B1X0BFMB2FAF9ZUXE2ODDE3ST.pcm
+2026-11-24T03:38:21.5490180Z 
+2026-11-24T03:38:21.5591070Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Spatial-E82P57GV47OWCTCSA80HDJPK7.pcm
+2026-11-24T03:38:21.5598790Z 
+2026-11-24T03:38:21.5700060Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/CoreFoundation-9OHWWVL3XPVFUI4QPZBM3HINU.pcm
+2026-11-24T03:38:21.5800830Z 
+2026-11-24T03:38:21.5873810Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/XPC-ARIYHP15U5ZF6PP2QX7AC0SEB.pcm
+2026-11-24T03:38:21.5884590Z 
+2026-11-24T03:38:21.5885480Z SwiftExplicitDependencyGeneratePcm x86_64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/os-DSYMDRZD6A39I3FQ906S0KSZE.pcm
+2026-11-24T03:38:21.5886180Z 
+2026-11-24T03:38:21.5886700Z SwiftExplicitDependencyGeneratePcm x86_64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/CoreGraphics-6OR0X5KHBU59BCD1I8885DH8B.pcm
+2026-11-24T03:38:21.5893030Z 
+2026-11-24T03:38:21.5964040Z SwiftExplicitDependencyGeneratePcm x86_64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/CFNetwork-7MKDELO86CQGZLHZ1PAPFA2C5.pcm
+2026-11-24T03:38:21.5965010Z 
+2026-11-24T03:38:21.5986700Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Security-6Q3E9IP7L14JR922E015V6ZC1.pcm
+2026-11-24T03:38:21.6069370Z 
+2026-11-24T03:38:21.6095720Z SwiftExplicitDependencyGeneratePcm x86_64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Spatial-ANFNOOZXCYIBZQEYV44DJDXPG.pcm
+2026-11-24T03:38:21.6321090Z 
+2026-11-24T03:38:21.6406430Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/CoreGraphics-BBIACRJ1JHZZZDJ7A1FA97G37.pcm
+2026-11-24T03:38:21.6407070Z 
+2026-11-24T03:38:21.6407500Z SwiftExplicitDependencyGeneratePcm x86_64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Security-EX7O14T4U4CAKU6Q9AINGISPO.pcm
+2026-11-24T03:38:21.6408030Z 
+2026-11-24T03:38:21.6408460Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/os-F0GIAEOVB7ZPBWRQKDKU17FPF.pcm
+2026-11-24T03:38:21.6408950Z 
+2026-11-24T03:38:21.6409380Z SwiftExplicitDependencyGeneratePcm x86_64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/CoreText-5GCJ78DFVZ2BEW5Q6GS0U0XR6.pcm
+2026-11-24T03:38:21.6409880Z 
+2026-11-24T03:38:21.6410300Z SwiftExplicitDependencyGeneratePcm x86_64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/ImageIO-54OQUSSE0REO1ETVX88JHY97H.pcm
+2026-11-24T03:38:21.6410830Z 
+2026-11-24T03:38:21.6411260Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/CoreText-1DRA9R9BK0IXUL2ZW6BNOTOZR.pcm
+2026-11-24T03:38:21.6571200Z 
+2026-11-24T03:38:21.6572150Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/ImageIO-57C2074Q2GGCIWZOSDU7704B3.pcm
+2026-11-24T03:38:21.6572670Z 
+2026-11-24T03:38:21.6573050Z SwiftExplicitDependencyGeneratePcm x86_64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Foundation-17V1E3MMSP0RGVPV7CTL7GTY6.pcm
+2026-11-24T03:38:21.8222700Z 
+2026-11-24T03:38:21.8224270Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/CFNetwork-6U8UZOBGEA535BZWYZTAQXOKJ.pcm
+2026-11-24T03:38:21.8224720Z 
+2026-11-24T03:38:21.8225200Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Foundation-4UHO8N388NNUHM9FP2UMACAT0.pcm
+2026-11-24T03:38:21.8753630Z 
+2026-11-24T03:38:21.8854870Z SwiftExplicitDependencyGeneratePcm x86_64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/CoreData-3MLK89CNVEQ20660Z3P0GAYEM.pcm
+2026-11-24T03:38:21.8956100Z 
+2026-11-24T03:38:21.9057090Z SwiftExplicitDependencyGeneratePcm x86_64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/FileProvider-2OCSW61XL15D1WIT3C43KGCR0.pcm
+2026-11-24T03:38:21.9159990Z 
+2026-11-24T03:38:21.9261980Z SwiftExplicitDependencyGeneratePcm x86_64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/IOSurface-510BCG21DWD66LJL4XAGTJBU5.pcm
+2026-11-24T03:38:21.9363210Z 
+2026-11-24T03:38:21.9464640Z SwiftExplicitDependencyGeneratePcm x86_64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/UniformTypeIdentifiers-2WD9FGFG58IYL6F1PIMUKH13H.pcm
+2026-11-24T03:38:21.9565870Z 
+2026-11-24T03:38:21.9666970Z SwiftExplicitDependencyGeneratePcm x86_64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/OpenGLES-PW3PGV0UVADAJ9VAB4DB8673.pcm
+2026-11-24T03:38:21.9736870Z 
+2026-11-24T03:38:21.9789410Z SwiftExplicitDependencyGeneratePcm x86_64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/DataDetection-3HLNYYM03BNBN37P3NLDMTXSR.pcm
+2026-11-24T03:38:21.9790310Z 
+2026-11-24T03:38:21.9790850Z SwiftExplicitDependencyGeneratePcm x86_64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Metal-2EEOTUUXQ0YFEZVWK0LINUSHX.pcm
+2026-11-24T03:38:21.9830730Z 
+2026-11-24T03:38:21.9935580Z SwiftExplicitDependencyGeneratePcm x86_64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Symbols-7XNHDQJ56QUDQR8GLU45SO2J4.pcm
+2026-11-24T03:38:21.9946500Z 
+2026-11-24T03:38:21.9975540Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/DataDetection-AIPRQYFJMLLMXY88MJGORBYR7.pcm
+2026-11-24T03:38:21.9976070Z 
+2026-11-24T03:38:22.0026780Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/IOSurface-CSOJG3WO88Q9JQYG62F8HS3L.pcm
+2026-11-24T03:38:22.0028530Z 
+2026-11-24T03:38:22.0041090Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/FileProvider-DHL6IBUNHKACB25K33KD9RNEM.pcm
+2026-11-24T03:38:22.0158920Z 
+2026-11-24T03:38:22.0262510Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/UniformTypeIdentifiers-444UBX3HGRA2075GL82BDYRYT.pcm
+2026-11-24T03:38:22.0325360Z 
+2026-11-24T03:38:22.0326920Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/CoreData-62FX6MYE2TILYTRSVC7ZPEOTX.pcm
+2026-11-24T03:38:22.0327750Z 
+2026-11-24T03:38:22.0328260Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Symbols-BLF27ELYJ24F0NPSV3XBP2IYF.pcm
+2026-11-24T03:38:22.0328890Z 
+2026-11-24T03:38:22.0329390Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/OSLog-5Z22XGRK416B0Q376Y1ZKJN2A.pcm
+2026-11-24T03:38:22.0360810Z 
+2026-11-24T03:38:22.0402000Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Accessibility-DYHC6SQKRHCNOMKMXQN4LEP0D.pcm
+2026-11-24T03:38:22.0503490Z 
+2026-11-24T03:38:22.0612790Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/CoreTransferable-25T88UGUT8UJYCZXCZSDL04DJ.pcm
+2026-11-24T03:38:22.0675160Z 
+2026-11-24T03:38:22.0677060Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Metal-7Q25RJO3PO0J1PR3BO00I3966.pcm
+2026-11-24T03:38:22.1251560Z 
+2026-11-24T03:38:22.1253700Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/OpenGLES-22YDI9U6V06R00HNFYM9HOZVK.pcm
+2026-11-24T03:38:22.1254870Z 
+2026-11-24T03:38:22.1255750Z SwiftExplicitDependencyGeneratePcm x86_64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/OSLog-6QJ9V6A4KPWB9MSWCRNBMM66V.pcm
+2026-11-24T03:38:22.1256820Z 
+2026-11-24T03:38:22.1257760Z SwiftExplicitDependencyGeneratePcm x86_64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Accessibility-EPNKU6S0U9DLKGH4YWH1Y4C5W.pcm
+2026-11-24T03:38:22.1258940Z 
+2026-11-24T03:38:22.1259860Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/UIUtilities-10HW7KMZ8W7YY4RJFUIT34COR.pcm
+2026-11-24T03:38:22.1261500Z 
+2026-11-24T03:38:22.1262450Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/UserNotifications-EXLMWZBR7TXSFSTWWAOQ6V8FW.pcm
+2026-11-24T03:38:22.1326100Z 
+2026-11-24T03:38:22.1327460Z SwiftExplicitDependencyGeneratePcm x86_64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/UserNotifications-475CJNWC45X3TDD4JHVB5SP0M.pcm
+2026-11-24T03:38:22.1328920Z 
+2026-11-24T03:38:22.1329520Z SwiftExplicitDependencyGeneratePcm x86_64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/CoreTransferable-9VFA5558RC2Z964ID7XNDM3SV.pcm
+2026-11-24T03:38:22.1330040Z 
+2026-11-24T03:38:22.1330450Z SwiftExplicitDependencyGeneratePcm x86_64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/UIUtilities-9TB8LAIK8YLPHBRPGE82V4IFV.pcm
+2026-11-24T03:38:22.1331260Z 
+2026-11-24T03:38:22.1331650Z SwiftExplicitDependencyGeneratePcm x86_64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/CoreVideo-4TDFNFIM0WA0C98HY4TGAOIFQ.pcm
+2026-11-24T03:38:22.1744110Z 
+2026-11-24T03:38:22.1745500Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/CoreVideo-4CPKVCRGFYZJTGR5EQJEOCPFZ.pcm
+2026-11-24T03:38:22.1790780Z 
+2026-11-24T03:38:22.1793130Z SwiftExplicitDependencyGeneratePcm x86_64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/CoreImage-ANGXOQ1PZNQCMO0WM5H51KQ13.pcm
+2026-11-24T03:38:22.2659480Z 
+2026-11-24T03:38:22.2661680Z SwiftExplicitDependencyGeneratePcm x86_64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/QuartzCore-1E09F9DCWWBYS5BPATM1PFUE7.pcm
+2026-11-24T03:38:22.2662420Z 
+2026-11-24T03:38:22.2662960Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/QuartzCore-DXASKVQ5ZLG13H1A0H9LBK7JK.pcm
+2026-11-24T03:38:22.2663570Z 
+2026-11-24T03:38:22.2664060Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/CoreImage-5TCNHS60ECTN7F2QZ4OKG0XCZ.pcm
+2026-11-24T03:38:22.2733080Z 
+2026-11-24T03:38:22.2736420Z SwiftExplicitDependencyGeneratePcm x86_64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/SwiftUICore-C58Z8RXFVV3T5LCGHDXPE6DQ9.pcm
+2026-11-24T03:38:22.2881060Z 
+2026-11-24T03:38:22.2881770Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/SwiftUICore-2KWBEYRXK6UWM93G6KVAPJ40B.pcm
+2026-11-24T03:38:22.2942280Z 
+2026-11-24T03:38:22.2943660Z SwiftExplicitDependencyGeneratePcm x86_64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/UIKit-2UE0Q2RIGQOP5W65I2OLOC3RW.pcm
+2026-11-24T03:38:22.7195620Z 
+2026-11-24T03:38:22.7196580Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/UIKit-A8JJ7TE5V2VSJDROE3H1W13KZ.pcm
+2026-11-24T03:38:22.7334600Z 
+2026-11-24T03:38:22.7336180Z SwiftExplicitDependencyGeneratePcm x86_64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/SwiftUI-CY7LW0JBCPU5A2CXB5AYYKQAV.pcm
+2026-11-24T03:38:22.7660710Z 
+2026-11-24T03:38:22.7662830Z SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/SwiftUI-CJIET4RSBO1U9A3ADD6MO4KHF.pcm
+2026-11-24T03:38:22.7819300Z 
+2026-11-24T03:38:22.7935300Z SwiftEmitModule normal x86_64 Emitting\ module\ for\ AppStoreIPADownloader (in target 'AppStoreIPADownloader' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:22.8100270Z 
+2026-11-24T03:38:22.8100920Z EmitSwiftModule normal x86_64 (in target 'AppStoreIPADownloader' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:22.8102010Z     cd /Users/runner/work/IPAForge/IPAForge
+2026-11-24T03:38:22.8102350Z     
+2026-11-24T03:38:23.0937020Z 
+2026-11-24T03:38:23.0953590Z SwiftCompile normal x86_64 Compiling\ AppStoreIPADownloaderApp.swift,\ Models.swift,\ LoggingService.swift,\ AnisetteService.swift /Users/runner/work/IPAForge/IPAForge/App/AppStoreIPADownloaderApp.swift /Users/runner/work/IPAForge/IPAForge/Models/Models.swift /Users/runner/work/IPAForge/IPAForge/Logging/LoggingService.swift /Users/runner/work/IPAForge/IPAForge/Anisette/AnisetteService.swift (in target 'AppStoreIPADownloader' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:23.0956140Z SwiftCompile normal x86_64 /Users/runner/work/IPAForge/IPAForge/App/AppStoreIPADownloaderApp.swift (in target 'AppStoreIPADownloader' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:23.0956730Z     cd /Users/runner/work/IPAForge/IPAForge
+2026-11-24T03:38:23.0956910Z     
+2026-11-24T03:38:23.1232320Z 
+2026-11-24T03:38:23.1234540Z SwiftCompile normal x86_64 /Users/runner/work/IPAForge/IPAForge/Models/Models.swift (in target 'AppStoreIPADownloader' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:23.1235980Z     cd /Users/runner/work/IPAForge/IPAForge
+2026-11-24T03:38:23.1236710Z     
+2026-11-24T03:38:23.1237020Z 
+2026-11-24T03:38:23.1237590Z SwiftCompile normal x86_64 /Users/runner/work/IPAForge/IPAForge/Logging/LoggingService.swift (in target 'AppStoreIPADownloader' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:23.1238180Z     cd /Users/runner/work/IPAForge/IPAForge
+2026-11-24T03:38:23.1238380Z     
+2026-11-24T03:38:23.1238440Z 
+2026-11-24T03:38:23.1239060Z SwiftCompile normal x86_64 /Users/runner/work/IPAForge/IPAForge/Anisette/AnisetteService.swift (in target 'AppStoreIPADownloader' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:23.1239680Z     cd /Users/runner/work/IPAForge/IPAForge
+2026-11-24T03:38:23.1239890Z     
+2026-11-24T03:38:23.1239950Z 
+2026-11-24T03:38:23.1241310Z SwiftCompile normal x86_64 Compiling\ AuthenticationService.swift,\ AppStoreService.swift,\ DownloadService.swift,\ ExportService.swift /Users/runner/work/IPAForge/IPAForge/Authentication/AuthenticationService.swift /Users/runner/work/IPAForge/IPAForge/AppStore/AppStoreService.swift /Users/runner/work/IPAForge/IPAForge/Downloader/DownloadService.swift /Users/runner/work/IPAForge/IPAForge/Export/ExportService.swift (in target 'AppStoreIPADownloader' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:23.1243320Z SwiftCompile normal x86_64 /Users/runner/work/IPAForge/IPAForge/Authentication/AuthenticationService.swift (in target 'AppStoreIPADownloader' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:23.1243930Z     cd /Users/runner/work/IPAForge/IPAForge
+2026-11-24T03:38:23.1244120Z     
+2026-11-24T03:38:23.1247910Z 
+2026-11-24T03:38:23.1248620Z SwiftCompile normal x86_64 /Users/runner/work/IPAForge/IPAForge/AppStore/AppStoreService.swift (in target 'AppStoreIPADownloader' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:23.1249250Z     cd /Users/runner/work/IPAForge/IPAForge
+2026-11-24T03:38:23.1249440Z     
+2026-11-24T03:38:23.1251390Z 
+2026-11-24T03:38:23.1254140Z SwiftCompile normal x86_64 /Users/runner/work/IPAForge/IPAForge/Downloader/DownloadService.swift (in target 'AppStoreIPADownloader' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:23.1257120Z     cd /Users/runner/work/IPAForge/IPAForge
+2026-11-24T03:38:23.1257340Z     
+2026-11-24T03:38:23.1258500Z 
+2026-11-24T03:38:23.1259130Z SwiftCompile normal x86_64 /Users/runner/work/IPAForge/IPAForge/Export/ExportService.swift (in target 'AppStoreIPADownloader' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:23.1259700Z     cd /Users/runner/work/IPAForge/IPAForge
+2026-11-24T03:38:23.1259880Z     
+2026-11-24T03:38:23.1259940Z 
+2026-11-24T03:38:23.1262680Z SwiftCompile normal x86_64 Compiling\ SettingsView.swift,\ DownloadDetailView.swift,\ AnisetteServersView.swift /Users/runner/work/IPAForge/IPAForge/Views/SettingsView.swift /Users/runner/work/IPAForge/IPAForge/Views/DownloadDetailView.swift /Users/runner/work/IPAForge/IPAForge/Views/AnisetteServersView.swift (in target 'AppStoreIPADownloader' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:23.1264040Z 
+2026-11-24T03:38:23.1264440Z SwiftCompile normal x86_64 /Users/runner/work/IPAForge/IPAForge/Views/SettingsView.swift (in target 'AppStoreIPADownloader' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:23.1265390Z     cd /Users/runner/work/IPAForge/IPAForge
+2026-11-24T03:38:23.1265620Z     
+2026-11-24T03:38:23.1265730Z 
+2026-11-24T03:38:23.1266150Z SwiftCompile normal x86_64 /Users/runner/work/IPAForge/IPAForge/Views/DownloadDetailView.swift (in target 'AppStoreIPADownloader' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:23.1266780Z     cd /Users/runner/work/IPAForge/IPAForge
+2026-11-24T03:38:23.1267040Z     
+2026-11-24T03:38:23.1267110Z 
+2026-11-24T03:38:23.1267520Z SwiftCompile normal x86_64 /Users/runner/work/IPAForge/IPAForge/Views/AnisetteServersView.swift (in target 'AppStoreIPADownloader' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:23.1268070Z     cd /Users/runner/work/IPAForge/IPAForge
+2026-11-24T03:38:23.1268240Z     
+2026-11-24T03:38:23.1268430Z 
+2026-11-24T03:38:23.1269730Z SwiftCompile normal x86_64 Compiling\ AppStoreSearchView.swift,\ AppDetailView.swift,\ DownloadManagerView.swift,\ LogViewerView.swift /Users/runner/work/IPAForge/IPAForge/Views/AppStoreSearchView.swift /Users/runner/work/IPAForge/IPAForge/Views/AppDetailView.swift /Users/runner/work/IPAForge/IPAForge/Views/DownloadManagerView.swift /Users/runner/work/IPAForge/IPAForge/Views/LogViewerView.swift (in target 'AppStoreIPADownloader' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:23.1271140Z Failed frontend command:
+2026-11-24T03:38:23.1299610Z /Applications/Xcode_26.3.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift-frontend -frontend -c /Users/runner/work/IPAForge/IPAForge/App/AppStoreIPADownloaderApp.swift /Users/runner/work/IPAForge/IPAForge/Models/Models.swift /Users/runner/work/IPAForge/IPAForge/Logging/LoggingService.swift /Users/runner/work/IPAForge/IPAForge/Anisette/AnisetteService.swift /Users/runner/work/IPAForge/IPAForge/Authentication/AuthenticationService.swift /Users/runner/work/IPAForge/IPAForge/AppStore/AppStoreService.swift /Users/runner/work/IPAForge/IPAForge/Downloader/DownloadService.swift /Users/runner/work/IPAForge/IPAForge/Export/ExportService.swift /Users/runner/work/IPAForge/IPAForge/ViewModels/AppEnvironment.swift /Users/runner/work/IPAForge/IPAForge/Views/RootView.swift /Users/runner/work/IPAForge/IPAForge/Views/LoginView.swift /Users/runner/work/IPAForge/IPAForge/Views/MainTabView.swift -primary-file /Users/runner/work/IPAForge/IPAForge/Views/AppStoreSearchView.swift -primary-file /Users/runner/work/IPAForge/IPAForge/Views/AppDetailView.swift -primary-file /Users/runner/work/IPAForge/IPAForge/Views/DownloadManagerView.swift -primary-file /Users/runner/work/IPAForge/IPAForge/Views/LogViewerView.swift /Users/runner/work/IPAForge/IPAForge/Views/SettingsView.swift /Users/runner/work/IPAForge/IPAForge/Views/DownloadDetailView.swift /Users/runner/work/IPAForge/IPAForge/Views/AnisetteServersView.swift -supplementary-output-file-map /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/Objects-normal/x86_64/supplementaryOutputs-7 -target x86_64-apple-ios16.0-simulator -load-resolved-plugin /Applications/Xcode_26.3.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libFoundationMacros.dylib\#/Applications/Xcode_26.3.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#FoundationMacros -load-resolved-plugin /Applications/Xcode_26.3.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libObservationMacros.dylib\#/Applications/Xcode_26.3.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#ObservationMacros -load-resolved-plugin /Applications/Xcode_26.3.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libPreviewsMacros.dylib\#/Applications/Xcode_26.3.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#PreviewsMacros -load-resolved-plugin /Applications/Xcode_26.3.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libSwiftMacros.dylib\#/Applications/Xcode_26.3.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#SwiftMacros -load-resolved-plugin /Applications/Xcode_26.3.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libSwiftUIMacros.dylib\#/Applications/Xcode_26.3.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#SwiftUIMacros -disable-implicit-swift-modules -Xcc -fno-implicit-modules -Xcc -fno-implicit-module-maps -explicit-swift-module-map-file /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/Objects-normal/x86_64/AppStoreIPADownloader-dependencies-1.json -enable-objc-interop -sdk /Applications/Xcode_26.3.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.2.sdk -I /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Products/Debug-iphonesimulator -F /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Products/Debug-iphonesimulator -no-color-diagnostics -Xcc -fno-color-diagnostics -g -debug-info-format\=dwarf -dwarf-version\=4 -module-cache-path /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -swift-version 5 -enforce-exclusivity\=checked -O -serialize-debugging-options -const-gather-protocols-file /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/Objects-normal/x86_64/AppStoreIPADownloader_const_extract_protocols.json -enable-experimental-feature DebugDescriptionMacro -enable-bare-slash-regex -empty-abi-descriptor -validate-clang-modules-once -clang-build-session-file /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -working-directory -Xcc /Users/runner/work/IPAForge/IPAForge -file-compilation-dir /Users/runner/work/IPAForge/IPAForge -Xcc -ivfsstatcache -Xcc /Users/runner/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator26.2-23C57-dc75598d0054f22ec865fa860f139d72e244bd9a5feaf902f95f61bf06266e52.sdkstatcache -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/swift-overrides.hmap -Xcc -iquote -Xcc /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/AppStoreIPADownloader-generated-files.hmap -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/AppStoreIPADownloader-own-target-headers.hmap -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/AppStoreIPADownloader-all-target-headers.hmap -Xcc -iquote -Xcc /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/AppStoreIPADownloader-project-headers.hmap -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/DerivedSources-normal/x86_64 -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/DerivedSources/x86_64 -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/DerivedSources -no-auto-bridging-header-chaining -module-name AppStoreIPADownloader -frontend-parseable-output -disable-clang-spi -target-sdk-version 26.2 -target-sdk-name iphonesimulator26.2 -clang-target x86_64-apple-ios26.2-simulator -in-process-plugin-server-path /Applications/Xcode_26.3.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/libSwiftInProcPluginServer.dylib -o /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/Objects-normal/x86_64/AppStoreSearchView.o -o /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/Objects-normal/x86_64/AppDetailView.o -o /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/Objects-normal/x86_64/DownloadManagerView.o -o /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/Objects-normal/x86_64/LogViewerView.o -index-unit-output-path /AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/Objects-normal/x86_64/AppStoreSearchView.o -index-unit-output-path /AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/Objects-normal/x86_64/AppDetailView.o -index-unit-output-path /AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/Objects-normal/x86_64/DownloadManagerView.o -index-unit-output-path /AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/Objects-normal/x86_64/LogViewerView.o
+2026-11-24T03:38:23.1337080Z 
+2026-11-24T03:38:23.1337770Z SwiftCompile normal x86_64 /Users/runner/work/IPAForge/IPAForge/Views/AppStoreSearchView.swift (in target 'AppStoreIPADownloader' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:23.1338510Z     cd /Users/runner/work/IPAForge/IPAForge
+2026-11-24T03:38:23.1338720Z     
+2026-11-24T03:38:23.1338780Z 
+2026-11-24T03:38:23.1339200Z SwiftCompile normal x86_64 /Users/runner/work/IPAForge/IPAForge/Views/AppDetailView.swift (in target 'AppStoreIPADownloader' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:23.1339770Z     cd /Users/runner/work/IPAForge/IPAForge
+2026-11-24T03:38:23.1339970Z     
+2026-11-24T03:38:23.1340030Z 
+2026-11-24T03:38:23.1340570Z SwiftCompile normal x86_64 /Users/runner/work/IPAForge/IPAForge/Views/DownloadManagerView.swift (in target 'AppStoreIPADownloader' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:23.1341380Z     cd /Users/runner/work/IPAForge/IPAForge
+2026-11-24T03:38:23.1341590Z     
+2026-11-24T03:38:23.1342320Z /Users/runner/work/IPAForge/IPAForge/Views/DownloadManagerView.swift:50:75: error: member 'red' in 'HierarchicalShapeStyle' produces result of type 'Color', but context expects 'HierarchicalShapeStyle'
+2026-11-24T03:38:23.1343310Z                 .foregroundStyle(task.errorMessage == nil ? .secondary : .red)
+2026-11-24T03:38:23.1343610Z                                                                           ^
+2026-11-24T03:38:23.1344300Z /Users/runner/work/IPAForge/IPAForge/Views/DownloadManagerView.swift:50:75: error: static property 'red' requires the types 'HierarchicalShapeStyle' and 'Color' be equivalent
+2026-11-24T03:38:23.1346680Z                 .foregroundStyle(task.errorMessage == nil ? .secondary : .red)
+2026-11-24T03:38:23.1346980Z                                                                           ^
+2026-11-24T03:38:23.1347320Z SwiftUI.ShapeStyle:2:11: note: where 'Self' = 'HierarchicalShapeStyle'
+2026-11-24T03:38:23.1347700Z extension ShapeStyle where Self == Color {
+2026-11-24T03:38:23.1347910Z           ^
+2026-11-24T03:38:23.1347980Z 
+2026-11-24T03:38:23.1348420Z SwiftCompile normal x86_64 /Users/runner/work/IPAForge/IPAForge/Views/LogViewerView.swift (in target 'AppStoreIPADownloader' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:23.1349240Z     cd /Users/runner/work/IPAForge/IPAForge
+2026-11-24T03:38:23.1349450Z     
+2026-11-24T03:38:23.1349530Z 
+2026-11-24T03:38:23.1349880Z SwiftEmitModule normal arm64 Emitting\ module\ for\ AppStoreIPADownloader (in target 'AppStoreIPADownloader' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:23.1350310Z 
+2026-11-24T03:38:23.1350700Z SwiftDriverJobDiscovery normal x86_64 Emitting module for AppStoreIPADownloader (in target 'AppStoreIPADownloader' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:23.1351160Z 
+2026-11-24T03:38:23.1351640Z SwiftDriver\ Compilation\ Requirements AppStoreIPADownloader normal x86_64 com.apple.xcode.tools.swift.compiler (in target 'AppStoreIPADownloader' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:23.1352300Z     cd /Users/runner/work/IPAForge/IPAForge
+2026-11-24T03:38:23.1372640Z     builtin-Swift-Compilation-Requirements -- /Applications/Xcode_26.3.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name AppStoreIPADownloader -O -enforce-exclusivity\=checked @/Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/Objects-normal/x86_64/AppStoreIPADownloader.SwiftFileList -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode_26.3.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.2.sdk -target x86_64-apple-ios16.0-simulator -g -module-cache-path /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -swift-version 5 -I /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Products/Debug-iphonesimulator -F /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Products/Debug-iphonesimulator -c -j5 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/runner/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator26.2-23C57-dc75598d0054f22ec865fa860f139d72e244bd9a5feaf902f95f61bf06266e52.sdkstatcache -output-file-map /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/Objects-normal/x86_64/AppStoreIPADownloader-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -sdk-module-cache-path /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/Objects-normal/x86_64/AppStoreIPADownloader.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/runner/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/Objects-normal/x86_64/AppStoreIPADownloader_const_extract_protocols.json -Xcc -iquote -Xcc /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/AppStoreIPADownloader-generated-files.hmap -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/AppStoreIPADownloader-own-target-headers.hmap -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/AppStoreIPADownloader-all-target-headers.hmap -Xcc -iquote -Xcc /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/AppStoreIPADownloader-project-headers.hmap -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/DerivedSources-normal/x86_64 -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/DerivedSources/x86_64 -Xcc -I/Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/DerivedSources -emit-objc-header -emit-objc-header-path /Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Intermediates.noindex/AppStoreIPADownloader.build/Debug-iphonesimulator/AppStoreIPADownloader.build/Objects-normal/x86_64/AppStoreIPADownloader-Swift.h -working-directory /Users/runner/work/IPAForge/IPAForge -experimental-emit-module-separately -disable-cmo
+2026-11-24T03:38:23.1390780Z 
+2026-11-24T03:38:23.1391540Z warning: Traditional headermap style is no longer supported; please migrate to using separate headermaps and set 'ALWAYS_SEARCH_USER_PATHS' to NO. (in target 'AppStoreIPADownloader' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:23.1399090Z warning: Traditional headermap style is no longer supported; please migrate to using separate headermaps and set 'ALWAYS_SEARCH_USER_PATHS' to NO. (in target 'AppStoreIPADownloaderTests' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:23.2054270Z Testing failed:
+2026-11-24T03:38:23.2054480Z 
+2026-11-24T03:38:23.2054810Z 	Member 'red' in 'HierarchicalShapeStyle' produces result of type 'Color', but context expects 'HierarchicalShapeStyle'
+2026-11-24T03:38:23.2055470Z 	Static property 'red' requires the types 'HierarchicalShapeStyle' and 'Color' be equivalent
+2026-11-24T03:38:23.2055880Z 	Testing cancelled because the build failed.
+2026-11-24T03:38:23.2056470Z 
+2026-11-24T03:38:23.2056560Z ** TEST FAILED **
+2026-11-24T03:38:23.2056710Z 
+2026-11-24T03:38:23.2056710Z 
+2026-11-24T03:38:23.2056800Z The following build commands failed:
+2026-11-24T03:38:23.2058460Z 	SwiftCompile normal x86_64 Compiling\ AppStoreSearchView.swift,\ AppDetailView.swift,\ DownloadManagerView.swift,\ LogViewerView.swift /Users/runner/work/IPAForge/IPAForge/Views/AppStoreSearchView.swift /Users/runner/work/IPAForge/IPAForge/Views/AppDetailView.swift /Users/runner/work/IPAForge/IPAForge/Views/DownloadManagerView.swift /Users/runner/work/IPAForge/IPAForge/Views/LogViewerView.swift (in target 'AppStoreIPADownloader' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:23.2060420Z 	SwiftCompile normal x86_64 /Users/runner/work/IPAForge/IPAForge/Views/DownloadManagerView.swift (in target 'AppStoreIPADownloader' from project 'AppStoreIPADownloader')
+2026-11-24T03:38:23.2061340Z Test session results, code coverage, and logs:
+2026-11-24T03:38:23.2062040Z 	/Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Logs/Test/Test-AppStoreIPADownloader-2026.11.24_03-38-15-+0000.xcresult
+2026-11-24T03:38:23.2062680Z 
+2026-11-24T03:38:23.2062840Z 	Testing project AppStoreIPADownloader with scheme AppStoreIPADownloader
+2026-11-24T03:38:23.2073220Z (3 failures)
+2026-11-24T03:38:23.2300810Z ##[error]Process completed with exit code 65.
