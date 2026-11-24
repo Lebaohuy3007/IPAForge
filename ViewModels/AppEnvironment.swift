@@ -60,7 +60,7 @@ final class AppEnvironment: ObservableObject {
 
     static var defaultAppStoreCountry: String {
         if #available(iOS 16, *) {
-            return Locale.current.region?.lowercased() ?? "us"
+            return Locale.current.region?.identifier.lowercased() ?? "us"
         }
         return Locale.current.regionCode?.lowercased() ?? "us"
     }
