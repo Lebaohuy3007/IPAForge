@@ -21,7 +21,7 @@ struct SettingsView: View {
                 }
                 Section("Account") {
                     Button("Sign Out", role: .destructive) {
-                        environment.cancelLogin()
+                        environment.signOut()
                     }
                 }
                 Section("Status") {

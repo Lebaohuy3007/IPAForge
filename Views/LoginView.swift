@@ -4,46 +4,53 @@ struct LoginView: View {
     @EnvironmentObject private var environment: AppEnvironment
     @State private var appleID = ""
     @State private var password = ""
-    @State private var serverSheet: ServerSheet?
+    @State private var isPasswordVisible = false
+    @State private var showingAnisetteServers = false
     @State private var statusMessage = ""
-
-    private enum ServerSheet: String, Identifiable {
-        case picker
-        case manager
-
-        var id: String { rawValue }
-    }
+    @FocusState private var passwordFieldIsFocused: Bool
 
     var body: some View {
         NavigationStack {
             Form {
                 Section("Anisette Server") {
-                    HStack {
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(environment.anisetteServers.selectedServer?.name ?? "Chưa chọn")
-                                .font(.headline)
-                            Text(environment.anisetteServers.selectedServer?.url ?? "Chọn server đã xác thực Anisette")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                            if let selectedID = environment.anisetteServers.selectedServerID,
-                               let result = environment.anisetteServers.probeResults[selectedID] {
-                                AnisetteProbeStatusView(serverID: selectedID, store: environment.anisetteServers)
-                                if !result.state.isUsable {
-                                    Text("Server hiện không sẵn sàng; không tự chuyển nguồn.")
+                    Button {
+                        showingAnisetteServers = true
+                    } label: {
+                        HStack(spacing: 12) {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(environment.anisetteServers.selectedServer?.name ?? "Chưa chọn")
+                                    .font(.headline)
+                                if let selectedServer = environment.anisetteServers.selectedServer {
+                                    Text(selectedServer.url)
                                         .font(.caption)
-                                        .foregroundStyle(.orange)
+                                        .foregroundStyle(.secondary)
+                                }
+                                if let selectedID = environment.anisetteServers.selectedServerID,
+                                   let result = environment.anisetteServers.probeResults[selectedID] {
+                                    AnisetteProbeStatusView(
+                                        serverID: selectedID,
+                                        store: environment.anisetteServers
+                                    )
+                                    if !result.state.isUsable {
+                                        Text("Server hiện không sẵn sàng.")
+                                            .font(.caption)
+                                            .foregroundStyle(.orange)
+                                    }
                                 }
                             }
+                            Spacer(minLength: 8)
+                            Image(systemName: "chevron.right")
+                                .font(.caption.weight(.semibold))
+                                .foregroundStyle(.tertiary)
                         }
-                        Spacer()
-                        Button("Chọn") { serverSheet = .picker }
-                            .disabled(environment.anisetteServers.servers.isEmpty)
+                        .contentShape(Rectangle())
                     }
-                    Button("Quản lý Anisette Server") { serverSheet = .manager }
+                    .buttonStyle(.plain)
+
                     if environment.anisetteServers.hasFinishedInitialChecks &&
                         !environment.anisetteServers.hasUsableServer {
                         Label(
-                            "Không có Anisette nào được dùng. Hãy thử lại hoặc quản lý server.",
+                            "Không có Anisette Server khả dụng. Hãy thử lại hoặc thêm nguồn.",
                             systemImage: "exclamationmark.triangle"
                         )
                         .font(.footnote)
@@ -55,18 +62,45 @@ struct LoginView: View {
                 }
 
                 Section("Apple Account") {
-                    TextField("Apple ID / Email", text: $appleID)
-                        .textContentType(.username)
-                        .textInputAutocapitalization(.never)
-                        .autocorrectionDisabled()
-                    SecureField("Password", text: $password)
-                        .textContentType(.password)
-                    Button("Login") { login() }
-                        .disabled(appleID.isEmpty || password.isEmpty || !hasReadyAnisette)
-                    Button("Cancel Login", role: .destructive) {
-                        password = ""
-                        environment.cancelLogin()
-                        statusMessage = "Login cancelled."
+                    if environment.authPhase == .signedIn {
+                        Label(appleID, systemImage: "person.crop.circle")
+                        Button("Đăng xuất", role: .destructive) {
+                            appleID = ""
+                            password = ""
+                            isPasswordVisible = false
+                            environment.signOut()
+                            statusMessage = "Đã đăng xuất."
+                        }
+                    } else {
+                        TextField("Apple ID / Email", text: $appleID)
+                            .textContentType(.username)
+                            .textInputAutocapitalization(.never)
+                            .autocorrectionDisabled()
+                        HStack {
+                            Group {
+                                if isPasswordVisible {
+                                    TextField("Password", text: $password)
+                                        .focused($passwordFieldIsFocused)
+                                        .submitLabel(.done)
+                                        .onSubmit { passwordFieldIsFocused = false }
+                                } else {
+                                    SecureField("Password", text: $password)
+                                        .focused($passwordFieldIsFocused)
+                                        .submitLabel(.done)
+                                        .onSubmit { passwordFieldIsFocused = false }
+                                }
+                            }
+                            .textContentType(.password)
+                            Button {
+                                isPasswordVisible.toggle()
+                            } label: {
+                                Image(systemName: isPasswordVisible ? "eye.slash" : "eye")
+                                    .foregroundStyle(.secondary)
+                            }
+                            .buttonStyle(.plain)
+                            .accessibilityLabel(isPasswordVisible ? "Hide password" : "Show password")
+                        }
+                        Button("Login") { login() }
                     }
                 }
 
@@ -80,32 +114,24 @@ struct LoginView: View {
                         .foregroundStyle(.secondary)
                 }
             }
-            .navigationTitle("AppStore IPA")
+            .navigationTitle("Apple Account")
             .onAppear {
                 environment.anisetteServers.refreshAll()
             }
-            .sheet(item: $serverSheet) { sheet in
+            .sheet(isPresented: $showingAnisetteServers) {
                 NavigationStack {
-                    if sheet == .picker {
-                        AnisetteServerPickerView()
-                    } else {
-                        AnisetteServersView()
-                    }
+                    AnisetteServersView()
                 }
             }
         }
     }
 
-    private var hasReadyAnisette: Bool {
-        guard let selectedID = environment.anisetteServers.selectedServerID,
-              !environment.anisetteServers.checkingIDs.contains(selectedID) else {
-            return false
-        }
-        return environment.anisetteServers.probeResults[selectedID]?.state.isUsable == true
-    }
-
     private func login() {
-        password = ""
+        guard !appleID.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+              !password.isEmpty else {
+            statusMessage = "Vui lòng nhập Apple ID và mật khẩu, không để trống ô nào."
+            return
+        }
         statusMessage = AuthenticationError.unsupported.localizedDescription
         environment.logger.log(.error, "Apple Account sign-in is unavailable.")
     }

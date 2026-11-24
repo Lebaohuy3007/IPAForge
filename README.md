@@ -8,7 +8,7 @@
 
 - SwiftUI app và Xcode project, deployment target iOS 16, Swift language mode 5.
 - Tìm kiếm ứng dụng theo tên hoặc App ID, xem bundle ID, developer, version, icon và metadata có sẵn.
-- Quản lý danh sách Anisette Server SideStore/jkcoxson và nguồn tùy chỉnh; thêm/sửa/xóa, chống URL trùng, chọn nguồn, xác nhận xóa, lưu danh sách và lựa chọn bằng UserDefaults.
+- Quản lý danh sách Anisette Server SideStore/jkcoxson và nguồn tùy chỉnh; SideStore được chọn mặc định, chạm để đổi server, thêm/sửa/xóa nguồn trong cùng màn hình, chống URL trùng và lưu lựa chọn bằng UserDefaults.
 - Probe bất đồng bộ GET endpoint gốc, timeout 8 giây, đo RTT bằng monotonic clock. Phân biệt không phản hồi, có phản hồi nhưng payload không hợp lệ, và JSON Anisette v1 có hai trường bắt buộc `X-Apple-I-MD`/`X-Apple-I-MD-M`.
 - Không đánh dấu `/v3/client_info` hoặc HTTP reachability là Anisette hợp lệ; không gửi Apple ID, mật khẩu, mã 2FA, token hay Anisette identity khi probe.
 - Log Viewer có mức log, xóa/copy nhật ký và bộ lọc thông tin xác thực.
@@ -23,7 +23,7 @@
 3. **Server đang chọn không tự failover.** Khi probe tiếp theo thất bại, lựa chọn vẫn hiển thị để tránh đổi identity âm thầm nhưng không còn trạng thái usable; người dùng có thể chọn một nguồn đã probe hợp lệ. Không có phiên Apple đang hoạt động trong bản này.
 4. **IPA download chưa triển khai.** Nút Download IPA tạo trạng thái lỗi giải thích, không gọi mua/tải Store, không vượt DRM và không tạo package giả.
 5. **Share Sheet chỉ được bật khi có file `.ipa`.** Export kiểm tra file tồn tại, đuôi `.ipa` và ZIP local-header signature; bước này không xác minh đầy đủ cấu trúc `Payload/*.app`. Chưa có file tải về do downloader chưa hoạt động; không tạo file mẫu để tạo cảm giác hoàn thành.
-6. **Build workflow unsigned.** Experimental Build đóng gói `.app` vào `Payload/` và xuất `IPAForge-unsigned.ipa`. File IPA chưa được ký và không thể cài trực tiếp; muốn cài đặt cần cấu hình signing hợp lệ và xác minh riêng trên thiết bị. Release Build hiện xuất `.xcarchive.zip`, không phải IPA.
+6. **Build workflow unsigned.** App có version hiển thị `1.0.0`; Experimental Build dùng số thứ tự workflow làm build number, đóng gói `.app` vào `Payload/` và xuất `IPAForge-1.0.0-<build>-unsigned.ipa`. File IPA chưa được ký và không thể cài trực tiếp; muốn cài đặt cần cấu hình signing hợp lệ và xác minh riêng trên thiết bị. Release Build hiện xuất `.xcarchive.zip`, không phải IPA.
 7. API tìm kiếm công khai không chứng minh người dùng sở hữu ứng dụng, quyền tải lại hoặc khả năng lấy binary.
 
 ## Đối chiếu thư viện / giao thức
@@ -51,7 +51,7 @@ CI cần được xác nhận bằng lần chạy workflow gần nhất trên Gi
 
 ## GitHub Actions
 
-- **Experimental Build**: workflow dispatch thủ công; chạy unit tests, build app unsigned và upload artifact `IPAForge-Unsigned` chứa `IPAForge-unsigned.ipa`. Đây là IPA unsigned, không phải bản cài đặt đã ký.
+- **Experimental Build**: workflow dispatch thủ công; chạy unit tests, build app version `1.0.0` (build number là GitHub Actions run number) và upload artifact `IPAForge-1.0.0-<build>-Unsigned` chứa IPA unsigned cùng version. Đây chưa phải bản cài đặt đã ký.
 - **Release Build**: chạy khi push tag `v*` hoặc workflow dispatch với `release_tag`; test, archive Release unsigned và tạo GitHub Release. Artifact tên `AppStoreIPA-Release`, file đính kèm là unsigned `.xcarchive.zip`, không phải IPA.
 - Chưa cần certificate/secret để compile unsigned. Không thêm private key, certificate hay mật khẩu vào repository.
 

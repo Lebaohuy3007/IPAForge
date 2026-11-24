@@ -46,7 +46,6 @@ enum AnisetteServerError: LocalizedError, Equatable {
     case duplicateURL
     case notFound
     case cannotModifyDefault
-    case serverNotReady
 
     var errorDescription: String? {
         switch self {
@@ -54,7 +53,6 @@ enum AnisetteServerError: LocalizedError, Equatable {
         case .duplicateURL: return "Anisette Server này đã có trong danh sách."
         case .notFound: return "Không tìm thấy Anisette Server."
         case .cannotModifyDefault: return "Không thể sửa hoặc xóa nguồn mặc định."
-        case .serverNotReady: return "Server chưa trả về Anisette v1 hợp lệ. Hãy kiểm tra lại hoặc chọn server khác."
         }
     }
 }
@@ -211,6 +209,7 @@ final class AnisetteServerStore: ObservableObject {
                 defaults.removeObject(forKey: selectedIDKey)
             }
         }
+        selectSideStoreIfNeeded()
         for server in servers {
             probeResults[server.id] = AnisetteProbeResult(state: .unchecked, durationMilliseconds: nil)
         }
@@ -273,6 +272,7 @@ final class AnisetteServerStore: ObservableObject {
             probeResults[serverID] = AnisetteProbeResult(state: .unchecked, durationMilliseconds: nil)
             if selectedServerID == serverID {
                 selectID(nil)
+                selectSideStoreIfNeeded()
             }
         }
         persistServers()
@@ -286,16 +286,16 @@ final class AnisetteServerStore: ObservableObject {
         guard !server.isDefault else { throw AnisetteServerError.cannotModifyDefault }
         servers.removeAll { $0.id == serverID }
         probeResults.removeValue(forKey: serverID)
-        if selectedServerID == serverID { selectID(nil) }
+        if selectedServerID == serverID {
+            selectID(nil)
+            selectSideStoreIfNeeded()
+        }
         persistServers()
     }
 
     func select(serverID: UUID) throws {
         guard servers.contains(where: { $0.id == serverID }) else {
             throw AnisetteServerError.notFound
-        }
-        guard probeResults[serverID]?.state.isUsable == true else {
-            throw AnisetteServerError.serverNotReady
         }
         selectID(serverID)
     }
@@ -336,6 +336,18 @@ final class AnisetteServerStore: ObservableObject {
         } else {
             defaults.removeObject(forKey: selectedIDKey)
         }
+    }
+
+    private func selectSideStoreIfNeeded() {
+        guard selectedServerID == nil,
+              let sideStore = AnisetteService.defaultServers.first(where: { $0.name == "SideStore" }),
+              let server = servers.first(where: {
+                  AnisetteURLValidator.normalized($0.url) ==
+                    AnisetteURLValidator.normalized(sideStore.url)
+              }) else {
+            return
+        }
+        selectID(server.id)
     }
 
     private func persistServers() {

@@ -1,5 +1,5 @@
 name: Experimental Build
-run-name: Apple ID Test
+run-name: UI
 on:
   workflow_dispatch:
 
@@ -46,6 +46,7 @@ jobs:
             -parallel-testing-enabled NO \
             ONLY_ACTIVE_ARCH=YES \
             ENABLE_TESTABILITY=YES \
+            CURRENT_PROJECT_VERSION="$GITHUB_RUN_NUMBER" \
             CODE_SIGNING_ALLOWED=NO \
             | xcbeautify
       - name: Build unsigned application
@@ -57,6 +58,7 @@ jobs:
             -configuration Debug \
             -destination 'generic/platform=iOS' \
             -derivedDataPath "$DERIVED_DATA_PATH" \
+            CURRENT_PROJECT_VERSION="$GITHUB_RUN_NUMBER" \
             CODE_SIGNING_ALLOWED=NO \
             | xcbeautify
       - name: Package unsigned IPA
@@ -68,10 +70,10 @@ jobs:
             build/ipa/Payload/AppStoreIPADownloader.app
           ditto -c -k --sequesterRsrc --keepParent \
             build/ipa/Payload \
-            build/artifacts/IPAForge-unsigned.ipa
+            "build/artifacts/IPAForge-1.0.0-${GITHUB_RUN_NUMBER}-unsigned.ipa"
       - uses: actions/upload-artifact@v4
         with:
-          name: IPAForge-Unsigned
-          path: build/artifacts/IPAForge-unsigned.ipa
+          name: IPAForge-1.0.0-${{ github.run_number }}-Unsigned
+          path: build/artifacts/IPAForge-1.0.0-${{ github.run_number }}-unsigned.ipa
           if-no-files-found: error
           retention-days: 14

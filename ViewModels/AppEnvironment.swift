@@ -30,4 +30,11 @@ final class AppEnvironment: ObservableObject {
         authPhase = .signedOut
         logger.log(.warning, "Login cancelled.")
     }
+
+    func signOut() {
+        authentication.cancelLogin()
+        authPhase = .signedOut
+        authMessage = ""
+        logger.log(.info, "Signed out.")
+    }
 }

@@ -2,7 +2,10 @@ import SwiftUI
 
 struct AnisetteServersView: View {
     @EnvironmentObject private var environment: AppEnvironment
-    @State private var showingAdd = false
+    @Environment(\.dismiss) private var dismiss
+    @State private var editorRoute: ServerEditorRoute?
+    @State private var serverToDelete: AnisetteServer?
+    @State private var errorMessage: String?
 
     var body: some View {
         List {
@@ -10,44 +13,81 @@ struct AnisetteServersView: View {
                 !environment.anisetteServers.hasUsableServer {
                 Section {
                     Label(
-                        "Hiện tại không có Anisette Server khả dụng. Hãy kiểm tra kết nối, thử lại hoặc thêm server khác.",
+                        "Hiện tại không có Anisette Server khả dụng. Hãy kiểm tra kết nối hoặc thêm nguồn khác.",
                         systemImage: "exclamationmark.triangle"
                     )
                     .foregroundStyle(.orange)
-                    Button("Thử lại tất cả") {
-                        environment.anisetteServers.refreshAll(force: true)
-                    }
                 }
             }
 
-            Section("Anisette Server · Anisette v1") {
+            Section("Chọn Anisette Server") {
                 ForEach(Array(environment.anisetteServers.servers.enumerated()), id: \.element.id) { index, server in
-                    NavigationLink {
-                        AnisetteServerDetailView(server: server)
-                    } label: {
-                        AnisetteServerRow(index: index, server: server)
+                    HStack(spacing: 8) {
+                        Button {
+                            do {
+                                try environment.anisetteServers.select(serverID: server.id)
+                                errorMessage = nil
+                            } catch {
+                                errorMessage = error.localizedDescription
+                            }
+                        } label: {
+                            AnisetteServerRow(
+                                index: index,
+                                server: server,
+                                isSelected: environment.anisetteServers.selectedServerID == server.id,
+                                store: environment.anisetteServers
+                            )
+                        }
+                        .buttonStyle(.plain)
+
+                        if !server.isDefault {
+                            Menu {
+                                Button {
+                                    editorRoute = .edit(server)
+                                } label: {
+                                    Label("Sửa nguồn", systemImage: "pencil")
+                                }
+                                Button(role: .destructive) {
+                                    serverToDelete = server
+                                } label: {
+                                    Label("Xóa nguồn", systemImage: "trash")
+                                }
+                            } label: {
+                                Image(systemName: "ellipsis")
+                                    .foregroundStyle(.secondary)
+                                    .frame(width: 32, height: 44)
+                                    .contentShape(Rectangle())
+                            }
+                            .accessibilityLabel("Tùy chọn \(server.name)")
+                        }
                     }
                 }
             }
 
             Section {
                 Button {
-                    showingAdd = true
+                    editorRoute = .add
                 } label: {
                     Label("Thêm nguồn mới", systemImage: "plus")
                 }
             }
 
-            Section {
-                Text("Chỉ phản hồi JSON có X-Apple-I-MD và X-Apple-I-MD-M không rỗng mới được đánh dấu Anisette v1 hợp lệ. Endpoint v3/provisioning chưa được tích hợp.")
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
+            if let errorMessage {
+                Section {
+                    Text(errorMessage)
+                        .font(.footnote)
+                        .foregroundStyle(.red)
+                }
             }
+
         }
         .navigationTitle("Anisette Server")
         .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button("Kiểm tra lại") {
+            ToolbarItem(placement: .cancellationAction) {
+                Button("Đóng") { dismiss() }
+            }
+            ToolbarItem(placement: .confirmationAction) {
+                Button("Kiểm tra") {
                     environment.anisetteServers.refreshAll(force: true)
                 }
             }
@@ -55,98 +95,50 @@ struct AnisetteServersView: View {
         .onAppear {
             environment.anisetteServers.refreshAll()
         }
-        .sheet(isPresented: $showingAdd) {
+        .sheet(item: $editorRoute) { route in
             NavigationStack {
-                AnisetteServerEditorView()
-            }
-        }
-    }
-}
-
-struct AnisetteServerPickerView: View {
-    @EnvironmentObject private var environment: AppEnvironment
-    @Environment(\.dismiss) private var dismiss
-    @State private var pendingServerID: UUID?
-    @State private var errorMessage: String?
-
-    var body: some View {
-        List {
-            Section("Chọn Anisette Server") {
-                ForEach(Array(environment.anisetteServers.servers.enumerated()), id: \.element.id) { index, server in
-                    Button {
-                        pendingServerID = server.id
-                    } label: {
-                        HStack(alignment: .top, spacing: 10) {
-                            Image(systemName: pendingServerID == server.id ? "largecircle.fill.circle" : "circle")
-                                .foregroundStyle(
-                                    pendingServerID == server.id ? Color.accentColor : Color.secondary
-                                )
-                            VStack(alignment: .leading, spacing: 4) {
-                                HStack {
-                                    Text("#\(index + 1) \(server.name)")
-                                        .font(.headline)
-                                    Spacer()
-                                    if environment.anisetteServers.selectedServerID == server.id {
-                                        Image(systemName: "checkmark").foregroundStyle(.green)
-                                    }
-                                }
-                                Text(server.url).font(.caption).foregroundStyle(.secondary)
-                                AnisetteProbeStatusView(
-                                    serverID: server.id,
-                                    store: environment.anisetteServers
-                                )
-                            }
-                        }
-                        .contentShape(Rectangle())
-                    }
-                    .buttonStyle(.plain)
+                switch route {
+                case .add:
+                    AnisetteServerEditorView()
+                case .edit(let server):
+                    AnisetteServerEditorView(server: server)
                 }
             }
-            if let errorMessage {
-                Section { Text(errorMessage).foregroundStyle(.red) }
-            }
-            Section {
-                Button("Chọn máy chủ") {
-                    guard let pendingServerID else { return }
-                    do {
-                        try environment.anisetteServers.select(serverID: pendingServerID)
-                        dismiss()
-                    } catch {
-                        errorMessage = error.localizedDescription
-                    }
+        }
+        .confirmationDialog(
+            "Xóa nguồn Anisette?",
+            isPresented: Binding(
+                get: { serverToDelete != nil },
+                set: { if !$0 { serverToDelete = nil } }
+            ),
+            titleVisibility: .visible
+        ) {
+            Button("Xóa nguồn", role: .destructive) {
+                guard let server = serverToDelete else { return }
+                do {
+                    try environment.anisetteServers.delete(serverID: server.id)
+                    serverToDelete = nil
+                    errorMessage = nil
+                } catch {
+                    errorMessage = error.localizedDescription
                 }
-                .disabled(pendingServerID == nil)
             }
-            Section {
-                Text("Máy chủ phải trả về JSON Anisette v1 hợp lệ mới có thể được chọn. Việc kiểm tra không đăng nhập Apple ID.")
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
-            }
-        }
-        .navigationTitle("Anisette Server")
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button("Đóng") { dismiss() }
-            }
-        }
-        .onAppear {
-            pendingServerID = environment.anisetteServers.selectedServerID
-            environment.anisetteServers.refreshAll()
         }
     }
 }
 
 private struct AnisetteServerRow: View {
-    @EnvironmentObject private var environment: AppEnvironment
     let index: Int
     let server: AnisetteServer
+    let isSelected: Bool
+    @ObservedObject var store: AnisetteServerStore
 
     var body: some View {
         HStack(alignment: .top, spacing: 10) {
             VStack(alignment: .leading, spacing: 4) {
                 HStack {
-                    Text("#\(index + 1) \(server.name)").font(.headline)
+                    Text("#\(index + 1) \(server.name)")
+                        .font(.headline)
                     if server.isDefault {
                         Text("Mặc định")
                             .font(.caption2)
@@ -155,15 +147,19 @@ private struct AnisetteServerRow: View {
                             .background(.secondary.opacity(0.15), in: Capsule())
                     }
                     Spacer()
-                    if environment.anisetteServers.selectedServerID == server.id {
-                        Image(systemName: "checkmark").foregroundStyle(.green)
+                    if isSelected {
+                        Image(systemName: "checkmark")
+                            .foregroundStyle(.green)
                     }
                 }
-                Text(server.url).font(.caption).foregroundStyle(.secondary)
-                AnisetteProbeStatusView(serverID: server.id, store: environment.anisetteServers)
+                Text(server.url)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                AnisetteProbeStatusView(serverID: server.id, store: store)
             }
         }
         .padding(.vertical, 3)
+        .contentShape(Rectangle())
     }
 }
 
@@ -195,102 +191,16 @@ struct AnisetteProbeStatusView: View {
     }
 }
 
-private struct AnisetteServerDetailView: View {
-    @EnvironmentObject private var environment: AppEnvironment
-    @Environment(\.dismiss) private var dismiss
-    @State private var server: AnisetteServer
-    @State private var showingEdit = false
-    @State private var showingDeleteConfirmation = false
-    @State private var errorMessage: String?
+private enum ServerEditorRoute: Identifiable {
+    case add
+    case edit(AnisetteServer)
 
-    init(server: AnisetteServer) {
-        _server = State(initialValue: server)
-    }
-
-    var body: some View {
-        Form {
-            Section("Server") {
-                LabeledContent("Tên", value: server.name)
-                LabeledContent("URL", value: server.url)
-                LabeledContent(
-                    "Trạng thái",
-                    value: environment.anisetteServers.checkingIDs.contains(server.id)
-                        ? "Đang kiểm tra…"
-                        : (environment.anisetteServers.probeResults[server.id]?.state.title ?? "Chưa kiểm tra")
-                )
-                if let milliseconds = environment.anisetteServers.probeResults[server.id]?.durationMilliseconds {
-                    LabeledContent("Thời gian phản hồi", value: "\(milliseconds) ms")
-                }
-            }
-            Section {
-                Button("Kiểm tra lại") {
-                    Task { await environment.anisetteServers.refresh(serverID: server.id) }
-                }
-                if environment.anisetteServers.selectedServerID == server.id {
-                    Label("Đang được chọn", systemImage: "checkmark")
-                        .foregroundStyle(.green)
-                } else {
-                    Button("Chọn máy chủ") {
-                        do {
-                            try environment.anisetteServers.select(serverID: server.id)
-                        } catch {
-                            errorMessage = error.localizedDescription
-                        }
-                    }
-                    .disabled(environment.anisetteServers.probeResults[server.id]?.state.isUsable != true)
-                }
-            }
-            if !server.isDefault {
-                Section {
-                    Button("Sửa nguồn") { showingEdit = true }
-                    Button("Xóa nguồn", role: .destructive) {
-                        showingDeleteConfirmation = true
-                    }
-                }
-            }
-            if let errorMessage {
-                Section { Text(errorMessage).foregroundStyle(.red) }
-            }
-            Section {
-                Text("Kiểm tra dùng GET endpoint gốc của giao thức Anisette v1. Không gửi Apple ID, mật khẩu, mã 2FA, token hoặc identity Anisette.")
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
-            }
-        }
-        .navigationTitle(server.name)
-        .navigationBarTitleDisplayMode(.inline)
-        .onAppear {
-            if environment.anisetteServers.probeResults[server.id]?.state == .unchecked {
-                Task { await environment.anisetteServers.refresh(serverID: server.id) }
-            }
-        }
-        .onChange(of: environment.anisetteServers.servers) { updatedServers in
-            guard let updated = updatedServers.first(where: { $0.id == server.id }) else {
-                dismiss()
-                return
-            }
-            server = updated
-        }
-        .sheet(isPresented: $showingEdit) {
-            NavigationStack {
-                AnisetteServerEditorView(server: server)
-            }
-        }
-        .confirmationDialog(
-            "Xóa \(server.name)?",
-            isPresented: $showingDeleteConfirmation,
-            titleVisibility: .visible
-        ) {
-            Button("Xóa nguồn", role: .destructive) {
-                do {
-                    try environment.anisetteServers.delete(serverID: server.id)
-                    dismiss()
-                } catch {
-                    errorMessage = error.localizedDescription
-                }
-            }
-        } message: {
-            Text("Nguồn đã chọn sẽ bị bỏ chọn. IPAForge không tự chuyển sang máy chủ khác.")
+    var id: String {
+        switch self {
+        case .add:
+            return "add"
+        case .edit(let server):
+            return "edit-\(server.id)"
         }
     }
 }
@@ -312,11 +222,6 @@ private struct AnisetteServerEditorView: View {
 
     var body: some View {
         Form {
-            Section {
-                Text("Thêm địa chỉ Anisette Server để IPAForge có thể kiểm tra, lưu và sử dụng khi đăng nhập Apple ID.")
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-            }
             Section("Thông tin Server") {
                 TextField("Tên nguồn (không bắt buộc)", text: $name)
                     .textInputAutocapitalization(.words)
@@ -325,7 +230,9 @@ private struct AnisetteServerEditorView: View {
                     .keyboardType(.URL)
                     .autocorrectionDisabled()
             }
-            if isSaving { Section { ProgressView("Đang kiểm tra server…") } }
+            if isSaving {
+                Section { ProgressView("Đang kiểm tra server…") }
+            }
             if let errorMessage {
                 Section { Text(errorMessage).foregroundStyle(.red) }
             }

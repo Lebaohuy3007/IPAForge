@@ -60,12 +60,16 @@ final class AnisetteURLValidatorTests: XCTestCase {
 
 @MainActor
 final class AnisetteServerStoreTests: XCTestCase {
-    func testAddPersistsSelectionAndDeleteClearsIt() async throws {
+    func testSideStoreIsDefaultAndCustomSelectionPersists() async throws {
         configureValidAnisetteResponse()
         let (defaults, suite) = makeDefaults()
         defer { defaults.removePersistentDomain(forName: suite) }
         let store = makeStore(defaults: defaults)
         XCTAssertEqual(store.servers.map(\.name), ["SideStore", "jkcoxson"])
+        let sideStoreID = try XCTUnwrap(
+            store.servers.first(where: { $0.name == "SideStore" })?.id
+        )
+        XCTAssertEqual(store.selectedServerID, sideStoreID)
         XCTAssertTrue(store.servers.allSatisfy {
             store.probeResults[$0.id]?.state == .unchecked
         })
@@ -73,7 +77,7 @@ final class AnisetteServerStoreTests: XCTestCase {
         let id = try await store.add(name: "  Personal  ", url: "https://personal.example/")
         XCTAssertEqual(store.servers.last?.name, "Personal")
         XCTAssertEqual(store.probeResults[id]?.state, .validV1)
-        XCTAssertNil(store.selectedServerID)
+        XCTAssertEqual(store.selectedServerID, sideStoreID)
 
         try store.select(serverID: id)
         XCTAssertEqual(store.selectedServerID, id)
@@ -82,11 +86,11 @@ final class AnisetteServerStoreTests: XCTestCase {
         XCTAssertEqual(restored.servers.last?.url, "https://personal.example")
 
         try store.delete(serverID: id)
-        XCTAssertNil(store.selectedServerID)
+        XCTAssertEqual(store.selectedServerID, sideStoreID)
         XCTAssertFalse(store.servers.contains(where: { $0.id == id }))
     }
 
-    func testRejectsInvalidDuplicateAndUnavailableServers() async throws {
+    func testRejectsInvalidDuplicateAndAllowsSelectingUnavailableServer() async throws {
         MockURLProtocol.responseData = Data(#"{"message":"not anisette"}"#.utf8)
         MockURLProtocol.statusCode = 200
         MockURLProtocol.stubbedError = nil
@@ -103,12 +107,8 @@ final class AnisetteServerStoreTests: XCTestCase {
 
         let id = try await store.add(name: "Invalid response", url: "https://invalid.example")
         XCTAssertEqual(store.probeResults[id]?.state, .responded)
-        do {
-            try store.select(serverID: id)
-            XCTFail("A server without valid Anisette data must not be selectable.")
-        } catch {
-            XCTAssertEqual(error as? AnisetteServerError, .serverNotReady)
-        }
+        try store.select(serverID: id)
+        XCTAssertEqual(store.selectedServerID, id)
 
         do {
             _ = try await store.add(name: "Duplicate", url: "https://INVALID.example/")
@@ -144,18 +144,21 @@ final class AnisetteServerStoreTests: XCTestCase {
         }
     }
 
-    func testAllServersUnavailableDoesNotSelectOrFailOver() async throws {
+    func testAllServersUnavailableKeepsDefaultWithoutFailingOver() async throws {
         MockURLProtocol.stubbedError = URLError(.cannotConnectToHost)
         let (defaults, suite) = makeDefaults()
         defer { defaults.removePersistentDomain(forName: suite) }
         let store = makeStore(defaults: defaults)
+        let sideStoreID = try XCTUnwrap(
+            store.servers.first(where: { $0.name == "SideStore" })?.id
+        )
 
         for server in store.servers {
             await store.refresh(serverID: server.id)
         }
         XCTAssertTrue(store.hasFinishedInitialChecks)
         XCTAssertFalse(store.hasUsableServer)
-        XCTAssertNil(store.selectedServerID)
+        XCTAssertEqual(store.selectedServerID, sideStoreID)
     }
 
     private func makeStore(defaults: UserDefaults) -> AnisetteServerStore {
