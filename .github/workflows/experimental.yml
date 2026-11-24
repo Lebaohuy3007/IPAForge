@@ -1,5 +1,5 @@
 name: Experimental Build
-run-name: Apple ID Test
+run-name: Test UI
 on:
   push:
     branches:
