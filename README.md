@@ -1,6 +1,6 @@
 # AppStore IPA Downloader
 
-Ứng dụng SwiftUI cho iOS 16+ để duyệt App Store, cấu hình endpoint Anisette và theo dõi các giới hạn của quy trình tải IPA. Mục tiêu thiết bị là iPhone XS Max; giao diện hỗ trợ cả Light và Dark Mode.
+Ứng dụng SwiftUI cho iOS 16+ để duyệt App Store, cấu hình endpoint Anisette và theo dõi các giới hạn của quy trình tải IPA. Giao diện hỗ trợ cả Light và Dark Mode.
 
 > **Tình trạng hiện tại:** Đây chưa phải downloader hoạt động đầu-cuối. App Store Search dùng iTunes Search API công khai và chạy thật. Quản lý nguồn và kiểm tra phản hồi Anisette v1 đã có; Apple Account sign-in, Apple SRP/2FA, Anisette v3 provisioning/get_headers và tải package từ Store chưa được triển khai. Giao diện không giả lập đăng nhập/thành công và không tạo file IPA giả.
 
@@ -45,7 +45,9 @@ xcodebuild test \
   CODE_SIGNING_ALLOWED=NO
 ```
 
-Chưa thể xác nhận build/test trong môi trường Codespaces hiện tại do không có Xcode hoặc Swift toolchain. GitHub Actions dùng macOS runner để thực hiện xác nhận này.
+Thiết bị đã thử: iOS 18.7.9 (theo xác nhận của người dùng; không nêu model thiết bị). Đây là thông tin thử nghiệm thủ công, không đồng nghĩa mọi chức năng đã hoàn thiện hoặc IPA đã được ký.
+
+CI hiện chưa xác nhận build/test thành công: lần chạy gần nhất dừng trước khi tests bắt đầu vì Xcode báo `AppStoreIPADownloader.xcodeproj` bị lỗi parse. Cần sửa project file và chạy lại trên macOS/Xcode.
 
 ## GitHub Actions
 

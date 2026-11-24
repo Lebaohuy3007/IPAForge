@@ -106,7 +106,7 @@
 		720000000000000000000001 = {
 			isa = PBXProject;
 			attributes = {
-				BuildIndependentTargetsIn parallel = 1;
+				BuildIndependentTargetsInParallel = 1;
 				LastUpgradeCheck = 1600;
 				TargetAttributes = {
 					400000000000000000000001 = { CreatedOnToolsVersion = 16.0; };
