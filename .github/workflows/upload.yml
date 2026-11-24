@@ -12,7 +12,7 @@ on:
         type: string
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   upload-source:
@@ -24,7 +24,7 @@ jobs:
           ref: ${{ inputs.branch || github.ref_name }}
           persist-credentials: true
 
-      - name: Push source branch
+      - name: Verify source branch is uploaded
         env:
           BRANCH_NAME: ${{ inputs.branch || github.ref_name }}
           REF_TYPE: ${{ github.ref_type }}
@@ -38,4 +38,9 @@ jobs:
             echo "::error::Select a branch or provide the branch input."
             exit 1
           fi
-          git push origin "HEAD:refs/heads/$BRANCH_NAME"
+          REMOTE_SHA="$(git ls-remote origin "refs/heads/$BRANCH_NAME" | awk 'NR == 1 { print $1 }')"
+          if [[ -z "$REMOTE_SHA" ]]; then
+            echo "::error::Branch '$BRANCH_NAME' does not exist on origin."
+            exit 1
+          fi
+          echo "Branch '$BRANCH_NAME' is uploaded on origin at $REMOTE_SHA."
