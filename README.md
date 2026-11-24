@@ -1,4 +1,4 @@
-# AppStore IPA Downloader
+# IPAForge
 
 Ứng dụng SwiftUI cho iOS 16+ để duyệt App Store, cấu hình endpoint Anisette và theo dõi các giới hạn của quy trình tải IPA. Giao diện hỗ trợ cả Light và Dark Mode.
 
@@ -23,7 +23,7 @@
 3. **Server đang chọn không tự failover.** Khi probe tiếp theo thất bại, lựa chọn vẫn hiển thị để tránh đổi identity âm thầm nhưng không còn trạng thái usable; người dùng có thể chọn một nguồn đã probe hợp lệ. Không có phiên Apple đang hoạt động trong bản này.
 4. **IPA download chưa triển khai.** Nút Download IPA tạo trạng thái lỗi giải thích, không gọi mua/tải Store, không vượt DRM và không tạo package giả.
 5. **Share Sheet chỉ được bật khi có file `.ipa`.** Export kiểm tra file tồn tại, đuôi `.ipa` và ZIP local-header signature; bước này không xác minh đầy đủ cấu trúc `Payload/*.app`. Chưa có file tải về do downloader chưa hoạt động; không tạo file mẫu để tạo cảm giác hoàn thành.
-6. **Build workflow unsigned.** Artifact là `.app` hoặc `.xcarchive` unsigned, không phải IPA ký và chưa được chứng minh cài được trên iPhone. Muốn cài đặt cần cấu hình signing hợp lệ và xác minh riêng trên thiết bị.
+6. **Build workflow unsigned.** Experimental Build đóng gói `.app` vào `Payload/` và xuất `IPAForge-unsigned.ipa`. File IPA chưa được ký và không thể cài trực tiếp; muốn cài đặt cần cấu hình signing hợp lệ và xác minh riêng trên thiết bị. Release Build hiện xuất `.xcarchive.zip`, không phải IPA.
 7. API tìm kiếm công khai không chứng minh người dùng sở hữu ứng dụng, quyền tải lại hoặc khả năng lấy binary.
 
 ## Đối chiếu thư viện / giao thức
@@ -47,12 +47,12 @@ xcodebuild test \
 
 Thiết bị đã thử: iOS 18.7.9 (theo xác nhận của người dùng; không nêu model thiết bị). Đây là thông tin thử nghiệm thủ công, không đồng nghĩa mọi chức năng đã hoàn thiện hoặc IPA đã được ký.
 
-CI hiện chưa xác nhận build/test thành công: lần chạy gần nhất dừng trước khi tests bắt đầu vì Xcode báo `AppStoreIPADownloader.xcodeproj` bị lỗi parse. Cần sửa project file và chạy lại trên macOS/Xcode.
+CI cần được xác nhận bằng lần chạy workflow gần nhất trên GitHub Actions. Workflow Experimental Build dùng Xcode 27.2 trên runner `xcode-27`; runner phải có runtime iOS Simulator tương thích.
 
 ## GitHub Actions
 
-- **Experimental Build**: workflow dispatch thủ công; chạy unit tests, build unsigned `.app`, upload artifact `AppStoreIPA-Experimental`.
-- **Release Build**: chạy khi push tag `v*` hoặc workflow dispatch với `release_tag`; test, archive Release unsigned và tạo GitHub Release. Artifact tên `AppStoreIPA-Release`, file đính kèm là unsigned `.xcarchive.zip`.
+- **Experimental Build**: workflow dispatch thủ công; chạy unit tests, build app unsigned và upload artifact `IPAForge-Unsigned` chứa `IPAForge-unsigned.ipa`. Đây là IPA unsigned, không phải bản cài đặt đã ký.
+- **Release Build**: chạy khi push tag `v*` hoặc workflow dispatch với `release_tag`; test, archive Release unsigned và tạo GitHub Release. Artifact tên `AppStoreIPA-Release`, file đính kèm là unsigned `.xcarchive.zip`, không phải IPA.
 - Chưa cần certificate/secret để compile unsigned. Không thêm private key, certificate hay mật khẩu vào repository.
 
 Workflow tạo GitHub Release cần quyền `contents: write` được bật cho Actions trong repository settings. Với workflow dispatch, cung cấp tag, ví dụ `v1.0.0`.
