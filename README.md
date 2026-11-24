@@ -2,6 +2,13 @@
 
 Ứng dụng SwiftUI cho iOS 16+ để duyệt App Store, cấu hình endpoint Anisette và theo dõi các giới hạn của quy trình tải IPA.
 
+### Thử nghiệm
+
+| iOS Version | Trạng thái |
+|:---:|:---:|
+| 18.7.9 | Đã thử nghiệm |
+| Phiên bản khác | Chưa xác minh |
+
 > **Tình trạng hiện tại:** Đây chưa phải downloader hoạt động đầu-cuối. App Store Search dùng iTunes Search API công khai và chạy thật. Đăng nhập Apple qua StosSign (SRP/2FA), lấy Developer Teams và lưu/khôi phục session mã hóa đã được nối vào ứng dụng; chưa xác minh với tài khoản Apple thật hoặc chạy được Xcode test trong môi trường hiện tại. Tải package từ Store chưa được triển khai.
 
 ## Tính năng hiện có
