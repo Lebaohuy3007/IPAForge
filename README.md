@@ -9,7 +9,7 @@
 | 18.7.9 | Đã thử nghiệm |
 | Phiên bản khác | Chưa xác minh |
 
-> **Tình trạng hiện tại:** Đây chưa phải downloader hoạt động đầu-cuối. App Store Search dùng iTunes Search API công khai và chạy thật. Đăng nhập Apple qua StosSign (SRP/2FA), lấy Developer Teams và lưu/khôi phục session mã hóa đã được nối vào ứng dụng; chưa xác minh với tài khoản Apple thật hoặc chạy được Xcode test trong môi trường hiện tại. Tải package từ Store chưa được triển khai.
+> **Tình trạng hiện tại:** IPAForge hiện đã có chức năng tìm kiếm ứng dụng trên App Store và tích hợp đăng nhập Apple ID. Tuy nhiên, chức năng tải ứng dụng dưới dạng IPA vẫn chưa được triển khai. Đăng nhập Apple và các tính năng liên quan chưa được xác minh đầy đủ với tài khoản thật.
 
 ## Tính năng hiện có
 
@@ -21,16 +21,6 @@
 * Lưu và khôi phục phiên đăng nhập an toàn.
 * Theo dõi nhật ký đăng nhập và hoạt động.
 * Hỗ trợ kiểm thử và build tự động qua GitHub Actions.
-
-## Giới hạn quan trọng
-
-1. **Chưa xác minh đăng nhập trực tiếp với Apple.** Mã tích hợp StosSign, SRP, 2FA, Developer Teams và session restore; Apple có thể thay đổi API hoặc từ chối Anisette. Dùng tài khoản thử nghiệm phù hợp và xác minh trên iOS trước khi dựa vào tính năng này.
-2. **Anisette server là bên thứ ba.** Client v3 provision identity và lấy headers từ server được chọn; identity được lưu mã hóa, nhưng server nhận identifier và dữ liệu provisioning. Probe chỉ xác minh `/v3/client_info`, không bảo đảm provisioning hoặc `/v3/get_headers` thành công. Apple ID, mật khẩu và mã 2FA được gửi trong các request xác thực trực tiếp tới Apple qua StosSign, không gửi tới Anisette server.
-3. **Server đang chọn không tự failover.** Khi probe tiếp theo thất bại, lựa chọn vẫn hiển thị để tránh đổi identity âm thầm nhưng không còn trạng thái usable; người dùng có thể chọn một nguồn đã probe hợp lệ.
-4. **IPA download chưa triển khai.** Nút Download IPA tạo trạng thái lỗi giải thích, không gọi mua/tải Store, không vượt DRM và không tạo package giả.
-5. **Share Sheet chỉ được bật khi có file `.ipa`.** Export kiểm tra file tồn tại, đuôi `.ipa` và ZIP local-header signature; bước này không xác minh đầy đủ cấu trúc `Payload/*.app`. Chưa có file tải về do downloader chưa hoạt động; không tạo file mẫu để tạo cảm giác hoàn thành.
-6. **Build workflow unsigned.** App có version hiển thị `1.0.0`; Experimental Build dùng số thứ tự workflow làm build number, đóng gói `.app` vào `Payload/` và xuất `IPAForge-1.0.0-<build>-unsigned.ipa`. File IPA chưa được ký và không thể cài trực tiếp; muốn cài đặt cần cấu hình signing hợp lệ và xác minh riêng trên thiết bị. Release Build hiện xuất `.xcarchive.zip`, không phải IPA.
-7. API tìm kiếm công khai không chứng minh người dùng sở hữu ứng dụng, quyền tải lại hoặc khả năng lấy binary.
 
 ## Đối chiếu thư viện / giao thức
 
