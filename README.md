@@ -1,23 +1,19 @@
 # IPAForge
 
-Ứng dụng SwiftUI cho iOS 16+ để duyệt App Store, cấu hình endpoint Anisette và theo dõi các giới hạn của quy trình tải IPA. Giao diện hỗ trợ cả Light và Dark Mode.
+Ứng dụng SwiftUI cho iOS 16+ để duyệt App Store, cấu hình endpoint Anisette và theo dõi các giới hạn của quy trình tải IPA.
 
 > **Tình trạng hiện tại:** Đây chưa phải downloader hoạt động đầu-cuối. App Store Search dùng iTunes Search API công khai và chạy thật. Đăng nhập Apple qua StosSign (SRP/2FA), lấy Developer Teams và lưu/khôi phục session mã hóa đã được nối vào ứng dụng; chưa xác minh với tài khoản Apple thật hoặc chạy được Xcode test trong môi trường hiện tại. Tải package từ Store chưa được triển khai.
 
 ## Tính năng hiện có
 
-- SwiftUI app và Xcode project, deployment target iOS 16, Swift language mode 5.
-- Giao diện chính có App Store Search và Profile; mục Settings/Today/editorial/demo đã bỏ khỏi thanh điều hướng.
-- Tìm kiếm ứng dụng theo tên hoặc App ID, xem bundle ID, developer, version, icon và metadata có sẵn.
-- Quản lý danh sách Anisette Server SideStore/jkcoxson và nguồn tùy chỉnh; SideStore được chọn mặc định, chạm để đổi server, thêm/sửa/xóa nguồn trong cùng màn hình, chống URL trùng và lưu lựa chọn bằng UserDefaults.
-- Probe bất đồng bộ GET `/v3/client_info`, timeout 8 giây, đo RTT bằng monotonic clock; chỉ đánh dấu usable khi có `client_info` và `user_agent`.
-- Client Anisette v3 lấy metadata, thực hiện Apple provisioning qua WebSocket của server đã chọn, lưu `identifier`/`adi.pb` trong AppleAccountVault mã hóa AES-256-GCM/Keychain, rồi yêu cầu `/v3/get_headers`. Không gửi Apple ID, mật khẩu hoặc mã 2FA; server được chọn nhận identifier và dữ liệu provisioning cần cho v3.
-- Log Viewer có mức log, xóa/copy nhật ký và bộ lọc thông tin xác thực.
-- Màn hình Sign In dùng StosSign để xác thực Apple ID, nhận mã 2FA, tải Developer Teams và cho chọn team; Login Logs riêng, tự cuộn, có thời gian/mức độ, xóa độc lập với log toàn app và lọc dữ liệu nhạy cảm.
-- Dịch vụ tải xuống từ chối rõ ràng thay vì báo thành công giả.
-- Kho phiên Apple Account dùng AES-256-GCM với khóa trong Keychain iOS, mục Keychain chỉ dùng trên thiết bị hiện tại; session StosSign được chuyển sang DTO phiên bản hóa, không lưu mật khẩu. Nhiều tài khoản có thể được khôi phục bằng cách lấy Anisette v3 mới và xác minh account/teams với Apple.
-- Unit tests cho URL validation, Anisette v3, timeout/payload sai, `/v3/get_headers`, CRUD/persistence server, log sanitization, xác thực/2FA bằng provider giả lập, mã hóa/khôi phục/xóa vault và kiểm tra file export.
-- Hai GitHub Actions workflow build/test trên macOS.
+* Giao diện SwiftUI, hỗ trợ iOS 16+ trở lên.
+* Tìm kiếm ứng dụng trên App Store theo tên hoặc App ID.
+* Xem thông tin ứng dụng: icon, Bundle ID, nhà phát triển và phiên bản.
+* Quản lý và tùy chỉnh Anisette Server.
+* Đăng nhập Apple ID, hỗ trợ xác minh 2FA và chọn Developer Team.
+* Lưu và khôi phục phiên đăng nhập an toàn.
+* Theo dõi nhật ký đăng nhập và hoạt động.
+* Hỗ trợ kiểm thử và build tự động qua GitHub Actions.
 
 ## Giới hạn quan trọng
 
