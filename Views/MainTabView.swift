@@ -39,18 +39,6 @@ private struct ProfileView: View {
                         }
                     }
 
-                    private var profileStatus: String {
-                        switch environment.authPhase {
-                        case .signedOut:
-                            return "Sign in with your Apple Account."
-                        case .waitingFor2FA:
-                            return "Waiting for Apple two-factor verification."
-                        case .authenticating:
-                            return "Authenticating or restoring your Apple session…"
-                        case .signedIn:
-                            return "Signed in"
-                        }
-                    }
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 16)
                     .listRowBackground(Color.clear)
@@ -88,6 +76,19 @@ private struct ProfileView: View {
                     LogViewerView()
                 }
             }
+        }
+    }
+
+    private var profileStatus: String {
+        switch environment.authPhase {
+        case .signedOut:
+            return "Sign in with your Apple Account."
+        case .waitingFor2FA:
+            return "Waiting for Apple two-factor verification."
+        case .authenticating:
+            return "Authenticating or restoring your Apple session…"
+        case .signedIn:
+            return "Signed in"
         }
     }
 
