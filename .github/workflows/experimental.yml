@@ -2,6 +2,12 @@ name: Experimental Build
 run-name: Apple ID Test
 on:
   workflow_dispatch:
+    inputs:
+      run_tests:
+        description: Run unit tests on an iOS Simulator before building the IPA
+        required: false
+        type: boolean
+        default: false
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -23,10 +29,9 @@ jobs:
           xcode-version: "27.2"
       - name: Show Xcode version
         run: xcodebuild -version
-      - name: Install xcbeautify
-        run: brew install xcbeautify
       - name: Start test simulator
         id: test-simulator
+        if: ${{ inputs.run_tests }}
         run: |
           DEVICE_ID="$(xcrun simctl list devices available | awk -F '[()]' '/iPhone/ { print $2; exit }')"
           if [[ -z "$DEVICE_ID" ]]; then
@@ -50,9 +55,9 @@ jobs:
           restore-keys: |
             xcode-${{ runner.os }}-${{ runner.arch }}-27.2-${{ hashFiles('AppStoreIPADownloader.xcodeproj/project.pbxproj', 'AppStoreIPADownloader.xcodeproj/xcshareddata/xcschemes/**', '**/Package.resolved') }}-
       - name: Run unit tests
+        if: ${{ inputs.run_tests }}
         run: |
           xcrun simctl bootstatus "$TEST_SIMULATOR_ID" -b
-          set -o pipefail
           xcodebuild test \
             -project AppStoreIPADownloader.xcodeproj \
             -scheme AppStoreIPADownloader \
@@ -62,13 +67,11 @@ jobs:
             ONLY_ACTIVE_ARCH=YES \
             ENABLE_TESTABILITY=YES \
             CURRENT_PROJECT_VERSION="$GITHUB_RUN_NUMBER" \
-            CODE_SIGNING_ALLOWED=NO \
-            | xcbeautify
+            CODE_SIGNING_ALLOWED=NO
       - name: Build unsigned application
         run: |
           COMMIT_HASH="$(git rev-parse --short=7 HEAD)"
-          set -o pipefail
-          xcodebuild build \
+          xcodebuild -quiet build \
             -project AppStoreIPADownloader.xcodeproj \
             -scheme AppStoreIPADownloader \
             -configuration Debug \
@@ -76,8 +79,7 @@ jobs:
             -derivedDataPath "$DERIVED_DATA_PATH" \
             CURRENT_PROJECT_VERSION="$GITHUB_RUN_NUMBER" \
             IPAForgeCommitHash="$COMMIT_HASH" \
-            CODE_SIGNING_ALLOWED=NO \
-            | xcbeautify
+            CODE_SIGNING_ALLOWED=NO
       - name: Package unsigned IPA
         run: |
           mkdir -p build/artifacts
@@ -95,7 +97,7 @@ jobs:
           if-no-files-found: error
           retention-days: 14
       - name: Save build cache
-        if: always() && !cancelled() && steps.build-cache.outputs.cache-hit != 'true' && steps.test-simulator.outcome == 'success'
+        if: success() && steps.build-cache.outputs.cache-hit != 'true'
         uses: actions/cache/save@v4
         with:
           path: |

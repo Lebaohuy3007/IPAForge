@@ -20,37 +20,13 @@ struct SavedAccountsView: View {
                         .foregroundStyle(.secondary)
                 } else {
                     ForEach(environment.storedAccounts) { account in
-                        Button {
-                            select(account)
-                        } label: {
-                            HStack {
-                                VStack(alignment: .leading, spacing: 4) {
-                                    Text(account.appleID)
-                                        .foregroundStyle(.primary)
-                                    Text("\(account.teams.count) developer team(s)")
-                                        .font(.caption)
-                                        .foregroundStyle(.secondary)
-                                    if let selectedTeam = account.teams.first(where: { $0.id == account.selectedTeamID }) {
-                                        Text("Selected team: \(selectedTeam.name)")
-                                            .font(.caption2)
-                                            .foregroundStyle(.secondary)
-                                    }
-                                }
-                                Spacer()
-                                if environment.selectedStoredAccountID == account.id {
-                                    Image(systemName: "checkmark")
-                                        .foregroundStyle(.tint)
-                                }
-                            }
-                            .contentShape(Rectangle())
-                        }
-                        .buttonStyle(.plain)
-                        .disabled(environment.authPhase == .authenticating)
-                        .swipeActions {
-                            Button("Delete", role: .destructive) {
-                                accountToDelete = account
-                            }
-                        }
+                        SavedAccountRow(
+                            account: account,
+                            isSelected: environment.selectedStoredAccountID == account.id,
+                            isDisabled: environment.authPhase == .authenticating,
+                            onSelect: { select(account) },
+                            onDelete: { accountToDelete = account }
+                        )
                     }
                 }
             } footer: {
@@ -119,5 +95,52 @@ struct SavedAccountsView: View {
             errorMessage = error.localizedDescription
         }
         accountToDelete = nil
+    }
+}
+
+private struct SavedAccountRow: View {
+    let account: StoredAppleAccount
+    let isSelected: Bool
+    let isDisabled: Bool
+    let onSelect: () -> Void
+    let onDelete: () -> Void
+
+    var body: some View {
+        Button(action: onSelect) {
+            HStack {
+                accountDetails
+                Spacer()
+                selectionIndicator
+            }
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .disabled(isDisabled)
+        .swipeActions {
+            Button("Delete", role: .destructive, action: onDelete)
+        }
+    }
+
+    private var accountDetails: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(account.appleID)
+                .foregroundStyle(.primary)
+            Text("\(account.teams.count) developer team(s)")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+            if let selectedTeam = account.teams.first(where: { $0.id == account.selectedTeamID }) {
+                Text("Selected team: \(selectedTeam.name)")
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var selectionIndicator: some View {
+        if isSelected {
+            Image(systemName: "checkmark")
+                .foregroundStyle(.tint)
+        }
     }
 }
