@@ -15,6 +15,7 @@
 
 * Giao diện SwiftUI, hỗ trợ iOS 16+ trở lên.
 * Tìm kiếm ứng dụng trên App Store theo tên hoặc App ID.
+* Chọn vùng App Store để xem kết quả theo quốc gia.
 * Xem thông tin ứng dụng: icon, Bundle ID, nhà phát triển và phiên bản.
 * Quản lý và tùy chỉnh Anisette Server.
 * Đăng nhập Apple ID, hỗ trợ xác minh 2FA và chọn Developer Team.

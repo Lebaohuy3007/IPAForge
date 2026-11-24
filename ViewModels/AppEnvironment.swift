@@ -12,16 +12,22 @@ final class AppEnvironment: ObservableObject {
     let export = ExportService()
     @Published var authPhase: AuthPhase = .signedOut
     @Published var authMessage = ""
-    @Published private(set) var storedAccounts: [StoredAppleAccount] = []
     @Published private(set) var selectedStoredAccountID: UUID?
     @Published private(set) var activeAccount: StoredAppleAccount?
-    @Published var accountVaultMessage = ""
     @Published private(set) var country: String
     private var loginAttemptID: UUID?
+    private let defaults: UserDefaults
+    private static let storeCountryKey = "appStore.country.v1"
 
-    init(accountVault: AppleAccountVault = AppleAccountVault()) {
+    init(
+        accountVault: AppleAccountVault = AppleAccountVault(),
+        defaults: UserDefaults = .standard
+    ) {
         self.accountVault = accountVault
-        country = Self.defaultAppStoreCountry
+        self.defaults = defaults
+        let storedCountry = defaults.string(forKey: Self.storeCountryKey)
+            .flatMap(Self.normalizedStoreCountry)
+        country = storedCountry ?? Self.defaultAppStoreCountry
         authentication = AuthenticationService(
             vault: accountVault,
             provider: StosSignAuthenticationProvider()
@@ -34,20 +40,21 @@ final class AppEnvironment: ObservableObject {
             self.authPhase = isAwaiting ? .waitingFor2FA : .authenticating
         }
         do {
-            storedAccounts = try accountVault.accounts()
+            let accounts = try accountVault.accounts()
             let selectedID = try accountVault.selectedAccountID()
-            selectedStoredAccountID = storedAccounts.contains(where: { $0.id == selectedID })
+            selectedStoredAccountID = accounts.contains(where: { $0.id == selectedID })
                 ? selectedID
                 : nil
-            if let selectedAccount = storedAccounts.first(where: { $0.id == selectedStoredAccountID }),
+            if storedCountry == nil,
+               let selectedAccount = accounts.first(where: { $0.id == selectedStoredAccountID }),
                let region = selectedAccount.storeCountry?
                 .trimmingCharacters(in: .whitespacesAndNewlines)
                 .lowercased(),
-               region.count == 2 {
+               Self.normalizedStoreCountry(region) != nil {
                 country = region
+                defaults.set(region, forKey: Self.storeCountryKey)
             }
         } catch {
-            accountVaultMessage = "Secure account storage is unavailable. Saved accounts were not loaded."
             logger.log(.error, "Could not load encrypted Apple Account records; secure storage is unavailable.")
         }
         logger.log(.info, "Application launched.")
@@ -59,31 +66,31 @@ final class AppEnvironment: ObservableObject {
     }
 
     static var defaultAppStoreCountry: String {
-        Locale.current.region?.identifier.lowercased() ?? "us"
+        normalizedStoreCountry(Locale.current.region?.identifier ?? "US") ?? "us"
     }
 
-    func selectStoredAccount(id: UUID) async throws {
-        guard let account = storedAccounts.first(where: { $0.id == id }) else {
-            throw AppleAccountVaultError.accountNotFound
-        }
-        try accountVault.setSelectedAccountID(id)
-        selectedStoredAccountID = id
-        if let region = account.storeCountry?
-            .trimmingCharacters(in: .whitespacesAndNewlines)
-            .lowercased(),
-           region.count == 2 {
-            country = region
-        } else {
-            country = Self.defaultAppStoreCountry
-        }
-        do {
-            try await restore(account)
-        } catch {
-            activeAccount = nil
-            authPhase = .signedOut
-            authMessage = "Could not restore the saved Apple session: \(LogSanitizer.sanitize(error.localizedDescription))"
-            throw error
-        }
+    static let supportedStoreCountries: [String] = {
+        Locale.Region.isoRegions
+            .filter { $0.subRegions.isEmpty && $0.identifier.count == 2 }
+            .map(\.identifier)
+            .map { $0.uppercased() }
+            .sorted { first, second in
+                let firstName = Locale.current.localizedString(forRegionCode: first) ?? first
+                let secondName = Locale.current.localizedString(forRegionCode: second) ?? second
+                return firstName.localizedStandardCompare(secondName) == .orderedAscending
+            }
+    }()
+
+    func setStoreCountry(_ value: String) {
+        guard let country = Self.normalizedStoreCountry(value) else { return }
+        self.country = country
+        defaults.set(country, forKey: Self.storeCountryKey)
+    }
+
+    private static func normalizedStoreCountry(_ value: String) -> String? {
+        let country = value.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
+        guard supportedStoreCountries.contains(country) else { return nil }
+        return country.lowercased()
     }
 
     func signIn(appleID: String, password: String) async throws {
@@ -109,8 +116,6 @@ final class AppEnvironment: ObservableObject {
                 anisetteHeaders: anisetteHeaders
             )
             guard loginAttemptID == attemptID else { throw CancellationError() }
-            storedAccounts = (storedAccounts.filter { $0.id != account.id } + [account])
-                .sorted { $0.id.uuidString < $1.id.uuidString }
             selectedStoredAccountID = account.id
             activeAccount = account
             authPhase = .signedIn
@@ -145,18 +150,6 @@ final class AppEnvironment: ObservableObject {
         )
         try accountVault.save(updatedAccount)
         activeAccount = updatedAccount
-        storedAccounts = storedAccounts.map { $0.id == updatedAccount.id ? updatedAccount : $0 }
-    }
-
-    func deleteStoredAccount(id: UUID) throws {
-        try accountVault.deleteAccount(id: id)
-        storedAccounts = try accountVault.accounts()
-        selectedStoredAccountID = try accountVault.selectedAccountID()
-        if activeAccount?.id == id {
-            authentication.signOut()
-            activeAccount = nil
-            authPhase = .signedOut
-        }
     }
 
     func cancelLogin() {
@@ -170,11 +163,10 @@ final class AppEnvironment: ObservableObject {
     func signOut() {
         authentication.signOut()
         do {
-            try accountVault.setSelectedAccountID(nil)
+            try accountVault.deleteAllAccounts()
             selectedStoredAccountID = nil
         } catch {
-            accountVaultMessage = error.localizedDescription
-            logger.logLogin(.error, "Could not clear the selected saved session: \(error.localizedDescription)")
+            logger.logLogin(.error, "Could not clear saved Apple sessions: \(error.localizedDescription)")
         }
         activeAccount = nil
         authPhase = .signedOut
@@ -183,11 +175,13 @@ final class AppEnvironment: ObservableObject {
     }
 
     private func restoreSelectedAccount() async {
-        guard let selectedID = selectedStoredAccountID,
-              let account = storedAccounts.first(where: { $0.id == selectedID }) else {
+        guard let selectedID = selectedStoredAccountID else {
             return
         }
         do {
+            guard let account = try accountVault.accounts().first(where: { $0.id == selectedID }) else {
+                throw AppleAccountVaultError.accountNotFound
+            }
             try await restore(account)
         } catch {
             authPhase = .signedOut
@@ -210,7 +204,6 @@ final class AppEnvironment: ObservableObject {
             anisetteHeaders: anisetteHeaders
         )
         activeAccount = restoredAccount
-        storedAccounts = storedAccounts.map { $0.id == restoredAccount.id ? restoredAccount : $0 }
         selectedStoredAccountID = restoredAccount.id
         authPhase = .signedIn
         logger.logLogin(.success, "Restored Apple session and fetched Developer Teams.")

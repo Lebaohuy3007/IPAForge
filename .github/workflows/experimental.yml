@@ -63,7 +63,8 @@ jobs:
         if: ${{ inputs.run_tests }}
         run: |
           xcrun simctl bootstatus "$TEST_SIMULATOR_ID" -b
-          xcodebuild test \
+          set -o pipefail
+          xcodebuild -quiet test \
             -project AppStoreIPADownloader.xcodeproj \
             -scheme AppStoreIPADownloader \
             -destination "platform=iOS Simulator,id=$TEST_SIMULATOR_ID" \
@@ -72,10 +73,16 @@ jobs:
             ONLY_ACTIVE_ARCH=YES \
             ENABLE_TESTABILITY=YES \
             CURRENT_PROJECT_VERSION="$GITHUB_RUN_NUMBER" \
-            CODE_SIGNING_ALLOWED=NO
+            CODE_SIGNING_ALLOWED=NO \
+            2>&1 | awk '
+              /DVTAssertions: Warning in DVTiOSFrameworks\/IDEiOSSupportCore\/DVTiPhoneSimulator\.m:661/ { suppress = 1; next }
+              suppress && /Please file a bug at https:\/\/feedbackassistant\.apple\.com/ { suppress = 0; next }
+              !suppress { print }
+            '
       - name: Build unsigned application
         run: |
           COMMIT_HASH="$(git rev-parse --short=7 HEAD)"
+          set -o pipefail
           xcodebuild -quiet build \
             -project AppStoreIPADownloader.xcodeproj \
             -scheme AppStoreIPADownloader \
@@ -84,7 +91,12 @@ jobs:
             -derivedDataPath "$DERIVED_DATA_PATH" \
             CURRENT_PROJECT_VERSION="$GITHUB_RUN_NUMBER" \
             IPAForgeCommitHash="$COMMIT_HASH" \
-            CODE_SIGNING_ALLOWED=NO
+            CODE_SIGNING_ALLOWED=NO \
+            2>&1 | awk '
+              /DVTAssertions: Warning in DVTiOSFrameworks\/IDEiOSSupportCore\/DVTiPhoneSimulator\.m:661/ { suppress = 1; next }
+              suppress && /Please file a bug at https:\/\/feedbackassistant\.apple\.com/ { suppress = 0; next }
+              !suppress { print }
+            '
       - name: Package unsigned IPA
         run: |
           mkdir -p build/artifacts

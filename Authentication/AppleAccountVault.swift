@@ -130,6 +130,13 @@ final class AppleAccountVault {
         try keychain.deleteData(for: key)
     }
 
+    func deleteAllAccounts() throws {
+        try setSelectedAccountID(nil)
+        for key in try keychain.keys(withPrefix: accountKeyPrefix) {
+            try keychain.deleteData(for: key)
+        }
+    }
+
     func selectedAccountID() throws -> UUID? {
         guard let encryptedID = try keychain.data(for: selectedAccountName) else {
             return nil

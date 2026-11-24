@@ -19,29 +19,7 @@ private struct ProfileView: View {
         NavigationStack {
             List {
                 Section {
-                    VStack(spacing: 12) {
-                        Image(systemName: "person.crop.circle.fill")
-                            .font(.system(size: 72))
-                            .foregroundStyle(.tint)
-                        Text(environment.authPhase == .signedIn
-                             ? (environment.activeAccount?.appleID ?? "Apple Account")
-                             : "Your Profile")
-                            .font(.title3.bold())
-                        Text(profileStatus)
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                            .multilineTextAlignment(.center)
-                        if environment.authPhase == .signedOut {
-                            Button("Apple Account Sign In") {
-                                destination = .login
-                            }
-                            .buttonStyle(.borderedProminent)
-                        }
-                    }
-
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 16)
-                    .listRowBackground(Color.clear)
+                    profileAccountSection
                 }
 
                 Section("Your Library") {
@@ -49,7 +27,6 @@ private struct ProfileView: View {
                 }
 
                 Section("Account") {
-                    profileRow("Saved Accounts", symbol: "person.2", destination: .savedAccounts)
                     profileRow("Anisette Server", symbol: "server.rack", destination: .anisette)
                 }
 
@@ -68,10 +45,8 @@ private struct ProfileView: View {
                     LoginView()
                 case .downloads:
                     DownloadManagerView()
-                case .savedAccounts:
-                    SavedAccountsView()
                 case .anisette:
-                    AnisetteServersView()
+                    AnisetteServersView(store: environment.anisetteServers)
                 case .logs:
                     LogViewerView()
                 }
@@ -79,17 +54,99 @@ private struct ProfileView: View {
         }
     }
 
-    private var profileStatus: String {
-        switch environment.authPhase {
-        case .signedOut:
-            return "Sign in with your Apple Account."
-        case .waitingFor2FA:
-            return "Waiting for Apple two-factor verification."
-        case .authenticating:
-            return "Authenticating or restoring your Apple session…"
-        case .signedIn:
-            return "Signed in"
+    @ViewBuilder
+    private var profileAccountSection: some View {
+        if environment.authPhase == .authenticating {
+            HStack(spacing: 10) {
+                ProgressView()
+                Text("Đang khôi phục phiên đăng nhập…")
+                    .foregroundStyle(.secondary)
+            }
+        } else if environment.authPhase == .signedIn,
+                  let account = environment.activeAccount {
+            HStack(spacing: 12) {
+                profileImage
+                VStack(alignment: .leading, spacing: 5) {
+                    Text(account.appleID)
+                        .font(.headline)
+                        .textSelection(.enabled)
+                    Label("Signed in", systemImage: "checkmark.circle.fill")
+                        .font(.subheadline)
+                        .foregroundStyle(.green)
+                }
+            }
+            .padding(.vertical, 4)
+
+            Picker("Region", selection: Binding(
+                get: { environment.country.uppercased() },
+                set: { environment.setStoreCountry($0) }
+            )) {
+                ForEach(AppEnvironment.supportedStoreCountries, id: \.self) { code in
+                    Text("\(Locale.current.localizedString(forRegionCode: code) ?? code) (\(code))")
+                        .tag(code)
+                }
+            }
+            .pickerStyle(.menu)
+
+            if account.teams.count > 1 {
+                Picker("Developer Team", selection: Binding(
+                    get: { account.selectedTeamID ?? "" },
+                    set: { teamID in
+                        guard !teamID.isEmpty else { return }
+                        do {
+                            try environment.selectDeveloperTeam(id: teamID)
+                        } catch {
+                            environment.authMessage = error.localizedDescription
+                        }
+                    }
+                )) {
+                    Text("Select a team").tag("")
+                    ForEach(account.teams) { team in
+                        Text(team.name).tag(team.id)
+                    }
+                }
+                .pickerStyle(.menu)
+            }
+
+            if !environment.authMessage.isEmpty {
+                Text(environment.authMessage)
+                    .font(.footnote)
+                    .foregroundStyle(.red)
+            }
+
+            Button(role: .destructive) {
+                environment.signOut()
+            } label: {
+                Label("Đăng xuất", systemImage: "rectangle.portrait.and.arrow.right")
+            }
+        } else {
+            Button {
+                destination = .login
+            } label: {
+                HStack(spacing: 12) {
+                    profileImage
+                    Text("Đăng nhập bằng Tài khoản Apple")
+                        .font(.headline)
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(.tertiary)
+                }
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            if !environment.authMessage.isEmpty {
+                Text(environment.authMessage)
+                    .font(.footnote)
+                    .foregroundStyle(.red)
+            }
         }
+    }
+
+    private var profileImage: some View {
+        Image(systemName: "person.crop.circle.fill")
+            .font(.system(size: 48))
+            .foregroundStyle(.tint)
     }
 
     private func profileRow(
@@ -109,7 +166,6 @@ private struct ProfileView: View {
 private enum ProfileDestination: String, Identifiable {
     case login
     case downloads
-    case savedAccounts
     case anisette
     case logs
 

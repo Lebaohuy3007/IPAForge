@@ -34,11 +34,13 @@ struct AppDetailView: View {
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
-                Button("Tải xuống") {
+                Button {
                     environment.downloads.start(app: app)
+                } label: {
+                    Label("Tải xuống", systemImage: "arrow.down.to.line")
                 }
-                .buttonStyle(.borderedProminent)
-                .frame(maxWidth: .infinity)
+                .buttonStyle(.plain)
+                .frame(maxWidth: .infinity, alignment: .leading)
                 Text("Downloads require Apple Account entitlement. IPA delivery is not implemented in this build.")
                     .font(.caption)
                     .foregroundStyle(.secondary)

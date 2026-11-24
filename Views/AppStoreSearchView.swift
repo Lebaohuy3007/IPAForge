@@ -10,17 +10,13 @@ struct AppStoreSearchView: View {
     var body: some View {
         NavigationStack {
             VStack {
-                HStack {
-                    TextField("Tên, Bundle ID hoặc App Store ID", text: $query)
-                        .textFieldStyle(.roundedBorder)
-                        .textInputAutocapitalization(.never)
-                        .autocorrectionDisabled()
-                    Button("Search") { search() }
-                        .disabled(query.isEmpty || isLoading)
+                if isLoading {
+                    HStack(spacing: 8) {
+                        ProgressView()
+                        Text("Searching...")
+                    }
+                    .padding(.horizontal)
                 }
-                .padding()
-
-                if isLoading { ProgressView("Searching...") }
                 if let errorMessage {
                     Text(errorMessage).foregroundStyle(.red).padding(.horizontal)
                 }
@@ -34,16 +30,24 @@ struct AppStoreSearchView: View {
                 }
             }
             .navigationTitle("App Store")
+            .searchable(
+                text: $query,
+                placement: .navigationBarDrawer(displayMode: .always),
+                prompt: "Tên, Bundle ID hoặc App Store ID"
+            )
+            .onSubmit(of: .search) { search() }
         }
     }
 
     private func search() {
+        let searchQuery = query.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !searchQuery.isEmpty, !isLoading else { return }
         isLoading = true
         errorMessage = nil
         Task {
             do {
                 results = try await environment.appStore.search(
-                    query, country: environment.country
+                    searchQuery, country: environment.country
                 )
                 environment.logger.log(.info, "App Store search completed.")
             } catch {
@@ -71,7 +75,6 @@ private struct AppRow: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(app.name).font(.headline)
                 Text(app.developer).font(.subheadline).foregroundStyle(.secondary)
-                Text(app.bundleID).font(.caption).foregroundStyle(.tertiary)
                 Text("v\(app.version)").font(.caption).foregroundStyle(.secondary)
             }
         }

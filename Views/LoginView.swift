@@ -2,6 +2,7 @@ import SwiftUI
 
 struct LoginView: View {
     @EnvironmentObject private var environment: AppEnvironment
+    @Environment(\.dismiss) private var dismiss
     @State private var appleID = ""
     @State private var password = ""
     @State private var verificationCode = ""
@@ -87,7 +88,10 @@ struct LoginView: View {
                                 }
                             }
                         } else {
-                            ProgressView("Restoring Apple session…")
+                            HStack(spacing: 8) {
+                                ProgressView()
+                                Text("Restoring Apple session…")
+                            }
                         }
                         Button("Đăng xuất", role: .destructive) {
                             appleID = ""
@@ -112,7 +116,10 @@ struct LoginView: View {
                             verificationCode = ""
                         }
                     } else if environment.authPhase == .authenticating && !isSigningIn {
-                        ProgressView("Restoring Apple session…")
+                        HStack(spacing: 8) {
+                            ProgressView()
+                            Text("Restoring Apple session…")
+                        }
                     } else {
                         TextField("Apple ID / Email", text: $appleID)
                             .textContentType(.username)
@@ -145,13 +152,21 @@ struct LoginView: View {
                             .accessibilityLabel(isPasswordVisible ? "Hide password" : "Show password")
                         }
                         if isSigningIn {
-                            ProgressView("Signing in…")
+                            HStack(spacing: 8) {
+                                ProgressView()
+                                Text("Signing in…")
+                            }
                             Button("Cancel Sign In", role: .cancel) {
                                 environment.cancelLogin()
                             }
                         } else {
                             Button("Continue") { login() }
                         }
+                    }
+                    if !statusMessage.isEmpty {
+                        Text(statusMessage)
+                            .font(.footnote)
+                            .foregroundStyle(.red)
                     }
                 }
 
@@ -168,15 +183,6 @@ struct LoginView: View {
                         .disabled(environment.logger.loginEntries.isEmpty)
                     }
                 }
-
-                Section("Status") {
-                    Text(statusMessage.isEmpty
-                         ? (environment.authMessage.isEmpty
-                            ? "Use an Anisette v3 server to sign in to your Apple Account."
-                            : environment.authMessage)
-                         : statusMessage)
-                        .foregroundStyle(.secondary)
-                }
             }
             .navigationTitle("Apple Account")
             .onAppear {
@@ -184,7 +190,7 @@ struct LoginView: View {
             }
             .sheet(isPresented: $showingAnisetteServers) {
                 NavigationStack {
-                    AnisetteServersView()
+                    AnisetteServersView(store: environment.anisetteServers)
                 }
             }
         }
@@ -212,7 +218,7 @@ struct LoginView: View {
             }
             do {
                 try await environment.signIn(appleID: submittedAppleID, password: submittedPassword)
-                statusMessage = "Apple Account signed in and Developer Teams loaded."
+                dismiss()
             } catch {
                 if error is CancellationError {
                     statusMessage = "Sign-in cancelled."
