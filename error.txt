@@ -1,27 +1,24 @@
-2026-11-24T03:24:55.9504370Z ##[group]Run DEVICE_ID="$(xcrun simctl list devices available | awk -F '[()]' '/iPhone/ { print $2; exit }')"
-2026-11-24T03:24:55.9504990Z [36;1mDEVICE_ID="$(xcrun simctl list devices available | awk -F '[()]' '/iPhone/ { print $2; exit }')"[0m
-2026-11-24T03:24:55.9505440Z [36;1mtest -n "$DEVICE_ID"[0m
-2026-11-24T03:24:55.9505650Z [36;1mxcodebuild test \[0m
-2026-11-24T03:24:55.9505900Z [36;1m  -project AppStoreIPADownloader.xcodeproj \[0m
-2026-11-24T03:24:55.9506200Z [36;1m  -scheme AppStoreIPADownloader \[0m
-2026-11-24T03:24:55.9506510Z [36;1m  -destination "platform=iOS Simulator,id=$DEVICE_ID" \[0m
-2026-11-24T03:24:55.9506810Z [36;1m  CODE_SIGNING_ALLOWED=NO[0m
-2026-11-24T03:24:55.9536450Z shell: /bin/bash -e {0}
-2026-11-24T03:24:55.9536650Z env:
-2026-11-24T03:24:55.9536850Z   MD_APPLE_SDK_ROOT: /Applications/Xcode_26.3.app
-2026-11-24T03:24:55.9537080Z ##[endgroup]
-2026-11-24T03:25:01.3322640Z Command line invocation:
-2026-11-24T03:25:01.3325310Z     /Applications/Xcode_26.3.app/Contents/Developer/usr/bin/xcodebuild test -project AppStoreIPADownloader.xcodeproj -scheme AppStoreIPADownloader -destination "platform=iOS Simulator,id=DA1C9012-81EC-4C70-B52A-068AEAFBA1DE" CODE_SIGNING_ALLOWED=NO
-2026-11-24T03:25:01.3326650Z 
-2026-11-24T03:25:01.3327400Z Build settings from command line:
-2026-11-24T03:25:01.3328300Z     CODE_SIGNING_ALLOWED = NO
-2026-11-24T03:25:01.3329330Z 
-2026-11-24T03:25:01.4665010Z 2026-11-24 03:25:01.466 xcodebuild[1933:9710] Error Domain=NSCocoaErrorDomain Code=3840 "JSON text did not start with array or object and option to allow fragments not set. around line 1, column 0." UserInfo={NSDebugDescription=JSON text did not start with array or object and option to allow fragments not set. around line 1, column 0., NSJSONSerializationErrorIndex=0}
-2026-11-24T03:25:01.4714180Z 2026-11-24 03:25:01.471 xcodebuild[1933:9710] Writing error result bundle to /var/folders/9d/l02zfgrs7c16twd3wbpdmhkc0000gn/T/ResultBundle_2026-24-11_03-25-0001.xcresult
-2026-11-24T03:25:01.5575990Z xcodebuild: error: Unable to read project 'AppStoreIPADownloader.xcodeproj'.
-2026-11-24T03:25:01.5638170Z 	Reason: The project ‘AppStoreIPADownloader’ is damaged and cannot be opened due to a parse error. Examine the project file for invalid edits or unresolved source control conflicts.
-2026-11-24T03:25:01.5646010Z 
-2026-11-24T03:25:01.5646530Z Path: /Users/runner/work/IPAForge/IPAForge/AppStoreIPADownloader.xcodeproj
-2026-11-24T03:25:01.5646980Z 
-2026-11-24T03:25:01.5647100Z 
-2026-11-24T03:25:01.5655020Z ##[error]Process completed with exit code 74.
+2026-11-24T03:32:20.6221980Z ##[group]Run DEVICE_ID="$(xcrun simctl list devices available | awk -F '[()]' '/iPhone/ { print $2; exit }')"
+2026-11-24T03:32:20.6222550Z [36;1mDEVICE_ID="$(xcrun simctl list devices available | awk -F '[()]' '/iPhone/ { print $2; exit }')"[0m
+2026-11-24T03:32:20.6222930Z [36;1mtest -n "$DEVICE_ID"[0m
+2026-11-24T03:32:20.6223100Z [36;1mxcodebuild test \[0m
+2026-11-24T03:32:20.6223310Z [36;1m  -project AppStoreIPADownloader.xcodeproj \[0m
+2026-11-24T03:32:20.6223550Z [36;1m  -scheme AppStoreIPADownloader \[0m
+2026-11-24T03:32:20.6223810Z [36;1m  -destination "platform=iOS Simulator,id=$DEVICE_ID" \[0m
+2026-11-24T03:32:20.6224050Z [36;1m  CODE_SIGNING_ALLOWED=NO[0m
+2026-11-24T03:32:20.6249170Z shell: /bin/bash -e {0}
+2026-11-24T03:32:20.6249340Z env:
+2026-11-24T03:32:20.6249510Z   MD_APPLE_SDK_ROOT: /Applications/Xcode_26.3.app
+2026-11-24T03:32:20.6249720Z ##[endgroup]
+2026-11-24T03:32:25.7189830Z Command line invocation:
+2026-11-24T03:32:25.7305060Z     /Applications/Xcode_26.3.app/Contents/Developer/usr/bin/xcodebuild test -project AppStoreIPADownloader.xcodeproj -scheme AppStoreIPADownloader -destination "platform=iOS Simulator,id=DA1C9012-81EC-4C70-B52A-068AEAFBA1DE" CODE_SIGNING_ALLOWED=NO
+2026-11-24T03:32:25.7415100Z 
+2026-11-24T03:32:25.7518460Z Build settings from command line:
+2026-11-24T03:32:25.7622720Z     CODE_SIGNING_ALLOWED = NO
+2026-11-24T03:32:25.7723640Z 
+2026-11-24T03:32:26.5303420Z --- xcodebuild: WARNING: Using the first of multiple matching destinations:
+2026-11-24T03:32:26.5304460Z { platform:iOS Simulator, arch:arm64, id:DA1C9012-81EC-4C70-B52A-068AEAFBA1DE, OS:18.5, name:iPhone 16 Pro }
+2026-11-24T03:32:26.5305080Z { platform:iOS Simulator, arch:x86_64, id:DA1C9012-81EC-4C70-B52A-068AEAFBA1DE, OS:18.5, name:iPhone 16 Pro }
+2026-11-24T03:32:26.5394210Z 2026-11-24 03:32:26.539 xcodebuild[2309:11396] Writing error result bundle to /var/folders/9d/l02zfgrs7c16twd3wbpdmhkc0000gn/T/ResultBundle_2026-24-11_03-32-0026.xcresult
+2026-11-24T03:32:26.6152880Z xcodebuild: error: Failed to build project AppStoreIPADownloader with scheme AppStoreIPADownloader.: Could not find test host for AppStoreIPADownloaderTests: TEST_HOST evaluates to "/Users/runner/Library/Developer/Xcode/DerivedData/AppStoreIPADownloader-bstuohhsbcrllhdbiwochiyfavlp/Build/Products/Debug-iphonesimulator/AppStoreIPADownloader.app/AppStoreIPADownloader"
+2026-11-24T03:32:26.6194960Z ##[error]Process completed with exit code 70.
