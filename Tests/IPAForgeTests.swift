@@ -65,7 +65,7 @@ final class AnisetteURLValidatorTests: XCTestCase {
         let result = await service.testConnection(serverURL: "https://anisette.example")
         XCTAssertEqual(result.state, .responded)
         XCTAssertNotNil(result.durationMilliseconds)
-        XCTAssertEqual(result.httpStatusCode, 200)
+        XCTAssertGreaterThanOrEqual(result.durationMilliseconds ?? -1, 0)
 
         MockURLProtocol.responseData = Data(#"{"message":"ok"}"#.utf8)
         let responseOnly = await service.testConnection(serverURL: "https://anisette.example")
@@ -77,6 +77,7 @@ final class AnisetteURLValidatorTests: XCTestCase {
 
         let invalidURLResult = await service.testConnection(serverURL: "http://anisette.example")
         XCTAssertEqual(invalidURLResult.state, .invalidURL)
+        XCTAssertNil(invalidURLResult.durationMilliseconds)
     }
 
     func testTimeoutAndHTTPErrorAreNotUsable() async {
@@ -92,7 +93,6 @@ final class AnisetteURLValidatorTests: XCTestCase {
         MockURLProtocol.statusCode = 503
         let httpError = await service.testConnection(serverURL: "https://anisette.example")
         XCTAssertEqual(httpError.state, .responded)
-        XCTAssertEqual(httpError.httpStatusCode, 503)
         XCTAssertFalse(httpError.state.isUsable)
     }
 
@@ -254,6 +254,8 @@ final class AnisetteServerStoreTests: XCTestCase {
 
         let id = try await store.add(name: "  Personal  ", url: "https://personal.example/")
         XCTAssertEqual(store.servers.last?.name, "Personal")
+        XCTAssertEqual(store.probeResults[id]?.state, .unchecked)
+        await store.refresh(serverID: id)
         XCTAssertEqual(store.probeResults[id]?.state, .validV3)
         XCTAssertEqual(store.selectedServerID, sideStoreID)
 
@@ -284,6 +286,8 @@ final class AnisetteServerStoreTests: XCTestCase {
         }
 
         let id = try await store.add(name: "Invalid response", url: "https://invalid.example")
+        XCTAssertEqual(store.probeResults[id]?.state, .unchecked)
+        await store.refresh(serverID: id)
         XCTAssertEqual(store.probeResults[id]?.state, .responded)
         try store.select(serverID: id)
         XCTAssertEqual(store.selectedServerID, id)

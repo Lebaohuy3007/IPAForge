@@ -1,0 +1,6 @@
+Chỉ hiển thị Tên sv và url thôi, neeus có cơ chế auto đổi anisette server nếu server ko phản hồi cũng xoas, khi nhập ủrl server mới, app sẽ đo bên kia nếu trả kết quả đc thì app sẽ thêm và nếu app trả kết quả ko kết nối đc thì app sẽ cảnh báo:
+Thông báo
+URL này có thể không hợp lệ. Bạn có chắc muốn thêm vào danh sách không?
+Cancel | OK
+Tui ãnaamx nghĩ thấy cái nút kiểm tra thì ấn nút kiểm tra sẽ hiện ra ms
+Ừ, ấn nút Kieemr tra sẽ hiện ra ms ở dưới

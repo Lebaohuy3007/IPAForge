@@ -1,7 +1,6 @@
 import Foundation
 import Combine
 import CryptoKit
-import Dispatch
 
 enum AnisetteProbeState: Equatable {
     case unchecked
@@ -26,13 +25,6 @@ enum AnisetteProbeState: Equatable {
 struct AnisetteProbeResult: Equatable {
     let state: AnisetteProbeState
     let durationMilliseconds: Int?
-    let httpStatusCode: Int?
-
-    init(state: AnisetteProbeState, durationMilliseconds: Int?, httpStatusCode: Int? = nil) {
-        self.state = state
-        self.durationMilliseconds = durationMilliseconds
-        self.httpStatusCode = httpStatusCode
-    }
 }
 
 struct AnisetteServer: Codable, Identifiable, Equatable {
@@ -260,6 +252,7 @@ final class AnisetteService: AnisetteServiceProtocol {
     }
 
     func testConnection(serverURL: String) async -> AnisetteProbeResult {
+        let startTime = ProcessInfo.processInfo.systemUptime
         guard let baseURL = AnisetteURLValidator.validatedBaseURL(serverURL) else {
             return AnisetteProbeResult(state: .invalidURL, durationMilliseconds: nil)
         }
@@ -269,37 +262,27 @@ final class AnisetteService: AnisetteServiceProtocol {
         request.timeoutInterval = 8
         request.cachePolicy = .reloadIgnoringLocalCacheData
         request.httpShouldHandleCookies = false
-        let startedAt = DispatchTime.now().uptimeNanoseconds
-
         do {
             let (data, response) = try await session.data(for: request)
-            let elapsed = Int((DispatchTime.now().uptimeNanoseconds - startedAt) / 1_000_000)
             guard let http = response as? HTTPURLResponse else {
-                return AnisetteProbeResult(state: .responded, durationMilliseconds: elapsed)
+                return probeResult(.responded, since: startTime)
             }
             guard AnisetteURLValidator.hasSameHTTPSOrigin(http.url, request.url) else {
-                return AnisetteProbeResult(
-                    state: .responded,
-                    durationMilliseconds: elapsed,
-                    httpStatusCode: http.statusCode
-                )
+                return probeResult(.responded, since: startTime)
             }
             guard (200...299).contains(http.statusCode) else {
-                return AnisetteProbeResult(
-                    state: .responded,
-                    durationMilliseconds: elapsed,
-                    httpStatusCode: http.statusCode
-                )
+                return probeResult(.responded, since: startTime)
             }
             let state = Self.isValidV3ClientInfo(data) ? AnisetteProbeState.validV3 : .responded
-            return AnisetteProbeResult(
-                state: state,
-                durationMilliseconds: elapsed,
-                httpStatusCode: http.statusCode
-            )
+            return probeResult(state, since: startTime)
         } catch {
-            return AnisetteProbeResult(state: .noResponse, durationMilliseconds: nil)
+            return probeResult(.noResponse, since: startTime)
         }
+    }
+
+    private func probeResult(_ state: AnisetteProbeState, since startTime: TimeInterval) -> AnisetteProbeResult {
+        let elapsed = max(0, ProcessInfo.processInfo.systemUptime - startTime)
+        return AnisetteProbeResult(state: state, durationMilliseconds: Int((elapsed * 1_000).rounded()))
     }
 
     func clearIdentity(forServer serverURL: String) throws {
@@ -767,7 +750,6 @@ final class AnisetteServerStore: ObservableObject {
         servers.append(server)
         probeResults[server.id] = AnisetteProbeResult(state: .unchecked, durationMilliseconds: nil)
         persistServers()
-        await refresh(serverID: server.id)
         return server.id
     }
 
@@ -800,7 +782,6 @@ final class AnisetteServerStore: ObservableObject {
             }
         }
         persistServers()
-        await refresh(serverID: serverID)
     }
 
     func delete(serverID: UUID) throws {

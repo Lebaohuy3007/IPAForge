@@ -10,6 +10,7 @@ struct AnisetteServersView: View {
     @State private var provisioningServerID: UUID?
     @State private var provisioningRequestID: UUID?
     @State private var provisioningTask: Task<Void, Never>?
+    @State private var checkingAllServers = false
 
     init(store: AnisetteServerStore) {
         _store = ObservedObject(wrappedValue: store)
@@ -17,16 +18,6 @@ struct AnisetteServersView: View {
 
     var body: some View {
         List {
-            if store.hasFinishedInitialChecks && !store.hasUsableServer {
-                Section {
-                    Label(
-                        "Hiện tại không có Anisette Server khả dụng. Hãy kiểm tra kết nối hoặc thêm nguồn khác.",
-                        systemImage: "exclamationmark.triangle"
-                    )
-                    .foregroundStyle(.orange)
-                }
-            }
-
             Section {
                 ForEach(Array(store.servers.enumerated()), id: \.element.id) { index, server in
                     HStack(spacing: 8) {
@@ -37,7 +28,6 @@ struct AnisetteServersView: View {
                                 index: index,
                                 server: server,
                                 isSelected: store.selectedServerID == server.id,
-                                isProvisioning: provisioningServerID == server.id,
                                 store: store
                             )
                         }
@@ -67,8 +57,6 @@ struct AnisetteServersView: View {
                 }
             } header: {
                 Text("Chọn Anisette Server")
-            } footer: {
-                Text("Khi chọn server, ứng dụng tự tạo dữ liệu Anisette v3. Server nhận identifier và dữ liệu provisioning Apple; Apple ID, mật khẩu và mã xác minh không được gửi.")
             }
 
             Section {
@@ -94,13 +82,19 @@ struct AnisetteServersView: View {
                 Button("Đóng") { dismiss() }
             }
             ToolbarItem(placement: .confirmationAction) {
-                Button("Kiểm tra") {
+                Button(checkingAllServers ? "Đang kiểm tra…" : "Kiểm tra") {
+                    guard !checkingAllServers else { return }
+                    checkingAllServers = true
                     store.refreshAll(force: true)
+                    Task { @MainActor in
+                        while !store.checkingIDs.isEmpty {
+                            try? await Task.sleep(for: .milliseconds(100))
+                        }
+                        checkingAllServers = false
+                    }
                 }
+                .disabled(checkingAllServers)
             }
-        }
-        .onAppear {
-            store.refreshAll()
         }
         .sheet(item: $editorRoute) { route in
             NavigationStack {
@@ -170,7 +164,6 @@ private struct AnisetteServerRow: View {
     let index: Int
     let server: AnisetteServer
     let isSelected: Bool
-    let isProvisioning: Bool
     @ObservedObject var store: AnisetteServerStore
 
     var body: some View {
@@ -179,13 +172,6 @@ private struct AnisetteServerRow: View {
                 HStack {
                     Text("#\(index + 1) \(server.name)")
                         .font(.headline)
-                    if server.isDefault {
-                        Text("Mặc định")
-                            .font(.caption2)
-                            .padding(.horizontal, 6)
-                            .padding(.vertical, 2)
-                            .background(.secondary.opacity(0.15), in: Capsule())
-                    }
                     Spacer()
                     if isSelected {
                         Image(systemName: "checkmark")
@@ -195,18 +181,7 @@ private struct AnisetteServerRow: View {
                 Text(server.url)
                     .font(.caption)
                     .foregroundStyle(.secondary)
-                if isProvisioning {
-                    HStack(spacing: 6) {
-                        ProgressView()
-                            .controlSize(.small)
-                        Text("Đang tạo dữ liệu Anisette v3…")
-                            .font(.caption)
-                    }
-                    .foregroundStyle(.secondary)
-                }
-                if !isProvisioning {
-                    AnisetteProbeStatusView(serverID: server.id, store: store)
-                }
+                AnisetteProbeStatusView(serverID: server.id, store: store)
             }
         }
         .padding(.vertical, 3)
@@ -224,41 +199,14 @@ struct AnisetteProbeStatusView: View {
                 .controlSize(.small)
                 .foregroundStyle(.secondary)
         } else if let result = store.probeResults[serverID] {
-            switch result.state {
-            case .validV3:
-                measurement(result, isSuccessful: true)
-            case .responded:
-                measurement(result, isSuccessful: false)
-            case .noResponse, .invalidURL:
-                Text(result.state.title)
+            if result.state != .unchecked, let milliseconds = result.durationMilliseconds {
+                Text(result.state == .noResponse || result.state == .invalidURL
+                     ? "Không kết nối được · \(milliseconds) ms"
+                     : "\(milliseconds) ms")
                     .font(.caption)
-                    .foregroundStyle(.red)
-            case .unchecked:
-                Text(result.state.title)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(result.state == .noResponse || result.state == .invalidURL ? .red : .secondary)
             }
-        } else {
-            Text("— ms")
-                .font(.caption)
-                .foregroundStyle(.secondary)
         }
-    }
-
-    private func measurement(_ result: AnisetteProbeResult, isSuccessful: Bool) -> some View {
-        HStack(spacing: 4) {
-            Text("\(result.durationMilliseconds.map(String.init) ?? "—") ms +")
-                .foregroundStyle(isSuccessful ? Color.green : Color.orange)
-            Text("HTTP \(result.httpStatusCode.map(String.init) ?? "—")")
-                .foregroundStyle(isSuccessful ? Color.green : Color.orange)
-                .padding(.horizontal, 6)
-                .padding(.vertical, 2)
-                .background(
-                    (isSuccessful ? Color.green : Color.yellow).opacity(0.2),
-                    in: Capsule()
-                )
-        }
-        .font(.caption.weight(.medium))
     }
 }
 
@@ -301,6 +249,7 @@ private struct AnisetteServerEditorView: View {
     @State private var url: String
     @State private var isSaving = false
     @State private var errorMessage: String?
+    @State private var showUnreachableConfirmation = false
 
     init(server: AnisetteServer? = nil) {
         self.server = server
@@ -339,6 +288,14 @@ private struct AnisetteServerEditorView: View {
         }
         .navigationTitle(server == nil ? "Thêm Anisette Server" : "Sửa Anisette Server")
         .navigationBarTitleDisplayMode(.inline)
+        .alert("Thông báo", isPresented: $showUnreachableConfirmation) {
+            Button("Cancel", role: .cancel) {}
+            Button("OK") {
+                saveNewServer()
+            }
+        } message: {
+            Text("URL này có thể không hợp lệ. Bạn có chắc muốn thêm vào danh sách không?")
+        }
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
                 Button("Hủy") { dismiss() }
@@ -363,11 +320,35 @@ private struct AnisetteServerEditorView: View {
                         url: AnisetteServerURLInput.fullURL(from: url)
                     )
                 } else {
+                    let normalizedURL = AnisetteServerURLInput.fullURL(from: url)
+                    let result = await environment.anisette.testConnection(serverURL: normalizedURL)
+                    guard result.state != .noResponse && result.state != .invalidURL else {
+                        showUnreachableConfirmation = true
+                        isSaving = false
+                        return
+                    }
                     _ = try await environment.anisetteServers.add(
                         name: name,
-                        url: AnisetteServerURLInput.fullURL(from: url)
+                        url: normalizedURL
                     )
                 }
+                dismiss()
+            } catch {
+                errorMessage = error.localizedDescription
+            }
+            isSaving = false
+        }
+    }
+
+    private func saveNewServer() {
+        isSaving = true
+        errorMessage = nil
+        Task {
+            do {
+                _ = try await environment.anisetteServers.add(
+                    name: name,
+                    url: AnisetteServerURLInput.fullURL(from: url)
+                )
                 dismiss()
             } catch {
                 errorMessage = error.localizedDescription
