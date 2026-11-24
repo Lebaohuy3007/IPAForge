@@ -1,5 +1,5 @@
 name: Experimental Build
-run-name: UI
+run-name: Apple ID Test
 on:
   workflow_dispatch:
 
