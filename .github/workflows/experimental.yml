@@ -26,9 +26,14 @@ jobs:
       - name: Install xcbeautify
         run: brew install xcbeautify
       - name: Start test simulator
+        id: test-simulator
         run: |
-          DEVICE_ID="$(xcrun simctl list devices available | awk -F '[()]' '/iPhone 16 \(/ { print $2; exit }')"
-          test -n "$DEVICE_ID"
+          DEVICE_ID="$(xcrun simctl list devices available | awk -F '[()]' '/iPhone/ { print $2; exit }')"
+          if [[ -z "$DEVICE_ID" ]]; then
+            xcrun simctl list devices available
+            echo "::error::No available iPhone simulator was found on this runner."
+            exit 1
+          fi
           echo "TEST_SIMULATOR_ID=$DEVICE_ID" >> "$GITHUB_ENV"
           xcrun simctl boot "$DEVICE_ID" >/dev/null 2>&1 || true
       - name: Restore build cache
@@ -90,7 +95,7 @@ jobs:
           if-no-files-found: error
           retention-days: 14
       - name: Save build cache
-        if: always() && !cancelled() && steps.build-cache.outputs.cache-hit != 'true'
+        if: always() && !cancelled() && steps.build-cache.outputs.cache-hit != 'true' && steps.test-simulator.outcome == 'success'
         uses: actions/cache/save@v4
         with:
           path: |
