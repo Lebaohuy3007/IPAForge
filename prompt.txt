@@ -1,0 +1,410 @@
+Project: AppStore IPA Downloader for iOS
+
+1. Vai trò
+
+Bạn là Senior iOS Engineer, Swift Developer và GitHub Actions Engineer.
+
+Hãy xây dựng một dự án mã nguồn mở có tên AppStore IPA Downloader.
+
+Mục tiêu: tạo ứng dụng iOS có giao diện đồ họa để người dùng đăng nhập Apple Account, tìm kiếm ứng dụng trên App Store, tải gói ứng dụng IPA mà tài khoản có quyền tải và xuất file IPA qua iOS Share Sheet.
+
+Không chỉ viết hướng dẫn hoặc ví dụ minh họa. Hãy triển khai dự án thực tế, tạo đầy đủ mã nguồn, cấu trúc thư mục, cấu hình build và GitHub Actions.
+
+2. Môi trường và yêu cầu tương thích
+
+* Thiết bị mục tiêu: iPhone XS Max.
+* iOS hiện tại: 18.7.9.
+* Ngôn ngữ chính: Swift.
+* Giao diện: SwiftUI.
+* Ưu tiên Swift 5.9+ và chế độ ngôn ngữ Swift 5 để tránh lỗi Strict Concurrency không cần thiết.
+* iOS Deployment Target: 16.0.
+* Sử dụng API tương thích iOS 18.
+* Không yêu cầu jailbreak.
+* Không yêu cầu root.
+* Không yêu cầu máy tính để sử dụng ứng dụng sau khi cài đặt.
+* Có thể phát triển trong GitHub Codespaces.
+* Sử dụng GitHub Actions với macOS runner để build ứng dụng iOS.
+
+Không sử dụng API chỉ có trên iOS 26 trở lên.
+
+3. Xác thực Apple Account
+
+Tạo giao diện đăng nhập Apple Account.
+
+Các thành phần:
+
+* Apple ID / Email.
+* Password.
+* Nút Login.
+* Khu vực hiển thị trạng thái đăng nhập.
+* Khu vực nhập mã xác minh 2FA.
+* Nút Verify.
+* Nút Cancel Login.
+
+Quy trình:
+
+1. Người dùng nhập Apple ID và mật khẩu.
+2. Thực hiện quy trình xác thực bằng phương thức tương thích với Apple.
+3. Nếu Apple yêu cầu xác minh hai yếu tố, chuyển sang giao diện nhập mã 2FA.
+4. Người dùng nhập mã xác minh.
+5. Tiếp tục quy trình xác thực.
+6. Khi xác thực thành công, chuyển đến màn hình App Store.
+
+Yêu cầu bảo mật:
+
+* Không ghi mật khẩu, mã 2FA, session token hoặc thông tin xác thực nhạy cảm vào log.
+* Không lưu mật khẩu dạng văn bản.
+* Không gửi Apple ID, mật khẩu hoặc mã 2FA đến Anisette Server.
+* Không tạo giao diện giả mạo trang đăng nhập Apple.
+* Ưu tiên tái sử dụng thư viện hoặc phương thức xác thực mã nguồn mở có uy tín.
+* Phân tích phương thức xác thực của ipatool, SideStore và AltStore.
+* Không tự ý sao chép mã nguồn có giấy phép không tương thích.
+* Nếu Apple thay đổi giao thức khiến đăng nhập không hoạt động, hiển thị lỗi rõ ràng thay vì giả lập đăng nhập thành công.
+
+4. Anisette Server
+
+Đây là thành phần quan trọng.
+
+Máy chủ Anisette mặc định:
+
+https://mac-ani.jkcoxson.com
+
+Tạo khu vực cấu hình Anisette ngay trên màn hình Login.
+
+Giao diện gồm:
+
+* Anisette Server URL.
+* Nút Test Connection.
+* Trạng thái Server.
+* Nút Save.
+
+Yêu cầu:
+
+1. Mặc định sử dụng:
+    https://mac-ani.jkcoxson.com
+2. Cho phép người dùng thay đổi URL máy chủ.
+3. Lưu cấu hình máy chủ trên thiết bị.
+4. Kiểm tra URL và kết nối HTTPS.
+5. Hiển thị các trạng thái:
+    * Connected.
+    * Server Unavailable.
+    * Invalid URL.
+    * Request Timeout.
+    * Invalid Response.
+6. Nếu máy chủ mặc định không hoạt động, người dùng có thể nhập máy chủ khác.
+7. Không tự động chuyển sang một máy chủ không rõ nguồn gốc.
+8. Không gửi thông tin Apple Account đến Anisette Server.
+9. Không giả định Anisette Server luôn hoạt động.
+
+Thiết kế Anisette thành một module riêng để có thể thay thế nhà cung cấp mà không phải sửa toàn bộ ứng dụng.
+
+Tham khảo tài liệu:
+
+* https://docs.sidestore.io/docs/advanced/anisette
+* https://github.com/majd/ipatool
+
+Lưu ý: Phải phân biệt Anisette v3 và các phương thức Anisette cũ. Không tự ý trộn hai giao thức.
+
+5. App Store Browser
+
+Sau khi đăng nhập thành công, hiển thị giao diện chính.
+
+Thiết kế tương tự một App Store Downloader.
+
+Các thành phần:
+
+* Thanh tìm kiếm ứng dụng.
+* Danh sách kết quả.
+* Tên ứng dụng.
+* Icon ứng dụng.
+* Nhà phát triển.
+* Bundle ID nếu có.
+* Phiên bản ứng dụng.
+* Dung lượng nếu có dữ liệu.
+* Nút Download IPA.
+
+Cho phép tìm kiếm ứng dụng theo tên hoặc App ID.
+
+Khi chọn một ứng dụng, mở trang chi tiết:
+
+* App Icon.
+* App Name.
+* Developer.
+* Bundle ID.
+* Version.
+* App ID.
+* Nút Download.
+
+Chỉ tải ứng dụng mà tài khoản có quyền truy cập theo quy định của App Store.
+
+6. Download Manager
+
+Tạo một màn hình quản lý tải xuống.
+
+Hiển thị:
+
+* Tên ứng dụng.
+* Phiên bản.
+* Tiến trình tải.
+* Phần trăm hoàn thành.
+* Dung lượng đã tải.
+* Trạng thái hiện tại.
+
+Các trạng thái:
+
+* Waiting.
+* Authenticating.
+* Fetching Metadata.
+* Downloading.
+* Verifying.
+* Completed.
+* Failed.
+* Cancelled.
+
+Có nút Cancel Download.
+
+Yêu cầu:
+
+* Xử lý lỗi mạng.
+* Xử lý tải xuống bị gián đoạn.
+* Không làm treo giao diện.
+* Không tải file vào thư mục công khai không cần thiết.
+* Không giải mã hoặc loại bỏ FairPlay DRM.
+* Giữ nguyên các cơ chế bảo vệ và quyền sử dụng của ứng dụng.
+
+Ưu tiên tái sử dụng logic tải xuống hợp pháp của ipatool nếu giấy phép cho phép.
+
+7. Export IPA và iOS Share Sheet
+
+Sau khi tải hoàn tất:
+
+Hiển thị màn hình Download Completed.
+
+Thông tin:
+
+* App Name.
+* Version.
+* File Name.
+* File Size.
+* File Path.
+
+Có hai nút:
+
+1. Share IPA.
+2. Save to Files.
+
+Sử dụng UIActivityViewController hoặc API chia sẻ tương thích iOS 18.
+
+Khi bấm Share IPA:
+
+* Mở bảng chia sẻ mặc định của iOS.
+* Cho phép người dùng chọn ứng dụng đích.
+* Cho phép lưu vào Files.
+* Không tự ý gửi file đến máy chủ bên ngoài.
+
+Đảm bảo file IPA được xuất đúng định dạng và không bị đổi tên thành một định dạng giả.
+
+8. Logging Console
+
+Tạo một giao diện Log Viewer.
+
+Hiển thị nhật ký theo thời gian thực.
+
+Ví dụ:
+
+[INFO] Application launched.
+[INFO] Checking Anisette Server.
+[INFO] Anisette Server connected.
+[INFO] Starting Apple Account authentication.
+[INFO] Waiting for 2FA verification.
+[INFO] Authentication completed.
+[INFO] Searching App Store.
+[INFO] Application selected.
+[INFO] Starting IPA download.
+[INFO] Download completed.
+[INFO] IPA ready for export.
+
+Có các mức log:
+
+* INFO
+* WARNING
+* ERROR
+* SUCCESS
+
+Có nút Clear Logs và Copy Logs.
+
+Tuyệt đối không ghi mật khẩu, mã 2FA, token, cookie hoặc dữ liệu xác thực riêng tư vào log.
+
+9. Giao diện
+
+Thiết kế giao diện SwiftUI hiện đại.
+
+Các màn hình:
+
+1. Login.
+2. Anisette Configuration.
+3. App Store Search.
+4. Application Details.
+5. Download Manager.
+6. Download Completed.
+7. Log Viewer.
+8. Settings.
+
+Yêu cầu:
+
+* Hỗ trợ Dark Mode.
+* Hỗ trợ Light Mode.
+* Tương thích màn hình iPhone XS Max.
+* Giao diện không bị tràn.
+* Có trạng thái Loading.
+* Có thông báo lỗi dễ hiểu.
+* Có thể quay lại màn hình trước.
+
+10. Kiến trúc mã nguồn
+
+Tổ chức theo module:
+
+* App/
+* Views/
+* ViewModels/
+* Models/
+* Services/
+* Authentication/
+* Anisette/
+* AppStore/
+* Downloader/
+* Export/
+* Logging/
+* Utilities/
+* Resources/
+* Tests/
+
+Tách riêng:
+
+* AuthenticationService.
+* AnisetteService.
+* AppStoreService.
+* DownloadService.
+* ExportService.
+* LoggingService.
+
+Không viết toàn bộ ứng dụng trong một file Swift.
+
+Sử dụng async/await và URLSession phù hợp với iOS 16 trở lên.
+
+11. GitHub Actions
+
+Tạo hai workflow độc lập.
+
+Workflow A: Experimental Build
+
+File:
+
+.github/workflows/experimental.yml
+
+Mục đích:
+
+* Build thử nghiệm khi push lên nhánh main.
+* Có thể chạy thủ công bằng workflow_dispatch.
+* Sử dụng macOS runner.
+* Cài đặt hoặc chọn phiên bản Xcode tương thích.
+* Build ứng dụng.
+* Chạy unit tests.
+* Kiểm tra lỗi biên dịch.
+* Xuất sản phẩm build dưới dạng GitHub Actions Artifact.
+
+Tên artifact:
+
+AppStoreIPA-Experimental
+
+Không yêu cầu Apple Distribution Certificate nếu chỉ build ứng dụng chưa ký để kiểm tra.
+
+Workflow B: Release Build
+
+File:
+
+.github/workflows/release.yml
+
+Mục đích:
+
+* Chạy khi tạo Git tag theo định dạng v*.
+* Có thể chạy thủ công.
+* Build bản Release.
+* Chạy tests.
+* Đóng gói sản phẩm.
+* Tạo GitHub Release.
+* Đính kèm artifact vào Release.
+
+Tên artifact:
+
+AppStoreIPA-Release
+
+Không nhúng chứng chỉ, private key hoặc mật khẩu vào mã nguồn.
+
+Sử dụng GitHub Secrets nếu cần thông tin ký ứng dụng.
+
+Phải phân biệt:
+
+* Build thành công.
+* IPA đã được ký.
+* IPA có thể cài đặt trên thiết bị.
+
+Không tuyên bố IPA đã cài được nếu chưa kiểm chứng.
+
+12. Kiểm thử
+
+Tạo Unit Tests cho:
+
+* URL Anisette.
+* Kiểm tra kết nối.
+* Xử lý lỗi xác thực.
+* Xử lý 2FA.
+* App Store Search.
+* Download Progress.
+* File Export.
+* Log Sanitization.
+
+Không sử dụng thông tin Apple Account thật trong Unit Tests.
+
+Nếu không thể kiểm thử một phần do yêu cầu dịch vụ Apple, ghi rõ giới hạn.
+
+13. Quy trình thực hiện
+
+Thực hiện theo thứ tự:
+
+1. Kiểm tra mã nguồn ipatool.
+2. Kiểm tra phương thức xác thực của SideStore và AltStore.
+3. Kiểm tra khả năng tương thích của các thư viện với iOS 18.
+4. Xây dựng kiến trúc.
+5. Tạo giao diện SwiftUI.
+6. Triển khai Authentication.
+7. Triển khai Anisette Configuration.
+8. Triển khai App Store Search.
+9. Triển khai Download Manager.
+10. Triển khai IPA Export.
+11. Tạo Logging.
+12. Viết Unit Tests.
+13. Tạo hai GitHub Actions workflows.
+14. Chạy build thử nghiệm và sửa lỗi.
+15. Hoàn thiện README.
+
+Không được bỏ qua các bước chỉ để tạo ra một giao diện demo.
+
+Nếu một chức năng chưa thể triển khai thực tế, hãy đánh dấu TODO và giải thích nguyên nhân. Không tạo dữ liệu giả để đánh lừa người dùng.
+
+14. Kết quả cần bàn giao
+
+* Toàn bộ mã nguồn Swift.
+* Xcode project.
+* README.md.
+* LICENSE phù hợp với mã nguồn được sử dụng.
+* experimental.yml.
+* release.yml.
+* Unit Tests.
+* Hướng dẫn build bằng GitHub Actions.
+* Danh sách các chức năng đã hoàn thành.
+* Danh sách các chức năng còn hạn chế.
+
+Ưu tiên cao nhất: xác thực Apple Account thực sự hoạt động, Anisette Server có thể thay đổi, tải IPA hợp lệ và xuất IPA qua Share Sheet trên iOS 18.7.9.
+
+Không chỉ tạo UI. Hãy xây dựng một ứng dụng có chức năng thực tế.
