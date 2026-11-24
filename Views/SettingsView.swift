@@ -33,23 +33,12 @@ struct SavedAccountsView: View {
                 Text("Saved Apple sessions are encrypted with AES-256-GCM and stored in this device's Keychain. Selecting an account refreshes Anisette v3 data and validates the session with Apple.")
             }
 
-            Section("Authentication") {
-                if environment.authPhase == .authenticating {
-                    ProgressView("Restoring Apple session…")
-                } else if environment.authPhase == .signedIn,
-                          let account = environment.activeAccount {
-                    Label("Signed in as \(account.appleID)", systemImage: "checkmark.circle.fill")
-                    Button("Sign Out") {
-                        environment.signOut()
-                    }
-                } else {
-                    Text(environment.authMessage.isEmpty
-                         ? "Choose a saved Apple Account to restore its session."
-                         : environment.authMessage)
-                        .font(.caption)
-                        .foregroundStyle(environment.authMessage.isEmpty ? .secondary : .orange)
-                }
-            }
+            AuthenticationStatusSection(
+                authPhase: environment.authPhase,
+                activeAccount: environment.activeAccount,
+                authMessage: environment.authMessage,
+                onSignOut: { environment.signOut() }
+            )
         }
         .navigationTitle("Saved Accounts")
         .confirmationDialog("Delete saved account?", isPresented: Binding(
@@ -141,6 +130,45 @@ private struct SavedAccountRow: View {
         if isSelected {
             Image(systemName: "checkmark")
                 .foregroundStyle(.tint)
+        }
+    }
+}
+
+private struct AuthenticationStatusSection: View {
+    let authPhase: AuthPhase
+    let activeAccount: StoredAppleAccount?
+    let authMessage: String
+    let onSignOut: () -> Void
+
+    var body: some View {
+        Section("Authentication") {
+            if authPhase == .authenticating {
+                ProgressView("Restoring Apple session…")
+            } else if authPhase == .signedIn, let activeAccount {
+                SignedInAccountStatus(appleID: activeAccount.appleID)
+                Button("Sign Out", action: onSignOut)
+            } else {
+                Text(statusMessage)
+                    .font(.caption)
+                    .foregroundStyle(authMessage.isEmpty ? .secondary : .orange)
+            }
+        }
+    }
+
+    private var statusMessage: String {
+        authMessage.isEmpty
+            ? "Choose a saved Apple Account to restore its session."
+            : authMessage
+    }
+}
+
+private struct SignedInAccountStatus: View {
+    let appleID: String
+
+    var body: some View {
+        HStack {
+            Image(systemName: "checkmark.circle.fill")
+            Text("Signed in as \(appleID)")
         }
     }
 }
