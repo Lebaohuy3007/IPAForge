@@ -3,7 +3,8 @@ import SwiftUI
 @MainActor
 final class AppEnvironment: ObservableObject {
     let logger = LoggingService()
-    let anisette = AnisetteService()
+    let anisette: AnisetteService
+    let anisetteServers: AnisetteServerStore
     let authentication = AuthenticationService()
     let appStore = AppStoreService()
     let downloads = DownloadService()
@@ -18,6 +19,9 @@ final class AppEnvironment: ObservableObject {
     }
 
     init() {
+        let anisette = AnisetteService()
+        self.anisette = anisette
+        self.anisetteServers = AnisetteServerStore(service: anisette)
         logger.log(.info, "Application launched.")
     }
 

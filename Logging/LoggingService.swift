@@ -44,7 +44,8 @@ final class LoggingService: ObservableObject {
 enum LogSanitizer {
     static func sanitize(_ text: String) -> String {
         let patterns = [
-            #"(?i)\b(password|passcode|2fa|verification code|token|cookie)\s*[:=]\s*\S+"#,
+            #"(?i)"?(password|passcode|2fa|verification code|session token|session_token|token|cookie)"?\s*[:=]\s*"?[^,\s"}]+"#,
+            #"(?i)"?(x-apple-(?:i-[a-z0-9-]+|locale)|x-mme-[a-z0-9-]+|adi[_.-]?(?:pb|blob)|anisette[_ -]?(?:data|identity)|identifier)"?\s*[:=]\s*"?[^,\s"}]+"#,
             #"(?i)\bBearer\s+[A-Za-z0-9._~-]+"#
         ]
         return patterns.reduce(text) { result, pattern in

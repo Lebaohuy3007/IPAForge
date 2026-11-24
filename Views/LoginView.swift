@@ -2,32 +2,56 @@ import SwiftUI
 
 struct LoginView: View {
     @EnvironmentObject private var environment: AppEnvironment
-    @AppStorage("anisetteServerURL") private var anisetteURL = AnisetteService.defaultURL
     @State private var appleID = ""
     @State private var password = ""
-    @State private var anisetteStatus: AnisetteStatus = .unknown
-    @State private var isTesting = false
+    @State private var serverSheet: ServerSheet?
     @State private var statusMessage = ""
+
+    private enum ServerSheet: String, Identifiable {
+        case picker
+        case manager
+
+        var id: String { rawValue }
+    }
 
     var body: some View {
         NavigationStack {
             Form {
                 Section("Anisette Server") {
-                    TextField("HTTPS server URL", text: $anisetteURL)
-                        .textInputAutocapitalization(.never)
-                        .keyboardType(.URL)
-                        .autocorrectionDisabled()
-                    Text(anisetteStatus.label)
-                        .foregroundStyle(anisetteStatus == .connected ? .green : .secondary)
                     HStack {
-                        Button("Test Connection") { testServer() }
-                            .disabled(isTesting)
-                        Button("Save") {
-                            UserDefaults.standard.set(anisetteURL, forKey: "anisetteServerURL")
-                            statusMessage = "Server URL saved on this device."
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(environment.anisetteServers.selectedServer?.name ?? "Chưa chọn")
+                                .font(.headline)
+                            Text(environment.anisetteServers.selectedServer?.url ?? "Chọn server đã xác thực Anisette")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                            if let selectedID = environment.anisetteServers.selectedServerID,
+                               let result = environment.anisetteServers.probeResults[selectedID] {
+                                AnisetteProbeStatusView(serverID: selectedID, store: environment.anisetteServers)
+                                if !result.state.isUsable {
+                                    Text("Server hiện không sẵn sàng; không tự chuyển nguồn.")
+                                        .font(.caption)
+                                        .foregroundStyle(.orange)
+                                }
+                            }
+                        }
+                        Spacer()
+                        Button("Chọn") { serverSheet = .picker }
+                            .disabled(environment.anisetteServers.servers.isEmpty)
+                    }
+                    Button("Quản lý Anisette Server") { serverSheet = .manager }
+                    if environment.anisetteServers.hasFinishedInitialChecks &&
+                        !environment.anisetteServers.hasUsableServer {
+                        Label(
+                            "Không có Anisette nào được dùng. Hãy thử lại hoặc quản lý server.",
+                            systemImage: "exclamationmark.triangle"
+                        )
+                        .font(.footnote)
+                        .foregroundStyle(.orange)
+                        Button("Thử lại") {
+                            environment.anisetteServers.refreshAll(force: true)
                         }
                     }
-                    if isTesting { ProgressView() }
                 }
 
                 Section("Apple Account") {
@@ -38,7 +62,7 @@ struct LoginView: View {
                     SecureField("Password", text: $password)
                         .textContentType(.password)
                     Button("Login") { login() }
-                        .disabled(appleID.isEmpty || password.isEmpty)
+                        .disabled(appleID.isEmpty || password.isEmpty || !hasReadyAnisette)
                     Button("Cancel Login", role: .destructive) {
                         password = ""
                         environment.cancelLogin()
@@ -51,25 +75,33 @@ struct LoginView: View {
                          ? "Apple Account authentication is currently unavailable."
                          : statusMessage)
                         .foregroundStyle(.secondary)
-                    Text("Credentials are not sent or stored. Login is disabled until a supported Apple authentication implementation is available.")
+                    Text("IPAForge không gửi Apple ID, mật khẩu hoặc mã 2FA đến Anisette Server. Apple SRP Authentication chưa được tích hợp trong phiên bản này.")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
             }
             .navigationTitle("AppStore IPA")
+            .onAppear {
+                environment.anisetteServers.refreshAll()
+            }
+            .sheet(item: $serverSheet) { sheet in
+                NavigationStack {
+                    if sheet == .picker {
+                        AnisetteServerPickerView()
+                    } else {
+                        AnisetteServersView()
+                    }
+                }
+            }
         }
     }
 
-    private func testServer() {
-        isTesting = true
-        Task {
-            anisetteStatus = await environment.anisette.testConnection(serverURL: anisetteURL)
-            environment.logger.log(
-                anisetteStatus == .connected ? .success : .warning,
-                "Anisette HTTPS endpoint check: \(anisetteStatus.label)."
-            )
-            isTesting = false
+    private var hasReadyAnisette: Bool {
+        guard let selectedID = environment.anisetteServers.selectedServerID,
+              !environment.anisetteServers.checkingIDs.contains(selectedID) else {
+            return false
         }
+        return environment.anisetteServers.probeResults[selectedID]?.state.isUsable == true
     }
 
     private func login() {

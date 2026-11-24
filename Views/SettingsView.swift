@@ -14,6 +14,11 @@ struct SettingsView: View {
                         .textInputAutocapitalization(.never)
                         .autocorrectionDisabled()
                 }
+                Section("Apple ID") {
+                    NavigationLink("Anisette Server") {
+                        AnisetteServersView()
+                    }
+                }
                 Section("Account") {
                     Button("Sign Out", role: .destructive) {
                         environment.cancelLogin()
