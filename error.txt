@@ -1,0 +1,1331 @@
+2026-11-24T07:35:21.8353010Z ##[group]Run DEVICE_ID="$(xcrun simctl list devices available | awk -F '[()]' '/iPhone/ { print $2; exit }')"
+2026-11-24T07:35:21.8353750Z [36;1mDEVICE_ID="$(xcrun simctl list devices available | awk -F '[()]' '/iPhone/ { print $2; exit }')"[0m
+2026-11-24T07:35:21.8354680Z [36;1mtest -n "$DEVICE_ID"[0m
+2026-11-24T07:35:21.8355000Z [36;1mset -o pipefail[0m
+2026-11-24T07:35:21.8355250Z [36;1mxcodebuild test \[0m
+2026-11-24T07:35:21.8355590Z [36;1m  -project AppStoreIPADownloader.xcodeproj \[0m
+2026-11-24T07:35:21.8356010Z [36;1m  -scheme AppStoreIPADownloader \[0m
+2026-11-24T07:35:21.8356380Z [36;1m  -destination "platform=iOS Simulator,id=$DEVICE_ID" \[0m
+2026-11-24T07:35:21.8356820Z [36;1m  -derivedDataPath "$DERIVED_DATA_PATH" \[0m
+2026-11-24T07:35:21.8357240Z [36;1m  -parallel-testing-enabled NO \[0m
+2026-11-24T07:35:21.8357530Z [36;1m  ONLY_ACTIVE_ARCH=YES \[0m
+2026-11-24T07:35:21.8357870Z [36;1m  ENABLE_TESTABILITY=YES \[0m
+2026-11-24T07:35:21.8358210Z [36;1m  CURRENT_PROJECT_VERSION="$GITHUB_RUN_NUMBER" \[0m
+2026-11-24T07:35:21.8358750Z [36;1m  CODE_SIGNING_ALLOWED=NO \[0m
+2026-11-24T07:35:21.8359080Z [36;1m  | xcbeautify[0m
+2026-11-24T07:35:21.8396790Z shell: /bin/bash -e {0}
+2026-11-24T07:35:21.8397070Z env:
+2026-11-24T07:35:21.8397400Z   DERIVED_DATA_PATH: build/DerivedData
+2026-11-24T07:35:21.8397790Z   MD_APPLE_SDK_ROOT: /Applications/Xcode_27.2.app
+2026-11-24T07:35:21.8398200Z ##[endgroup]
+2026-11-24T07:35:45.2681430Z 2026-11-24 07:35:45.261 xcodebuild[1339:7428] [MT] DVTAssertions: Warning in DVTiOSFrameworks/IDEiOSSupportCore/DVTiPhoneSimulator.m:661
+2026-11-24T07:35:45.2795960Z Details:  SimDevice native architecture is nil. Device: SimDevice : Apple TV 4K (3rd generation) (AA1A4436-9426-4301-8D39-5E909CAF9C42) : state={ Shutdown } deviceType={ com.apple.CoreSimulator.SimDeviceType.Apple-TV-4K-3rd-generation-4K: SimDeviceType : Apple TV 4K (3rd generation) (com.apple.CoreSimulator.SimDeviceType.Apple-TV-4K-3rd-generation-4K) } runtime={ com.apple.CoreSimulator.SimRuntime.tvOS-27-0: (null) }, supportedArches: (
+2026-11-24T07:35:45.2898910Z )
+2026-11-24T07:35:45.3000090Z Object:   <DVTiPhoneSimulator: 0x7b80212a00>
+2026-11-24T07:35:45.3111960Z Method:   -nativeArchitecture
+2026-11-24T07:35:45.3214630Z Thread:   <_NSMainThread: 0x1031e0dc0>{number = 1, name = main}
+2026-11-24T07:35:45.3320020Z Please file a bug at https://feedbackassistant.apple.com with this warning message and any useful information you can provide.
+2026-11-24T07:35:45.3423330Z 2026-11-24 07:35:45.262 xcodebuild[1339:7428] [MT] DVTAssertions: Warning in DVTiOSFrameworks/IDEiOSSupportCore/DVTiPhoneSimulator.m:661
+2026-11-24T07:35:45.3527890Z Details:  SimDevice native architecture is nil. Device: SimDevice : Apple TV 4K (3rd generation) (at 1080p) (B9E4D366-604B-4F2F-8C77-5D95AD648816) : state={ Shutdown } deviceType={ com.apple.CoreSimulator.SimDeviceType.Apple-TV-4K-3rd-generation-1080p: SimDeviceType : Apple TV 4K (3rd generation) (at 1080p) (com.apple.CoreSimulator.SimDeviceType.Apple-TV-4K-3rd-generation-1080p) } runtime={ com.apple.CoreSimulator.SimRuntime.tvOS-27-0: (null) }, supportedArches: (
+2026-11-24T07:35:45.3631370Z )
+2026-11-24T07:35:45.3733380Z Object:   <DVTiPhoneSimulator: 0x7b80212c00>
+2026-11-24T07:35:45.3834810Z Method:   -nativeArchitecture
+2026-11-24T07:35:45.3963580Z Thread:   <_NSMainThread: 0x1031e0dc0>{number = 1, name = main}
+2026-11-24T07:35:45.4179640Z Please file a bug at https://feedbackassistant.apple.com with this warning message and any useful information you can provide.
+2026-11-24T07:35:45.4278800Z 2026-11-24 07:35:45.267 xcodebuild[1339:7428] [MT] DVTAssertions: Warning in DVTiOSFrameworks/IDEiOSSupportCore/DVTiPhoneSimulator.m:661
+2026-11-24T07:35:45.4390360Z Details:  SimDevice native architecture is nil. Device: SimDevice : Apple TV 4K (3rd generation) (AA1A4436-9426-4301-8D39-5E909CAF9C42) : state={ Shutdown } deviceType={ com.apple.CoreSimulator.SimDeviceType.Apple-TV-4K-3rd-generation-4K: SimDeviceType : Apple TV 4K (3rd generation) (com.apple.CoreSimulator.SimDeviceType.Apple-TV-4K-3rd-generation-4K) } runtime={ com.apple.CoreSimulator.SimRuntime.tvOS-27-0: (null) }, supportedArches: (
+2026-11-24T07:35:45.4492770Z )
+2026-11-24T07:35:45.4594270Z Object:   <DVTiPhoneSimulator: 0x7b80212a00>
+2026-11-24T07:35:45.4694770Z Method:   -nativeArchitecture
+2026-11-24T07:35:45.4796580Z Thread:   <_NSMainThread: 0x1031e0dc0>{number = 1, name = main}
+2026-11-24T07:35:45.4899510Z Please file a bug at https://feedbackassistant.apple.com with this warning message and any useful information you can provide.
+2026-11-24T07:35:45.5001010Z 2026-11-24 07:35:45.267 xcodebuild[1339:7428] [MT] DVTAssertions: Warning in DVTiOSFrameworks/IDEiOSSupportCore/DVTiPhoneSimulator.m:661
+2026-11-24T07:35:45.5107430Z Details:  SimDevice native architecture is nil. Device: SimDevice : Apple TV 4K (3rd generation) (AA1A4436-9426-4301-8D39-5E909CAF9C42) : state={ Shutdown } deviceType={ com.apple.CoreSimulator.SimDeviceType.Apple-TV-4K-3rd-generation-4K: SimDeviceType : Apple TV 4K (3rd generation) (com.apple.CoreSimulator.SimDeviceType.Apple-TV-4K-3rd-generation-4K) } runtime={ com.apple.CoreSimulator.SimRuntime.tvOS-27-0: (null) }, supportedArches: (
+2026-11-24T07:35:45.5214020Z )
+2026-11-24T07:35:45.5352220Z Object:   <DVTiPhoneSimulator: 0x7b80212a00>
+2026-11-24T07:35:45.5460420Z Method:   -nativeArchitecture
+2026-11-24T07:35:45.5762330Z Thread:   <_NSMainThread: 0x1031e0dc0>{number = 1, name = main}
+2026-11-24T07:35:45.5866900Z Please file a bug at https://feedbackassistant.apple.com with this warning message and any useful information you can provide.
+2026-11-24T07:35:45.5968810Z 2026-11-24 07:35:45.267 xcodebuild[1339:7428] [MT] DVTAssertions: Warning in DVTiOSFrameworks/IDEiOSSupportCore/DVTiPhoneSimulator.m:661
+2026-11-24T07:35:45.6076440Z Details:  SimDevice native architecture is nil. Device: SimDevice : Apple TV 4K (3rd generation) (at 1080p) (B9E4D366-604B-4F2F-8C77-5D95AD648816) : state={ Shutdown } deviceType={ com.apple.CoreSimulator.SimDeviceType.Apple-TV-4K-3rd-generation-1080p: SimDeviceType : Apple TV 4K (3rd generation) (at 1080p) (com.apple.CoreSimulator.SimDeviceType.Apple-TV-4K-3rd-generation-1080p) } runtime={ com.apple.CoreSimulator.SimRuntime.tvOS-27-0: (null) }, supportedArches: (
+2026-11-24T07:35:45.6180330Z )
+2026-11-24T07:35:45.6281460Z Object:   <DVTiPhoneSimulator: 0x7b80212c00>
+2026-11-24T07:35:45.6388380Z Method:   -nativeArchitecture
+2026-11-24T07:35:45.6489880Z Thread:   <_NSMainThread: 0x1031e0dc0>{number = 1, name = main}
+2026-11-24T07:35:45.6603950Z Please file a bug at https://feedbackassistant.apple.com with this warning message and any useful information you can provide.
+2026-11-24T07:35:45.6781250Z 2026-11-24 07:35:45.267 xcodebuild[1339:7428] [MT] DVTAssertions: Warning in DVTiOSFrameworks/IDEiOSSupportCore/DVTiPhoneSimulator.m:661
+2026-11-24T07:35:45.6885250Z Details:  SimDevice native architecture is nil. Device: SimDevice : Apple TV 4K (3rd generation) (at 1080p) (B9E4D366-604B-4F2F-8C77-5D95AD648816) : state={ Shutdown } deviceType={ com.apple.CoreSimulator.SimDeviceType.Apple-TV-4K-3rd-generation-1080p: SimDeviceType : Apple TV 4K (3rd generation) (at 1080p) (com.apple.CoreSimulator.SimDeviceType.Apple-TV-4K-3rd-generation-1080p) } runtime={ com.apple.CoreSimulator.SimRuntime.tvOS-27-0: (null) }, supportedArches: (
+2026-11-24T07:35:45.7106400Z )
+2026-11-24T07:35:45.7249040Z Object:   <DVTiPhoneSimulator: 0x7b80212c00>
+2026-11-24T07:35:45.7360630Z Method:   -nativeArchitecture
+2026-11-24T07:35:45.7462250Z Thread:   <_NSMainThread: 0x1031e0dc0>{number = 1, name = main}
+2026-11-24T07:35:45.7574450Z Please file a bug at https://feedbackassistant.apple.com with this warning message and any useful information you can provide.
+2026-11-24T07:35:45.7739180Z 2026-11-24 07:35:45.276 xcodebuild[1339:7428] [MT] DVTAssertions: Warning in DVTiOSFrameworks/IDEiOSSupportCore/DVTiPhoneSimulator.m:661
+2026-11-24T07:35:45.7853550Z Details:  SimDevice native architecture is nil. Device: SimDevice : Apple TV 4K (3rd generation) (AA1A4436-9426-4301-8D39-5E909CAF9C42) : state={ Shutdown } deviceType={ com.apple.CoreSimulator.SimDeviceType.Apple-TV-4K-3rd-generation-4K: SimDeviceType : Apple TV 4K (3rd generation) (com.apple.CoreSimulator.SimDeviceType.Apple-TV-4K-3rd-generation-4K) } runtime={ com.apple.CoreSimulator.SimRuntime.tvOS-27-0: (null) }, supportedArches: (
+2026-11-24T07:35:45.7980920Z )
+2026-11-24T07:35:45.8081940Z Object:   <DVTiPhoneSimulator: 0x7b80212a00>
+2026-11-24T07:35:45.8183160Z Method:   -nativeArchitecture
+2026-11-24T07:35:45.8310850Z Thread:   <_NSMainThread: 0x1031e0dc0>{number = 1, name = main}
+2026-11-24T07:35:45.8396540Z Please file a bug at https://feedbackassistant.apple.com with this warning message and any useful information you can provide.
+2026-11-24T07:35:45.8501530Z 2026-11-24 07:35:45.276 xcodebuild[1339:7428] [MT] DVTAssertions: Warning in DVTiOSFrameworks/IDEiOSSupportCore/DVTiPhoneSimulator.m:661
+2026-11-24T07:35:45.8569640Z Details:  SimDevice native architecture is nil. Device: SimDevice : Apple TV 4K (3rd generation) (AA1A4436-9426-4301-8D39-5E909CAF9C42) : state={ Shutdown } deviceType={ com.apple.CoreSimulator.SimDeviceType.Apple-TV-4K-3rd-generation-4K: SimDeviceType : Apple TV 4K (3rd generation) (com.apple.CoreSimulator.SimDeviceType.Apple-TV-4K-3rd-generation-4K) } runtime={ com.apple.CoreSimulator.SimRuntime.tvOS-27-0: (null) }, supportedArches: (
+2026-11-24T07:35:45.8573820Z )
+2026-11-24T07:35:45.8574260Z Object:   <DVTiPhoneSimulator: 0x7b80212a00>
+2026-11-24T07:35:45.8575150Z Method:   -nativeArchitecture
+2026-11-24T07:35:45.8576680Z Thread:   <_NSMainThread: 0x1031e0dc0>{number = 1, name = main}
+2026-11-24T07:35:45.8577780Z Please file a bug at https://feedbackassistant.apple.com with this warning message and any useful information you can provide.
+2026-11-24T07:35:45.8580530Z 2026-11-24 07:35:45.276 xcodebuild[1339:7428] [MT] DVTAssertions: Warning in DVTiOSFrameworks/IDEiOSSupportCore/DVTiPhoneSimulator.m:661
+2026-11-24T07:35:45.8583840Z Details:  SimDevice native architecture is nil. Device: SimDevice : Apple TV 4K (3rd generation) (at 1080p) (B9E4D366-604B-4F2F-8C77-5D95AD648816) : state={ Shutdown } deviceType={ com.apple.CoreSimulator.SimDeviceType.Apple-TV-4K-3rd-generation-1080p: SimDeviceType : Apple TV 4K (3rd generation) (at 1080p) (com.apple.CoreSimulator.SimDeviceType.Apple-TV-4K-3rd-generation-1080p) } runtime={ com.apple.CoreSimulator.SimRuntime.tvOS-27-0: (null) }, supportedArches: (
+2026-11-24T07:35:45.8599400Z )
+2026-11-24T07:35:45.8621360Z Object:   <DVTiPhoneSimulator: 0x7b80212c00>
+2026-11-24T07:35:45.8623010Z Method:   -nativeArchitecture
+2026-11-24T07:35:45.8623670Z Thread:   <_NSMainThread: 0x1031e0dc0>{number = 1, name = main}
+2026-11-24T07:35:45.8624640Z Please file a bug at https://feedbackassistant.apple.com with this warning message and any useful information you can provide.
+2026-11-24T07:35:45.8627080Z 2026-11-24 07:35:45.276 xcodebuild[1339:7428] [MT] DVTAssertions: Warning in DVTiOSFrameworks/IDEiOSSupportCore/DVTiPhoneSimulator.m:661
+2026-11-24T07:35:45.8630210Z Details:  SimDevice native architecture is nil. Device: SimDevice : Apple TV 4K (3rd generation) (at 1080p) (B9E4D366-604B-4F2F-8C77-5D95AD648816) : state={ Shutdown } deviceType={ com.apple.CoreSimulator.SimDeviceType.Apple-TV-4K-3rd-generation-1080p: SimDeviceType : Apple TV 4K (3rd generation) (at 1080p) (com.apple.CoreSimulator.SimDeviceType.Apple-TV-4K-3rd-generation-1080p) } runtime={ com.apple.CoreSimulator.SimRuntime.tvOS-27-0: (null) }, supportedArches: (
+2026-11-24T07:35:45.8633070Z )
+2026-11-24T07:35:45.8633540Z Object:   <DVTiPhoneSimulator: 0x7b80212c00>
+2026-11-24T07:35:45.8634950Z Method:   -nativeArchitecture
+2026-11-24T07:35:45.8635630Z Thread:   <_NSMainThread: 0x1031e0dc0>{number = 1, name = main}
+2026-11-24T07:35:45.8636480Z Please file a bug at https://feedbackassistant.apple.com with this warning message and any useful information you can provide.
+2026-11-24T07:35:56.3993700Z 2026-11-24 07:35:56.398 xcodebuild[1339:7428] [MT] DVTAssertions: Warning in DVTiOSFrameworks/IDEiOSSupportCore/DVTiPhoneSimulator.m:661
+2026-11-24T07:35:56.4100900Z Details:  SimDevice native architecture is nil. Device: SimDevice : Apple Watch SE 3 (40mm) (59D98431-6DC6-4BA6-90DE-5EA5F59715D1) : state={ Shutdown } deviceType={ com.apple.CoreSimulator.SimDeviceType.Apple-Watch-SE-3-40mm: SimDeviceType : Apple Watch SE 3 (40mm) (com.apple.CoreSimulator.SimDeviceType.Apple-Watch-SE-3-40mm) } runtime={ com.apple.CoreSimulator.SimRuntime.watchOS-27-0: (null) }, supportedArches: (
+2026-11-24T07:35:56.4209320Z )
+2026-11-24T07:35:56.4317410Z Object:   <DVTiPhoneSimulator: 0x7b80213a00>
+2026-11-24T07:35:56.4423230Z Method:   -nativeArchitecture
+2026-11-24T07:35:56.4525370Z Thread:   <_NSMainThread: 0x1031e0dc0>{number = 1, name = main}
+2026-11-24T07:35:56.4668540Z Please file a bug at https://feedbackassistant.apple.com with this warning message and any useful information you can provide.
+2026-11-24T07:35:56.4775040Z 2026-11-24 07:35:56.398 xcodebuild[1339:7428] [MT] DVTAssertions: Warning in DVTiOSFrameworks/IDEiOSSupportCore/DVTiPhoneSimulator.m:661
+2026-11-24T07:35:56.4905790Z Details:  SimDevice native architecture is nil. Device: SimDevice : Apple Watch SE 3 (40mm) (59D98431-6DC6-4BA6-90DE-5EA5F59715D1) : state={ Shutdown } deviceType={ com.apple.CoreSimulator.SimDeviceType.Apple-Watch-SE-3-40mm: SimDeviceType : Apple Watch SE 3 (40mm) (com.apple.CoreSimulator.SimDeviceType.Apple-Watch-SE-3-40mm) } runtime={ com.apple.CoreSimulator.SimRuntime.watchOS-27-0: (null) }, supportedArches: (
+2026-11-24T07:35:56.5007970Z )
+2026-11-24T07:35:56.5185900Z Object:   <DVTiPhoneSimulator: 0x7b80213a00>
+2026-11-24T07:35:56.5288440Z Method:   -nativeArchitecture
+2026-11-24T07:35:56.5390130Z Thread:   <_NSMainThread: 0x1031e0dc0>{number = 1, name = main}
+2026-11-24T07:35:56.5495150Z Please file a bug at https://feedbackassistant.apple.com with this warning message and any useful information you can provide.
+2026-11-24T07:35:56.5596640Z 2026-11-24 07:35:56.398 xcodebuild[1339:7428] [MT] DVTAssertions: Warning in DVTiOSFrameworks/IDEiOSSupportCore/DVTiPhoneSimulator.m:661
+2026-11-24T07:35:56.5699160Z Details:  SimDevice native architecture is nil. Device: SimDevice : Apple Watch SE 3 (44mm) (9DC4C83D-BC52-420A-AAA0-35DBBCE62ECA) : state={ Shutdown } deviceType={ com.apple.CoreSimulator.SimDeviceType.Apple-Watch-SE-3-44mm: SimDeviceType : Apple Watch SE 3 (44mm) (com.apple.CoreSimulator.SimDeviceType.Apple-Watch-SE-3-44mm) } runtime={ com.apple.CoreSimulator.SimRuntime.watchOS-27-0: (null) }, supportedArches: (
+2026-11-24T07:35:56.5802650Z )
+2026-11-24T07:35:56.5905150Z Object:   <DVTiPhoneSimulator: 0x7b80213800>
+2026-11-24T07:35:56.6006270Z Method:   -nativeArchitecture
+2026-11-24T07:35:56.6179630Z Thread:   <_NSMainThread: 0x1031e0dc0>{number = 1, name = main}
+2026-11-24T07:35:56.6284690Z Please file a bug at https://feedbackassistant.apple.com with this warning message and any useful information you can provide.
+2026-11-24T07:35:56.6608690Z 2026-11-24 07:35:56.398 xcodebuild[1339:7428] [MT] DVTAssertions: Warning in DVTiOSFrameworks/IDEiOSSupportCore/DVTiPhoneSimulator.m:661
+2026-11-24T07:35:56.6713040Z Details:  SimDevice native architecture is nil. Device: SimDevice : Apple Watch SE 3 (44mm) (9DC4C83D-BC52-420A-AAA0-35DBBCE62ECA) : state={ Shutdown } deviceType={ com.apple.CoreSimulator.SimDeviceType.Apple-Watch-SE-3-44mm: SimDeviceType : Apple Watch SE 3 (44mm) (com.apple.CoreSimulator.SimDeviceType.Apple-Watch-SE-3-44mm) } runtime={ com.apple.CoreSimulator.SimRuntime.watchOS-27-0: (null) }, supportedArches: (
+2026-11-24T07:35:56.6815450Z )
+2026-11-24T07:35:56.6917740Z Object:   <DVTiPhoneSimulator: 0x7b80213800>
+2026-11-24T07:35:56.7008680Z Method:   -nativeArchitecture
+2026-11-24T07:35:56.7042670Z Thread:   <_NSMainThread: 0x1031e0dc0>{number = 1, name = main}
+2026-11-24T07:35:56.7043720Z Please file a bug at https://feedbackassistant.apple.com with this warning message and any useful information you can provide.
+2026-11-24T07:35:56.7044840Z 2026-11-24 07:35:56.398 xcodebuild[1339:7428] [MT] DVTAssertions: Warning in DVTiOSFrameworks/IDEiOSSupportCore/DVTiPhoneSimulator.m:661
+2026-11-24T07:35:56.7047010Z Details:  SimDevice native architecture is nil. Device: SimDevice : Apple Watch Series 12 (42mm) (0F2F315B-5869-49D4-A5C9-42A5585869D7) : state={ Shutdown } deviceType={ com.apple.CoreSimulator.SimDeviceType.Apple-Watch-Series-12-42mm: SimDeviceType : Apple Watch Series 12 (42mm) (com.apple.CoreSimulator.SimDeviceType.Apple-Watch-Series-12-42mm) } runtime={ com.apple.CoreSimulator.SimRuntime.watchOS-27-0: (null) }, supportedArches: (
+2026-11-24T07:35:56.7050880Z )
+2026-11-24T07:35:56.7051260Z Object:   <DVTiPhoneSimulator: 0x7b80213400>
+2026-11-24T07:35:56.7051630Z Method:   -nativeArchitecture
+2026-11-24T07:35:56.7052050Z Thread:   <_NSMainThread: 0x1031e0dc0>{number = 1, name = main}
+2026-11-24T07:35:56.7052640Z Please file a bug at https://feedbackassistant.apple.com with this warning message and any useful information you can provide.
+2026-11-24T07:35:56.7053600Z 2026-11-24 07:35:56.398 xcodebuild[1339:7428] [MT] DVTAssertions: Warning in DVTiOSFrameworks/IDEiOSSupportCore/DVTiPhoneSimulator.m:661
+2026-11-24T07:35:56.7055460Z Details:  SimDevice native architecture is nil. Device: SimDevice : Apple Watch Series 12 (42mm) (0F2F315B-5869-49D4-A5C9-42A5585869D7) : state={ Shutdown } deviceType={ com.apple.CoreSimulator.SimDeviceType.Apple-Watch-Series-12-42mm: SimDeviceType : Apple Watch Series 12 (42mm) (com.apple.CoreSimulator.SimDeviceType.Apple-Watch-Series-12-42mm) } runtime={ com.apple.CoreSimulator.SimRuntime.watchOS-27-0: (null) }, supportedArches: (
+2026-11-24T07:35:56.7056980Z )
+2026-11-24T07:35:56.7057210Z Object:   <DVTiPhoneSimulator: 0x7b80213400>
+2026-11-24T07:35:56.7057620Z Method:   -nativeArchitecture
+2026-11-24T07:35:56.7058230Z Thread:   <_NSMainThread: 0x1031e0dc0>{number = 1, name = main}
+2026-11-24T07:35:56.7059070Z Please file a bug at https://feedbackassistant.apple.com with this warning message and any useful information you can provide.
+2026-11-24T07:35:56.7059970Z 2026-11-24 07:35:56.398 xcodebuild[1339:7428] [MT] DVTAssertions: Warning in DVTiOSFrameworks/IDEiOSSupportCore/DVTiPhoneSimulator.m:661
+2026-11-24T07:35:56.7061950Z Details:  SimDevice native architecture is nil. Device: SimDevice : Apple Watch Series 12 (46mm) (CD8A490F-5B2C-485E-8F11-CD8596FA4AAE) : state={ Shutdown } deviceType={ com.apple.CoreSimulator.SimDeviceType.Apple-Watch-Series-12-46mm: SimDeviceType : Apple Watch Series 12 (46mm) (com.apple.CoreSimulator.SimDeviceType.Apple-Watch-Series-12-46mm) } runtime={ com.apple.CoreSimulator.SimRuntime.watchOS-27-0: (null) }, supportedArches: (
+2026-11-24T07:35:56.7063590Z )
+2026-11-24T07:35:56.7063880Z Object:   <DVTiPhoneSimulator: 0x7b80213200>
+2026-11-24T07:35:56.7064270Z Method:   -nativeArchitecture
+2026-11-24T07:35:56.7064660Z Thread:   <_NSMainThread: 0x1031e0dc0>{number = 1, name = main}
+2026-11-24T07:35:56.7065550Z Please file a bug at https://feedbackassistant.apple.com with this warning message and any useful information you can provide.
+2026-11-24T07:35:56.7066390Z 2026-11-24 07:35:56.399 xcodebuild[1339:7428] [MT] DVTAssertions: Warning in DVTiOSFrameworks/IDEiOSSupportCore/DVTiPhoneSimulator.m:661
+2026-11-24T07:35:56.7068130Z Details:  SimDevice native architecture is nil. Device: SimDevice : Apple Watch Series 12 (46mm) (CD8A490F-5B2C-485E-8F11-CD8596FA4AAE) : state={ Shutdown } deviceType={ com.apple.CoreSimulator.SimDeviceType.Apple-Watch-Series-12-46mm: SimDeviceType : Apple Watch Series 12 (46mm) (com.apple.CoreSimulator.SimDeviceType.Apple-Watch-Series-12-46mm) } runtime={ com.apple.CoreSimulator.SimRuntime.watchOS-27-0: (null) }, supportedArches: (
+2026-11-24T07:35:56.7069710Z )
+2026-11-24T07:35:56.7069960Z Object:   <DVTiPhoneSimulator: 0x7b80213200>
+2026-11-24T07:35:56.7070310Z Method:   -nativeArchitecture
+2026-11-24T07:35:56.7070690Z Thread:   <_NSMainThread: 0x1031e0dc0>{number = 1, name = main}
+2026-11-24T07:35:56.7071370Z Please file a bug at https://feedbackassistant.apple.com with this warning message and any useful information you can provide.
+2026-11-24T07:35:56.7072160Z 2026-11-24 07:35:56.399 xcodebuild[1339:7428] [MT] DVTAssertions: Warning in DVTiOSFrameworks/IDEiOSSupportCore/DVTiPhoneSimulator.m:661
+2026-11-24T07:35:56.7074480Z Details:  SimDevice native architecture is nil. Device: SimDevice : Apple Watch Ultra 4 (49mm) (BCB3C139-0F79-47D8-BCF2-5D39AA0D1C00) : state={ Shutdown } deviceType={ com.apple.CoreSimulator.SimDeviceType.Apple-Watch-Ultra-4-49mm: SimDeviceType : Apple Watch Ultra 4 (49mm) (com.apple.CoreSimulator.SimDeviceType.Apple-Watch-Ultra-4-49mm) } runtime={ com.apple.CoreSimulator.SimRuntime.watchOS-27-0: (null) }, supportedArches: (
+2026-11-24T07:35:56.7076130Z )
+2026-11-24T07:35:56.7076380Z Object:   <DVTiPhoneSimulator: 0x7b80213600>
+2026-11-24T07:35:56.7076760Z Method:   -nativeArchitecture
+2026-11-24T07:35:56.7077140Z Thread:   <_NSMainThread: 0x1031e0dc0>{number = 1, name = main}
+2026-11-24T07:35:56.7077720Z Please file a bug at https://feedbackassistant.apple.com with this warning message and any useful information you can provide.
+2026-11-24T07:35:56.7078600Z 2026-11-24 07:35:56.399 xcodebuild[1339:7428] [MT] DVTAssertions: Warning in DVTiOSFrameworks/IDEiOSSupportCore/DVTiPhoneSimulator.m:661
+2026-11-24T07:35:56.7081000Z Details:  SimDevice native architecture is nil. Device: SimDevice : Apple Watch Ultra 4 (49mm) (BCB3C139-0F79-47D8-BCF2-5D39AA0D1C00) : state={ Shutdown } deviceType={ com.apple.CoreSimulator.SimDeviceType.Apple-Watch-Ultra-4-49mm: SimDeviceType : Apple Watch Ultra 4 (49mm) (com.apple.CoreSimulator.SimDeviceType.Apple-Watch-Ultra-4-49mm) } runtime={ com.apple.CoreSimulator.SimRuntime.watchOS-27-0: (null) }, supportedArches: (
+2026-11-24T07:35:56.7082590Z )
+2026-11-24T07:35:56.7082890Z Object:   <DVTiPhoneSimulator: 0x7b80213600>
+2026-11-24T07:35:56.7083200Z Method:   -nativeArchitecture
+2026-11-24T07:35:56.7083610Z Thread:   <_NSMainThread: 0x1031e0dc0>{number = 1, name = main}
+2026-11-24T07:35:56.7084310Z Please file a bug at https://feedbackassistant.apple.com with this warning message and any useful information you can provide.
+2026-11-24T07:37:14.5830580Z 
+2026-11-24T07:37:14.5852360Z ----- xcbeautify -----
+2026-11-24T07:37:14.5867920Z Version: 3.2.1
+2026-11-24T07:37:14.5869500Z ----------------------
+2026-11-24T07:37:14.5872700Z 
+2026-11-24T07:37:14.5884400Z [36;1mResolving Package Graph[0m
+2026-11-24T07:37:14.5885560Z Fetching https://github.com/stossy11/StosSign
+2026-11-24T07:37:14.5886640Z Fetching https://github.com/adam-fowler/swift-srp.git
+2026-11-24T07:37:14.5887220Z Fetching https://github.com/adam-fowler/big-num
+2026-11-24T07:37:14.5887820Z Fetching https://github.com/apple/swift-crypto
+2026-11-24T07:37:14.5888450Z Fetching https://github.com/krzyzanowskim/CryptoSwift
+2026-11-24T07:37:14.5888990Z Fetching https://github.com/krzyzanowskim/OpenSSL
+2026-11-24T07:37:14.5889670Z Fetching https://github.com/apple/swift-certificates.git
+2026-11-24T07:37:14.5890270Z Fetching https://github.com/apple/swift-asn1.git
+2026-11-24T07:37:14.5904630Z Checking out [1m‘swift-srp’[0m @ [32mce202c48f8ca68f44b71732f945eb8221d6fe135[0m
+2026-11-24T07:37:14.5907390Z Checking out [1m‘big-num’[0m @ [32m2.0.3[0m
+2026-11-24T07:37:14.5909030Z Checking out [1m‘swift-asn1’[0m @ [32m1.7.5[0m
+2026-11-24T07:37:14.5910780Z Checking out [1m‘StosSign’[0m @ [32m01dd7bc4f5084ade9e2ebbc7e338dc2e3f454d77[0m
+2026-11-24T07:37:14.5912780Z Checking out [1m‘CryptoSwift’[0m @ [32m1.10.0[0m
+2026-11-24T07:37:14.5914040Z Checking out [1m‘swift-crypto’[0m @ [32m4.5.2[0m
+2026-11-24T07:37:14.6060660Z Checking out [1m‘swift-certificates’[0m @ [32m1.21.2[0m
+2026-11-24T07:37:14.6061430Z Checking out [1m‘OpenSSL’[0m @ [32m3.6.5000[0m
+2026-11-24T07:37:14.6061790Z [32;1mResolved source packages[0m
+2026-11-24T07:37:14.6062440Z [36;1mCryptoSwift[0m - [1mhttps://github.com/krzyzanowskim/CryptoSwift[0m @ [32m1.10.0[0m
+2026-11-24T07:37:14.6063300Z [36;1mswift-crypto[0m - [1mhttps://github.com/apple/swift-crypto[0m @ [32m4.5.2[0m
+2026-11-24T07:37:14.6064110Z [36;1mOpenSSL[0m - [1mhttps://github.com/krzyzanowskim/OpenSSL[0m @ [32m3.6.5000[0m
+2026-11-24T07:37:14.6064890Z [36;1mbig-num[0m - [1mhttps://github.com/adam-fowler/big-num[0m @ [32m2.0.3[0m
+2026-11-24T07:37:14.6073350Z [36;1mswift-asn1[0m - [1mhttps://github.com/apple/swift-asn1.git[0m @ [32m1.7.5[0m
+2026-11-24T07:37:14.6074160Z [36;1mswift-certificates[0m - [1mhttps://github.com/apple/swift-certificates.git[0m @ [32m1.21.2[0m
+2026-11-24T07:37:14.6078970Z [36;1mnote: [0mBuilding targets in dependency order
+2026-11-24T07:37:14.6079850Z [36;1mnote: [0mTarget dependency graph (35 targets)
+2026-11-24T07:37:14.6080650Z [[36mswift-crypto_CryptoExtras[0m] [1mWrite Auxiliary File[0m swift-crypto_CryptoExtras.DependencyMetadataFileList
+2026-11-24T07:37:14.6081940Z [[36mswift-crypto_CryptoExtras[0m] [1mWrite Auxiliary File[0m swift-crypto_CryptoExtras.DependencyStaticMetadataFileList
+2026-11-24T07:37:14.6082800Z [[36mswift-crypto_CryptoExtras[0m] [1mWrite Auxiliary File[0m empty-swift-crypto_CryptoExtras.plist
+2026-11-24T07:37:14.6083830Z [[36mswift-crypto_CryptoBoringWrapper[0m] [1mWrite Auxiliary File[0m swift-crypto_CryptoBoringWrapper.DependencyStaticMetadataFileList
+2026-11-24T07:37:14.6084770Z [[36mswift-crypto_CryptoBoringWrapper[0m] [1mWrite Auxiliary File[0m swift-crypto_CryptoBoringWrapper.DependencyMetadataFileList
+2026-11-24T07:37:14.6085640Z [[36mswift-crypto_CryptoBoringWrapper[0m] [1mWrite Auxiliary File[0m empty-swift-crypto_CryptoBoringWrapper.plist
+2026-11-24T07:37:14.6086320Z [[36mswift-crypto_Crypto[0m] [1mWrite Auxiliary File[0m swift-crypto_Crypto.DependencyStaticMetadataFileList
+2026-11-24T07:37:14.6087160Z [[36mswift-crypto_Crypto[0m] [1mWrite Auxiliary File[0m swift-crypto_Crypto.DependencyMetadataFileList
+2026-11-24T07:37:14.6087870Z [[36mswift-crypto_Crypto[0m] [1mWrite Auxiliary File[0m empty-swift-crypto_Crypto.plist
+2026-11-24T07:37:14.6088850Z [[36mswift-crypto_CCryptoBoringSSLShims[0m] [1mWrite Auxiliary File[0m swift-crypto_CCryptoBoringSSLShims.DependencyStaticMetadataFileList
+2026-11-24T07:37:14.6090000Z [[36mswift-crypto_CCryptoBoringSSLShims[0m] [1mWrite Auxiliary File[0m swift-crypto_CCryptoBoringSSLShims.DependencyMetadataFileList
+2026-11-24T07:37:14.6091100Z [[36mswift-crypto_CCryptoBoringSSLShims[0m] [1mWrite Auxiliary File[0m empty-swift-crypto_CCryptoBoringSSLShims.plist
+2026-11-24T07:37:14.6092120Z [[36mswift-crypto_CCryptoBoringSSL[0m] [1mWrite Auxiliary File[0m swift-crypto_CCryptoBoringSSL.DependencyStaticMetadataFileList
+2026-11-24T07:37:14.6093030Z [[36mswift-crypto_CCryptoBoringSSL[0m] [1mWrite Auxiliary File[0m swift-crypto_CCryptoBoringSSL.DependencyMetadataFileList
+2026-11-24T07:37:14.6094130Z [[36mswift-crypto_CCryptoBoringSSL[0m] [1mWrite Auxiliary File[0m empty-swift-crypto_CCryptoBoringSSL.plist
+2026-11-24T07:37:14.6094960Z [[36m_CryptoExtras[0m] [1mWrite Auxiliary File[0m _CryptoExtras.modulemap
+2026-11-24T07:37:14.6095810Z [[36m_CryptoExtras[0m] [1mWrite Auxiliary File[0m _CryptoExtras.DependencyStaticMetadataFileList
+2026-11-24T07:37:14.6096450Z [[36m_CryptoExtras[0m] [1mWrite Auxiliary File[0m _CryptoExtras.DependencyMetadataFileList
+2026-11-24T07:37:14.6097630Z [[36m_CryptoExtras[0m] [1mWrite Auxiliary File[0m _CryptoExtras_const_extract_protocols.json
+2026-11-24T07:37:14.6098290Z [[36m_CryptoExtras[0m] [1mWrite Auxiliary File[0m _CryptoExtras.SwiftFileList
+2026-11-24T07:37:14.6098920Z [[36m_CryptoExtras[0m] [1mWrite Auxiliary File[0m _CryptoExtras.SwiftConstValuesFileList
+2026-11-24T07:37:14.6099860Z [[36m_CryptoExtras[0m] [1mWrite Auxiliary File[0m _CryptoExtras.LinkFileList
+2026-11-24T07:37:14.6100670Z [[36m_CryptoExtras[0m] [1mWrite Auxiliary File[0m _CryptoExtras-OutputFileMap.json
+2026-11-24T07:37:14.6101470Z [[36m_CryptoExtras[0m] [1mCopy[0m _CryptoExtras.modulemap -> _CryptoExtras.modulemap
+2026-11-24T07:37:14.6102320Z [[36m_CertificateInternals[0m] [1mWrite Auxiliary File[0m _CertificateInternals.modulemap
+2026-11-24T07:37:14.6103600Z [[36m_CertificateInternals[0m] [1mWrite Auxiliary File[0m _CertificateInternals.DependencyStaticMetadataFileList
+2026-11-24T07:37:14.6104490Z [[36m_CertificateInternals[0m] [1mWrite Auxiliary File[0m _CertificateInternals.DependencyMetadataFileList
+2026-11-24T07:37:14.6106030Z [[36m_CertificateInternals[0m] [1mWrite Auxiliary File[0m _CertificateInternals_const_extract_protocols.json
+2026-11-24T07:37:14.6107290Z [[36m_CertificateInternals[0m] [1mWrite Auxiliary File[0m _CertificateInternals.SwiftFileList
+2026-11-24T07:37:14.6108140Z [[36m_CertificateInternals[0m] [1mWrite Auxiliary File[0m _CertificateInternals.SwiftConstValuesFileList
+2026-11-24T07:37:14.6109260Z [[36m_CertificateInternals[0m] [1mWrite Auxiliary File[0m _CertificateInternals.LinkFileList
+2026-11-24T07:37:14.6110030Z [[36m_CertificateInternals[0m] [1mWrite Auxiliary File[0m _CertificateInternals-OutputFileMap.json
+2026-11-24T07:37:14.6110790Z [[36m_CertificateInternals[0m] [1mCopy[0m _CertificateInternals.modulemap -> _CertificateInternals.modulemap
+2026-11-24T07:37:14.6112180Z [[36mX509[0m] [1mWrite Auxiliary File[0m X509.modulemap
+2026-11-24T07:37:14.6112860Z [[36mX509[0m] [1mWrite Auxiliary File[0m X509.DependencyStaticMetadataFileList
+2026-11-24T07:37:14.6113740Z [[36mX509[0m] [1mWrite Auxiliary File[0m X509.DependencyMetadataFileList
+2026-11-24T07:37:14.6114460Z [[36mX509[0m] [1mWrite Auxiliary File[0m X509_const_extract_protocols.json
+2026-11-24T07:37:14.6116600Z [[36mX509[0m] [1mWrite Auxiliary File[0m X509.SwiftFileList
+2026-11-24T07:37:14.6117310Z [[36mX509[0m] [1mWrite Auxiliary File[0m X509.SwiftConstValuesFileList
+2026-11-24T07:37:14.6118140Z [[36mX509[0m] [1mWrite Auxiliary File[0m X509.LinkFileList
+2026-11-24T07:37:14.6118930Z [[36mX509[0m] [1mWrite Auxiliary File[0m X509-OutputFileMap.json
+2026-11-24T07:37:14.6119560Z [[36mX509[0m] [1mCopy[0m X509.modulemap -> X509.modulemap
+2026-11-24T07:37:14.6120110Z [[36mSwiftASN1[0m] [1mWrite Auxiliary File[0m SwiftASN1.modulemap
+2026-11-24T07:37:14.6120940Z [[36mSwiftASN1[0m] [1mWrite Auxiliary File[0m SwiftASN1.DependencyStaticMetadataFileList
+2026-11-24T07:37:14.6121740Z [[36mSwiftASN1[0m] [1mWrite Auxiliary File[0m SwiftASN1.DependencyMetadataFileList
+2026-11-24T07:37:14.6122450Z [[36mSwiftASN1[0m] [1mWrite Auxiliary File[0m SwiftASN1_const_extract_protocols.json
+2026-11-24T07:37:14.6123340Z [[36mSwiftASN1[0m] [1mWrite Auxiliary File[0m SwiftASN1.SwiftFileList
+2026-11-24T07:37:14.6124310Z [[36mSwiftASN1[0m] [1mWrite Auxiliary File[0m SwiftASN1.SwiftConstValuesFileList
+2026-11-24T07:37:14.6124870Z [[36mSwiftASN1[0m] [1mWrite Auxiliary File[0m SwiftASN1.LinkFileList
+2026-11-24T07:37:14.6125720Z [[36mSwiftASN1[0m] [1mWrite Auxiliary File[0m SwiftASN1-OutputFileMap.json
+2026-11-24T07:37:14.6126480Z [[36mSwiftASN1[0m] [1mCopy[0m SwiftASN1.modulemap -> SwiftASN1.modulemap
+2026-11-24T07:37:14.6126970Z [[36mStosSign_Common[0m] [1mWrite Auxiliary File[0m StosSign_Common.modulemap
+2026-11-24T07:37:14.6127770Z [[36mStosSign_Common[0m] [1mWrite Auxiliary File[0m StosSign_Common.DependencyStaticMetadataFileList
+2026-11-24T07:37:14.6128660Z [[36mStosSign_Common[0m] [1mWrite Auxiliary File[0m StosSign_Common.DependencyMetadataFileList
+2026-11-24T07:37:14.6129320Z [[36mStosSign_Common[0m] [1mWrite Auxiliary File[0m StosSign_Common_const_extract_protocols.json
+2026-11-24T07:37:14.6130240Z [[36mStosSign_Common[0m] [1mWrite Auxiliary File[0m StosSign_Common.SwiftFileList
+2026-11-24T07:37:14.6130860Z [[36mStosSign_Common[0m] [1mWrite Auxiliary File[0m StosSign_Common.SwiftConstValuesFileList
+2026-11-24T07:37:14.6131590Z [[36mStosSign_Common[0m] [1mWrite Auxiliary File[0m StosSign_Common.LinkFileList
+2026-11-24T07:37:14.6132530Z [[36mStosSign_Common[0m] [1mWrite Auxiliary File[0m StosSign_Common-OutputFileMap.json
+2026-11-24T07:37:14.6133290Z [[36mStosSign_Common[0m] [1mCopy[0m StosSign_Common.modulemap -> StosSign_Common.modulemap
+2026-11-24T07:37:14.6135240Z [[36mStosSign_Auth[0m] [1mWrite Auxiliary File[0m StosSign_Auth.modulemap
+2026-11-24T07:37:14.6135930Z [[36mStosSign_Auth[0m] [1mWrite Auxiliary File[0m StosSign_Auth.DependencyStaticMetadataFileList
+2026-11-24T07:37:14.6137440Z [[36mStosSign_Auth[0m] [1mWrite Auxiliary File[0m StosSign_Auth.DependencyMetadataFileList
+2026-11-24T07:37:14.6138290Z [[36mStosSign_Auth[0m] [1mWrite Auxiliary File[0m StosSign_Auth_const_extract_protocols.json
+2026-11-24T07:37:14.6139380Z [[36mStosSign_Auth[0m] [1mWrite Auxiliary File[0m StosSign_Auth.SwiftFileList
+2026-11-24T07:37:14.6140250Z [[36mStosSign_Auth[0m] [1mWrite Auxiliary File[0m StosSign_Auth.SwiftConstValuesFileList
+2026-11-24T07:37:14.6141240Z [[36mStosSign_Auth[0m] [1mWrite Auxiliary File[0m StosSign_Auth.LinkFileList
+2026-11-24T07:37:14.6141960Z [[36mStosSign_Auth[0m] [1mWrite Auxiliary File[0m StosSign_Auth-OutputFileMap.json
+2026-11-24T07:37:14.6142620Z [[36mStosSign_Auth[0m] [1mCopy[0m StosSign_Auth.modulemap -> StosSign_Auth.modulemap
+2026-11-24T07:37:14.6143250Z [[36mStosSign_API[0m] [1mWrite Auxiliary File[0m StosSign_API.modulemap
+2026-11-24T07:37:14.6144050Z [[36mStosSign_API[0m] [1mWrite Auxiliary File[0m StosSign_API.DependencyStaticMetadataFileList
+2026-11-24T07:37:14.6144920Z [[36mStosSign_API[0m] [1mWrite Auxiliary File[0m StosSign_API.DependencyMetadataFileList
+2026-11-24T07:37:14.6145560Z [[36mStosSign_API[0m] [1mWrite Auxiliary File[0m StosSign_API_const_extract_protocols.json
+2026-11-24T07:37:14.6146330Z [[36mStosSign_API[0m] [1mWrite Auxiliary File[0m StosSign_API.SwiftFileList
+2026-11-24T07:37:14.6146810Z [[36mStosSign_API[0m] [1mWrite Auxiliary File[0m StosSign_API.SwiftConstValuesFileList
+2026-11-24T07:37:14.6147660Z [[36mStosSign_API[0m] [1mWrite Auxiliary File[0m StosSign_API.LinkFileList
+2026-11-24T07:37:14.6148380Z [[36mStosSign_API[0m] [1mWrite Auxiliary File[0m StosSign_API-OutputFileMap.json
+2026-11-24T07:37:14.6149310Z [[36mStosSign_API[0m] [1mCopy[0m StosSign_API.modulemap -> StosSign_API.modulemap
+2026-11-24T07:37:14.6149990Z [[36mSRP[0m] [1mWrite Auxiliary File[0m SRP.modulemap
+2026-11-24T07:37:14.6150550Z [[36mSRP[0m] [1mWrite Auxiliary File[0m SRP.DependencyStaticMetadataFileList
+2026-11-24T07:37:14.6151320Z [[36mSRP[0m] [1mWrite Auxiliary File[0m SRP.DependencyMetadataFileList
+2026-11-24T07:37:14.6152310Z [[36mSRP[0m] [1mWrite Auxiliary File[0m SRP_const_extract_protocols.json
+2026-11-24T07:37:14.6152840Z [[36mSRP[0m] [1mWrite Auxiliary File[0m SRP.SwiftFileList
+2026-11-24T07:37:14.6154210Z [[36mSRP[0m] [1mWrite Auxiliary File[0m SRP.SwiftConstValuesFileList
+2026-11-24T07:37:14.6157480Z [[36mSRP[0m] [1mWrite Auxiliary File[0m SRP.LinkFileList
+2026-11-24T07:37:14.6158250Z [[36mSRP[0m] [1mWrite Auxiliary File[0m SRP-OutputFileMap.json
+2026-11-24T07:37:14.6158910Z [[36mSRP[0m] [1mCopy[0m SRP.modulemap -> SRP.modulemap
+2026-11-24T07:37:14.6159810Z [[36mCryptoSwift_CryptoSwiftResources[0m] [1mWrite Auxiliary File[0m empty-CryptoSwift_CryptoSwiftResources.plist
+2026-11-24T07:37:14.6160800Z [[36mCryptoSwift_CryptoSwiftResources[0m] [1mWrite Auxiliary File[0m CryptoSwift_CryptoSwiftResources.DependencyStaticMetadataFileList
+2026-11-24T07:37:14.6162170Z [[36mCryptoSwift_CryptoSwiftResources[0m] [1mWrite Auxiliary File[0m CryptoSwift_CryptoSwiftResources.DependencyMetadataFileList
+2026-11-24T07:37:14.6163320Z [[36mCryptoSwiftResources[0m] [1mWrite Auxiliary File[0m CryptoSwiftResources_const_extract_protocols.json
+2026-11-24T07:37:14.6166290Z [[36mCryptoSwiftResources[0m] [1mWrite Auxiliary File[0m CryptoSwiftResources.SwiftFileList
+2026-11-24T07:37:14.6168420Z [[36mCryptoSwiftResources[0m] [1mWrite Auxiliary File[0m CryptoSwiftResources.SwiftConstValuesFileList
+2026-11-24T07:37:14.6169340Z [[36mCryptoSwiftResources[0m] [1mWrite Auxiliary File[0m CryptoSwiftResources.LinkFileList
+2026-11-24T07:37:14.6170030Z [[36mCryptoSwiftResources[0m] [1mWrite Auxiliary File[0m CryptoSwiftResources-OutputFileMap.json
+2026-11-24T07:37:14.6170900Z [[36mCryptoSwiftResources[0m] [1mWrite Auxiliary File[0m resource_bundle_accessor.swift
+2026-11-24T07:37:14.6171640Z [[36mCryptoSwiftResources[0m] [1mWrite Auxiliary File[0m CryptoSwiftResources.modulemap
+2026-11-24T07:37:14.6176310Z [[36mCryptoSwiftResources[0m] [1mWrite Auxiliary File[0m CryptoSwiftResources.DependencyStaticMetadataFileList
+2026-11-24T07:37:14.6177510Z [[36mCryptoSwiftResources[0m] [1mWrite Auxiliary File[0m CryptoSwiftResources.DependencyMetadataFileList
+2026-11-24T07:37:14.6179000Z [[36mCryptoSwiftResources[0m] [1mCopy[0m CryptoSwiftResources.modulemap -> CryptoSwiftResources.modulemap
+2026-11-24T07:37:14.6179910Z [[36mCryptoSwift[0m] [1mWrite Auxiliary File[0m CryptoSwift_const_extract_protocols.json
+2026-11-24T07:37:14.6180600Z [[36mCryptoSwift[0m] [1mWrite Auxiliary File[0m CryptoSwift.SwiftFileList
+2026-11-24T07:37:14.6181290Z [[36mCryptoSwift[0m] [1mWrite Auxiliary File[0m CryptoSwift.SwiftConstValuesFileList
+2026-11-24T07:37:14.6182380Z [[36mCryptoSwift[0m] [1mWrite Auxiliary File[0m CryptoSwift.LinkFileList
+2026-11-24T07:37:14.6184040Z [[36mCryptoSwift[0m] [1mWrite Auxiliary File[0m CryptoSwift-OutputFileMap.json
+2026-11-24T07:37:14.6184600Z [[36mCryptoSwift[0m] [1mWrite Auxiliary File[0m CryptoSwift.modulemap
+2026-11-24T07:37:14.6185540Z [[36mCryptoSwift[0m] [1mWrite Auxiliary File[0m CryptoSwift.DependencyStaticMetadataFileList
+2026-11-24T07:37:14.6186130Z [[36mCryptoSwift[0m] [1mWrite Auxiliary File[0m CryptoSwift.DependencyMetadataFileList
+2026-11-24T07:37:14.6187040Z [[36mCryptoSwift[0m] [1mCopy[0m CryptoSwift.modulemap -> CryptoSwift.modulemap
+2026-11-24T07:37:14.6188000Z [[36mCryptoExtras[0m] [1mWrite Auxiliary File[0m CryptoExtras_const_extract_protocols.json
+2026-11-24T07:37:14.6188690Z [[36mCryptoExtras[0m] [1mWrite Auxiliary File[0m CryptoExtras.SwiftFileList
+2026-11-24T07:37:14.6189360Z [[36mCryptoExtras[0m] [1mWrite Auxiliary File[0m CryptoExtras.SwiftConstValuesFileList
+2026-11-24T07:37:14.6190080Z [[36mCryptoExtras[0m] [1mWrite Auxiliary File[0m CryptoExtras.LinkFileList
+2026-11-24T07:37:14.6190810Z [[36mCryptoExtras[0m] [1mWrite Auxiliary File[0m CryptoExtras-OutputFileMap.json
+2026-11-24T07:37:14.6191490Z [[36mCryptoExtras[0m] [1mWrite Auxiliary File[0m resource_bundle_accessor.swift
+2026-11-24T07:37:14.6192250Z [[36mCryptoExtras[0m] [1mWrite Auxiliary File[0m CryptoExtras.modulemap
+2026-11-24T07:37:14.6193230Z [[36mCryptoExtras[0m] [1mWrite Auxiliary File[0m CryptoExtras.DependencyStaticMetadataFileList
+2026-11-24T07:37:14.6193950Z [[36mCryptoExtras[0m] [1mWrite Auxiliary File[0m CryptoExtras.DependencyMetadataFileList
+2026-11-24T07:37:14.6195030Z [[36mCryptoExtras[0m] [1mCopy[0m CryptoExtras.modulemap -> CryptoExtras.modulemap
+2026-11-24T07:37:14.6196070Z [[36mCryptoBoringWrapper[0m] [1mWrite Auxiliary File[0m CryptoBoringWrapper_const_extract_protocols.json
+2026-11-24T07:37:14.6196950Z [[36mCryptoBoringWrapper[0m] [1mWrite Auxiliary File[0m CryptoBoringWrapper.SwiftFileList
+2026-11-24T07:37:14.6197600Z [[36mCryptoBoringWrapper[0m] [1mWrite Auxiliary File[0m CryptoBoringWrapper.SwiftConstValuesFileList
+2026-11-24T07:37:14.6198500Z [[36mCryptoBoringWrapper[0m] [1mWrite Auxiliary File[0m CryptoBoringWrapper.LinkFileList
+2026-11-24T07:37:14.6199280Z [[36mCryptoBoringWrapper[0m] [1mWrite Auxiliary File[0m CryptoBoringWrapper-OutputFileMap.json
+2026-11-24T07:37:14.6200100Z [[36mCryptoBoringWrapper[0m] [1mWrite Auxiliary File[0m resource_bundle_accessor.swift
+2026-11-24T07:37:14.6200930Z [[36mCryptoBoringWrapper[0m] [1mWrite Auxiliary File[0m CryptoBoringWrapper.modulemap
+2026-11-24T07:37:14.6201870Z [[36mCryptoBoringWrapper[0m] [1mWrite Auxiliary File[0m CryptoBoringWrapper.DependencyStaticMetadataFileList
+2026-11-24T07:37:14.6202840Z [[36mCryptoBoringWrapper[0m] [1mWrite Auxiliary File[0m CryptoBoringWrapper.DependencyMetadataFileList
+2026-11-24T07:37:14.6203820Z [[36mCryptoBoringWrapper[0m] [1mCopy[0m CryptoBoringWrapper.modulemap -> CryptoBoringWrapper.modulemap
+2026-11-24T07:37:14.6204580Z [[36mCrypto[0m] [1mWrite Auxiliary File[0m Crypto_const_extract_protocols.json
+2026-11-24T07:37:14.6205270Z [[36mCrypto[0m] [1mWrite Auxiliary File[0m Crypto.SwiftFileList
+2026-11-24T07:37:14.6206610Z [[36mCrypto[0m] [1mWrite Auxiliary File[0m Crypto.SwiftConstValuesFileList
+2026-11-24T07:37:14.6207570Z [[36mCrypto[0m] [1mWrite Auxiliary File[0m Crypto.LinkFileList
+2026-11-24T07:37:14.6208250Z [[36mCrypto[0m] [1mWrite Auxiliary File[0m Crypto-OutputFileMap.json
+2026-11-24T07:37:14.6209410Z [[36mCrypto[0m] [1mWrite Auxiliary File[0m resource_bundle_accessor.swift
+2026-11-24T07:37:14.6210060Z [[36mCrypto[0m] [1mWrite Auxiliary File[0m Crypto.modulemap
+2026-11-24T07:37:14.6210720Z [[36mCrypto[0m] [1mWrite Auxiliary File[0m Crypto.DependencyStaticMetadataFileList
+2026-11-24T07:37:14.6212380Z [[36mCrypto[0m] [1mWrite Auxiliary File[0m Crypto.DependencyMetadataFileList
+2026-11-24T07:37:14.6213190Z [[36mCrypto[0m] [1mCopy[0m Crypto.modulemap -> Crypto.modulemap
+2026-11-24T07:37:14.6213890Z [[36mCCryptoBoringSSLShims[0m] [1mWrite Auxiliary File[0m CCryptoBoringSSLShims.LinkFileList
+2026-11-24T07:37:14.6214790Z [[36mCCryptoBoringSSLShims[0m] [1mWrite Auxiliary File[0m 7187679823f38a2a940e0043cdf9d637-common-args.resp
+2026-11-24T07:37:14.6215660Z [[36mCCryptoBoringSSLShims[0m] [1mWrite Auxiliary File[0m CCryptoBoringSSLShims.DependencyStaticMetadataFileList
+2026-11-24T07:37:14.6216860Z [[36mCCryptoBoringSSLShims[0m] [1mWrite Auxiliary File[0m CCryptoBoringSSLShims.DependencyMetadataFileList
+2026-11-24T07:37:14.6217670Z [[36mCCryptoBoringSSL[0m] [1mWrite Auxiliary File[0m CCryptoBoringSSL.LinkFileList
+2026-11-24T07:37:14.6218430Z [[36mCCryptoBoringSSL[0m] [1mWrite Auxiliary File[0m 82b82416624d2658e5098eb0a28c15c5-common-args.resp
+2026-11-24T07:37:14.6219500Z [[36mCCryptoBoringSSL[0m] [1mWrite Auxiliary File[0m 533656923a283fa776881f304837ed9e-common-args.resp
+2026-11-24T07:37:14.6220410Z [[36mCCryptoBoringSSL[0m] [1mWrite Auxiliary File[0m CCryptoBoringSSL.DependencyStaticMetadataFileList
+2026-11-24T07:37:14.6221860Z [[36mCCryptoBoringSSL[0m] [1mWrite Auxiliary File[0m CCryptoBoringSSL.DependencyMetadataFileList
+2026-11-24T07:37:14.6223020Z [[36mCBigNumBoringSSL[0m] [1mWrite Auxiliary File[0m 7187679823f38a2a940e0043cdf9d637-common-args.resp
+2026-11-24T07:37:14.6223820Z [[36mCBigNumBoringSSL[0m] [1mWrite Auxiliary File[0m CBigNumBoringSSL.LinkFileList
+2026-11-24T07:37:14.6225710Z [[36mCBigNumBoringSSL[0m] [1mWrite Auxiliary File[0m 533656923a283fa776881f304837ed9e-common-args.resp
+2026-11-24T07:37:14.6226990Z [[36mCBigNumBoringSSL[0m] [1mWrite Auxiliary File[0m CBigNumBoringSSL.modulemap
+2026-11-24T07:37:14.6227810Z [[36mCBigNumBoringSSL[0m] [1mWrite Auxiliary File[0m CBigNumBoringSSL.DependencyStaticMetadataFileList
+2026-11-24T07:37:14.6228760Z [[36mCBigNumBoringSSL[0m] [1mWrite Auxiliary File[0m CBigNumBoringSSL.DependencyMetadataFileList
+2026-11-24T07:37:14.6229630Z [[36mCBigNumBoringSSL[0m] [1mCopy[0m CBigNumBoringSSL.modulemap -> CBigNumBoringSSL.modulemap
+2026-11-24T07:37:14.6230420Z [[36mBigNum[0m] [1mWrite Auxiliary File[0m BigNum_const_extract_protocols.json
+2026-11-24T07:37:14.6231080Z [[36mBigNum[0m] [1mWrite Auxiliary File[0m BigNum.SwiftFileList
+2026-11-24T07:37:14.6231660Z [[36mBigNum[0m] [1mWrite Auxiliary File[0m BigNum.SwiftConstValuesFileList
+2026-11-24T07:37:30.8426270Z [[36mBigNum[0m] [1mWrite Auxiliary File[0m BigNum.LinkFileList
+2026-11-24T07:37:30.8528410Z [[36mBigNum[0m] [1mWrite Auxiliary File[0m BigNum-OutputFileMap.json
+2026-11-24T07:37:30.8630480Z [[36mBigNum[0m] [1mWrite Auxiliary File[0m BigNum.modulemap
+2026-11-24T07:37:30.8733070Z [[36mBigNum[0m] [1mWrite Auxiliary File[0m BigNum.DependencyStaticMetadataFileList
+2026-11-24T07:37:30.8835130Z [[36mBigNum[0m] [1mWrite Auxiliary File[0m BigNum.DependencyMetadataFileList
+2026-11-24T07:37:30.8936980Z [[36mBigNum[0m] [1mCopy[0m BigNum.modulemap -> BigNum.modulemap
+2026-11-24T07:37:30.9038610Z [[36mAppStoreIPADownloaderTests[0m] [1mWrite Auxiliary File[0m empty-AppStoreIPADownloaderTests.plist
+2026-11-24T07:37:30.9141750Z [[36mAppStoreIPADownloaderTests[0m] [1mWrite Auxiliary File[0m AppStoreIPADownloaderTests_const_extract_protocols.json
+2026-11-24T07:37:30.9177080Z [[36mAppStoreIPADownloaderTests[0m] [1mWrite Auxiliary File[0m AppStoreIPADownloaderTests.SwiftFileList
+2026-11-24T07:37:30.9282530Z [[36mAppStoreIPADownloaderTests[0m] [1mWrite Auxiliary File[0m AppStoreIPADownloaderTests.SwiftConstValuesFileList
+2026-11-24T07:37:30.9384610Z [[36mAppStoreIPADownloaderTests[0m] [1mWrite Auxiliary File[0m AppStoreIPADownloaderTests.LinkFileList
+2026-11-24T07:37:30.9486380Z [[36mAppStoreIPADownloaderTests[0m] [1mWrite Auxiliary File[0m AppStoreIPADownloaderTests-OutputFileMap.json
+2026-11-24T07:37:30.9588400Z [[36mAppStoreIPADownloaderTests[0m] [1mWrite Auxiliary File[0m AppStoreIPADownloaderTests.hmap
+2026-11-24T07:37:30.9675630Z [[36mAppStoreIPADownloaderTests[0m] [1mWrite Auxiliary File[0m AppStoreIPADownloaderTests.DependencyStaticMetadataFileList
+2026-11-24T07:37:30.9780120Z [[36mAppStoreIPADownloaderTests[0m] [1mWrite Auxiliary File[0m AppStoreIPADownloaderTests.DependencyMetadataFileList
+2026-11-24T07:37:30.9877670Z [[36mAppStoreIPADownloaderTests[0m] [1mWrite Auxiliary File[0m AppStoreIPADownloaderTests-project-headers.hmap
+2026-11-24T07:37:30.9982000Z [[36mAppStoreIPADownloaderTests[0m] [1mWrite Auxiliary File[0m AppStoreIPADownloaderTests-own-target-headers.hmap
+2026-11-24T07:37:31.0084640Z [[36mAppStoreIPADownloaderTests[0m] [1mWrite Auxiliary File[0m AppStoreIPADownloaderTests-generated-files.hmap
+2026-11-24T07:37:31.0187450Z [[36mAppStoreIPADownloaderTests[0m] [1mWrite Auxiliary File[0m AppStoreIPADownloaderTests-all-target-headers.hmap
+2026-11-24T07:37:31.0289580Z [[36mAppStoreIPADownloaderTests[0m] [1mWrite Auxiliary File[0m AppStoreIPADownloaderTests-all-non-framework-target-headers.hmap
+2026-11-24T07:37:31.0391460Z [[36mAppStoreIPADownloader[0m] [1mWrite Auxiliary File[0m empty-AppStoreIPADownloader.plist
+2026-11-24T07:37:31.0491890Z [[36mAppStoreIPADownloader[0m] [1mWrite Auxiliary File[0m AppStoreIPADownloader_const_extract_protocols.json
+2026-11-24T07:37:31.0593400Z [[36mAppStoreIPADownloader[0m] [1mWrite Auxiliary File[0m AppStoreIPADownloader.SwiftFileList
+2026-11-24T07:37:31.0694050Z [[36mAppStoreIPADownloader[0m] [1mWrite Auxiliary File[0m AppStoreIPADownloader.SwiftConstValuesFileList
+2026-11-24T07:37:31.0794900Z [[36mAppStoreIPADownloader[0m] [1mWrite Auxiliary File[0m AppStoreIPADownloader.LinkFileList
+2026-11-24T07:37:31.0896390Z [[36mAppStoreIPADownloader[0m] [1mWrite Auxiliary File[0m AppStoreIPADownloader-OutputFileMap.json
+2026-11-24T07:37:31.1005280Z [[36mAppStoreIPADownloader[0m] [1mWrite Auxiliary File[0m 7187679823f38a2a940e0043cdf9d637-common-args.resp
+2026-11-24T07:37:31.1121100Z [[36mAppStoreIPADownloader[0m] [1mWrite Auxiliary File[0m AppStoreIPADownloader_vers.c
+2026-11-24T07:37:31.1227410Z [[36mAppStoreIPADownloader[0m] [1mWrite Auxiliary File[0m AppStoreIPADownloader.hmap
+2026-11-24T07:37:31.1540900Z [[36mAppStoreIPADownloader[0m] [1mWrite Auxiliary File[0m AppStoreIPADownloader.DependencyStaticMetadataFileList
+2026-11-24T07:37:31.1572330Z [[36mAppStoreIPADownloader[0m] [1mWrite Auxiliary File[0m AppStoreIPADownloader.DependencyMetadataFileList
+2026-11-24T07:37:31.1690010Z [[36mAppStoreIPADownloader[0m] [1mWrite Auxiliary File[0m AppStoreIPADownloader-project-headers.hmap
+2026-11-24T07:37:31.1805220Z [[36mAppStoreIPADownloader[0m] [1mWrite Auxiliary File[0m AppStoreIPADownloader-own-target-headers.hmap
+2026-11-24T07:37:31.1927190Z [[36mAppStoreIPADownloader[0m] [1mWrite Auxiliary File[0m AppStoreIPADownloader-generated-files.hmap
+2026-11-24T07:37:31.2038810Z [[36mAppStoreIPADownloader[0m] [1mWrite Auxiliary File[0m AppStoreIPADownloader-all-target-headers.hmap
+2026-11-24T07:37:31.2153410Z [[36mAppStoreIPADownloader[0m] [1mWrite Auxiliary File[0m AppStoreIPADownloader-all-non-framework-target-headers.hmap
+2026-11-24T07:37:31.2257600Z [[36mswift-crypto_CryptoExtras[0m] [1mProcessing[0m empty-swift-crypto_CryptoExtras.plist
+2026-11-24T07:37:31.2360640Z [[36mswift-crypto_CryptoExtras[0m] [1mCopying[0m PrivacyInfo.xcprivacy
+2026-11-24T07:37:31.2467270Z [[36mswift-crypto_CryptoBoringWrapper[0m] [1mProcessing[0m empty-swift-crypto_CryptoBoringWrapper.plist
+2026-11-24T07:37:31.2570790Z [[36mswift-crypto_CryptoBoringWrapper[0m] [1mCopying[0m PrivacyInfo.xcprivacy
+2026-11-24T07:37:31.2684700Z [[36mswift-crypto_CryptoExtras[0m] [1mRegisterExecutionPolicyException[0m swift-crypto_CryptoExtras.bundle
+2026-11-24T07:37:31.2794110Z [[36mswift-crypto_Crypto[0m] [1mProcessing[0m empty-swift-crypto_Crypto.plist
+2026-11-24T07:37:31.2895620Z [[36mswift-crypto_Crypto[0m] [1mCopying[0m PrivacyInfo.xcprivacy
+2026-11-24T07:37:31.2997220Z [[36mswift-crypto_CryptoExtras[0m] [1mTouching[0m swift-crypto_CryptoExtras.bundle
+2026-11-24T07:37:31.3120830Z [[36mswift-crypto_CryptoBoringWrapper[0m] [1mRegisterExecutionPolicyException[0m swift-crypto_CryptoBoringWrapper.bundle
+2026-11-24T07:37:31.3239800Z [[36mswift-crypto_CryptoBoringWrapper[0m] [1mTouching[0m swift-crypto_CryptoBoringWrapper.bundle
+2026-11-24T07:37:31.3276460Z [[36mswift-crypto_CCryptoBoringSSLShims[0m] [1mProcessing[0m empty-swift-crypto_CCryptoBoringSSLShims.plist
+2026-11-24T07:37:31.3277600Z [[36mswift-crypto_CCryptoBoringSSLShims[0m] [1mCopying[0m PrivacyInfo.xcprivacy
+2026-11-24T07:37:31.3278720Z [[36mswift-crypto_CCryptoBoringSSL[0m] [1mProcessing[0m empty-swift-crypto_CCryptoBoringSSL.plist
+2026-11-24T07:37:31.3279810Z [[36mswift-crypto_CCryptoBoringSSL[0m] [1mCopying[0m PrivacyInfo.xcprivacy
+2026-11-24T07:37:31.3288920Z [[36mswift-crypto_Crypto[0m] [1mRegisterExecutionPolicyException[0m swift-crypto_Crypto.bundle
+2026-11-24T07:37:31.3289780Z [[36mswift-crypto_CCryptoBoringSSLShims[0m] [1mRegisterExecutionPolicyException[0m swift-crypto_CCryptoBoringSSLShims.bundle
+2026-11-24T07:37:31.3290500Z [[36mswift-crypto_Crypto[0m] [1mTouching[0m swift-crypto_Crypto.bundle
+2026-11-24T07:37:31.3291160Z [[36mswift-crypto_CCryptoBoringSSLShims[0m] [1mTouching[0m swift-crypto_CCryptoBoringSSLShims.bundle
+2026-11-24T07:37:31.3292060Z [[36mswift-crypto_CCryptoBoringSSL[0m] [1mRegisterExecutionPolicyException[0m swift-crypto_CCryptoBoringSSL.bundle
+2026-11-24T07:37:31.3292900Z [[36mCryptoSwift_CryptoSwiftResources[0m] [1mProcessing[0m empty-CryptoSwift_CryptoSwiftResources.plist
+2026-11-24T07:37:31.3293490Z [[36mCryptoSwift_CryptoSwiftResources[0m] [1mCopying[0m PrivacyInfo.xcprivacy
+2026-11-24T07:37:31.3294030Z [[36mswift-crypto_CCryptoBoringSSL[0m] [1mTouching[0m swift-crypto_CCryptoBoringSSL.bundle
+2026-11-24T07:37:31.3294820Z [[36mCryptoSwift_CryptoSwiftResources[0m] [1mRegisterExecutionPolicyException[0m CryptoSwift_CryptoSwiftResources.bundle
+2026-11-24T07:37:31.3295570Z [[36mCryptoSwift_CryptoSwiftResources[0m] [1mTouching[0m CryptoSwift_CryptoSwiftResources.bundle
+2026-11-24T07:37:31.3296580Z [[36m_CertificateInternals[0m] [1mCopy[0m arm64-apple-ios-simulator.swiftmodule -> _CertificateInternals.swiftmodule
+2026-11-24T07:37:31.3297560Z [[36m_CertificateInternals[0m] [1mCopy[0m arm64-apple-ios-simulator.swiftdoc -> _CertificateInternals.swiftdoc
+2026-11-24T07:37:31.3298240Z [[36m_CertificateInternals[0m] [1mCopy[0m arm64-apple-ios-simulator.abi.json -> _CertificateInternals.abi.json
+2026-11-24T07:37:31.3299030Z [[36m_CertificateInternals[0m] [1mCopy[0m arm64-apple-ios-simulator.swiftsourceinfo -> _CertificateInternals.swiftsourceinfo
+2026-11-24T07:37:31.3299610Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m xwing.cc
+2026-11-24T07:37:31.3299950Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m x_x509a.cc
+2026-11-24T07:37:31.3300290Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m x_x509.cc
+2026-11-24T07:37:31.3300610Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m x_spki.cc
+2026-11-24T07:37:31.3300930Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m x_sig.cc
+2026-11-24T07:37:31.3301260Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m x_req.cc
+2026-11-24T07:37:31.3301580Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m x_pubkey.cc
+2026-11-24T07:37:31.3302580Z [[36mStosSign_Common[0m] [1mCopy[0m arm64-apple-ios-simulator.swiftmodule -> StosSign_Common.swiftmodule
+2026-11-24T07:37:31.3303220Z [[36mStosSign_Common[0m] [1mCopy[0m arm64-apple-ios-simulator.swiftdoc -> StosSign_Common.swiftdoc
+2026-11-24T07:37:31.3304040Z [[36mStosSign_Common[0m] [1mCopy[0m arm64-apple-ios-simulator.abi.json -> StosSign_Common.abi.json
+2026-11-24T07:37:31.3304760Z [[36mStosSign_Common[0m] [1mCopy[0m arm64-apple-ios-simulator.swiftsourceinfo -> StosSign_Common.swiftsourceinfo
+2026-11-24T07:37:31.3305490Z [[36mCryptoBoringWrapper[0m] [1mCopy[0m arm64-apple-ios-simulator.swiftmodule -> CryptoBoringWrapper.swiftmodule
+2026-11-24T07:37:31.3306190Z [[36mCryptoBoringWrapper[0m] [1mCopy[0m arm64-apple-ios-simulator.swiftdoc -> CryptoBoringWrapper.swiftdoc
+2026-11-24T07:37:31.3306860Z [[36mCryptoBoringWrapper[0m] [1mCopy[0m arm64-apple-ios-simulator.abi.json -> CryptoBoringWrapper.abi.json
+2026-11-24T07:37:31.3307590Z [[36mCryptoBoringWrapper[0m] [1mCopy[0m arm64-apple-ios-simulator.swiftsourceinfo -> CryptoBoringWrapper.swiftsourceinfo
+2026-11-24T07:37:31.3308520Z [[36mCryptoSwiftResources[0m] [1mCopy[0m arm64-apple-ios-simulator.swiftmodule -> CryptoSwiftResources.swiftmodule
+2026-11-24T07:37:31.3309220Z [[36mCryptoSwiftResources[0m] [1mCopy[0m arm64-apple-ios-simulator.swiftdoc -> CryptoSwiftResources.swiftdoc
+2026-11-24T07:37:31.3309950Z [[36mCryptoSwiftResources[0m] [1mCopy[0m arm64-apple-ios-simulator.abi.json -> CryptoSwiftResources.abi.json
+2026-11-24T07:37:31.3310970Z [[36mCryptoSwiftResources[0m] [1mCopy[0m arm64-apple-ios-simulator.swiftsourceinfo -> CryptoSwiftResources.swiftsourceinfo
+2026-11-24T07:37:31.3311680Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m x_name.cc
+2026-11-24T07:37:31.3312320Z [[36mSwiftASN1[0m] [1mCopy[0m arm64-apple-ios-simulator.swiftmodule -> SwiftASN1.swiftmodule
+2026-11-24T07:37:31.3313000Z [[36mSwiftASN1[0m] [1mCopy[0m arm64-apple-ios-simulator.swiftdoc -> SwiftASN1.swiftdoc
+2026-11-24T07:37:31.3313620Z [[36mSwiftASN1[0m] [1mCopy[0m arm64-apple-ios-simulator.abi.json -> SwiftASN1.abi.json
+2026-11-24T07:37:31.3314270Z [[36mSwiftASN1[0m] [1mCopy[0m arm64-apple-ios-simulator.swiftsourceinfo -> SwiftASN1.swiftsourceinfo
+2026-11-24T07:37:31.3314840Z [[36mBigNum[0m] [1mCopy[0m arm64-apple-ios-simulator.swiftmodule -> BigNum.swiftmodule
+2026-11-24T07:37:31.3315330Z [[36mBigNum[0m] [1mCopy[0m arm64-apple-ios-simulator.swiftdoc -> BigNum.swiftdoc
+2026-11-24T07:37:31.3315800Z [[36mBigNum[0m] [1mCopy[0m arm64-apple-ios-simulator.abi.json -> BigNum.abi.json
+2026-11-24T07:37:31.3316360Z [[36mCrypto[0m] [1mCopy[0m arm64-apple-ios-simulator.swiftmodule -> Crypto.swiftmodule
+2026-11-24T07:37:31.3316850Z [[36mCrypto[0m] [1mCopy[0m arm64-apple-ios-simulator.swiftdoc -> Crypto.swiftdoc
+2026-11-24T07:37:31.3317320Z [[36mCrypto[0m] [1mCopy[0m arm64-apple-ios-simulator.abi.json -> Crypto.abi.json
+2026-11-24T07:37:31.3317860Z [[36mCrypto[0m] [1mCopy[0m arm64-apple-ios-simulator.swiftsourceinfo -> Crypto.swiftsourceinfo
+2026-11-24T07:37:31.3318430Z [[36mBigNum[0m] [1mCopy[0m arm64-apple-ios-simulator.swiftsourceinfo -> BigNum.swiftsourceinfo
+2026-11-24T07:37:31.3318880Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m x_exten.cc
+2026-11-24T07:37:31.3319190Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m x_crl.cc
+2026-11-24T07:37:31.3319540Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m x_attrib.cc
+2026-11-24T07:37:31.3319930Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m x_all.cc
+2026-11-24T07:37:31.3320520Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m x_algor.cc
+2026-11-24T07:37:31.3321840Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m x509spki.cc
+2026-11-24T07:37:31.3322210Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m x509rset.cc
+2026-11-24T07:37:31.3322520Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m x509name.cc
+2026-11-24T07:37:31.3322840Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m x509cset.cc
+2026-11-24T07:37:31.3323430Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m x509_vpm.cc
+2026-11-24T07:37:31.3323740Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m x509_vfy.cc
+2026-11-24T07:37:31.3324050Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m x509_v3.cc
+2026-11-24T07:37:31.3324570Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m x509_txt.cc
+2026-11-24T07:37:31.3324890Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m x509_trs.cc
+2026-11-24T07:37:31.3325200Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m x509_set.cc
+2026-11-24T07:37:31.3325530Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m x509_req.cc
+2026-11-24T07:37:31.3325850Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m x509_obj.cc
+2026-11-24T07:37:31.3326160Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m x509_lu.cc
+2026-11-24T07:37:31.3326510Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m x509_ext.cc
+2026-11-24T07:37:31.3326840Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m x509_def.cc
+2026-11-24T07:37:31.3327150Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m x509_d2.cc
+2026-11-24T07:37:31.3327470Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m x509_cmp.cc
+2026-11-24T07:37:31.3327790Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m x509_att.cc
+2026-11-24T07:37:31.3328090Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m x509.cc
+2026-11-24T07:37:31.3328400Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m windows.cc
+2026-11-24T07:37:31.3328710Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m voprf.cc
+2026-11-24T07:37:31.3329020Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m v3_utl.cc
+2026-11-24T07:37:31.3329340Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m v3_skey.cc
+2026-11-24T07:37:31.3329650Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m v3_purp.cc
+2026-11-24T07:37:31.3329950Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m v3_prn.cc
+2026-11-24T07:37:31.3330270Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m v3_pmaps.cc
+2026-11-24T07:37:31.3330590Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m v3_pcons.cc
+2026-11-24T07:37:31.3330910Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m v3_ocsp.cc
+2026-11-24T07:37:31.3331240Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m v3_ncons.cc
+2026-11-24T07:37:31.3331550Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m v3_lib.cc
+2026-11-24T07:37:31.3331870Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m v3_int.cc
+2026-11-24T07:37:31.3332190Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m v3_info.cc
+2026-11-24T07:37:31.3332510Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m v3_ia5.cc
+2026-11-24T07:37:31.3332820Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m v3_genn.cc
+2026-11-24T07:37:31.3333140Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m v3_extku.cc
+2026-11-24T07:37:31.3333470Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m v3_enum.cc
+2026-11-24T07:37:31.3333780Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m v3_crld.cc
+2026-11-24T07:37:31.3334230Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m v3_cpols.cc
+2026-11-24T07:37:31.3334590Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m v3_conf.cc
+2026-11-24T07:37:31.3334900Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m v3_bitst.cc
+2026-11-24T07:37:31.3335230Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m v3_bcons.cc
+2026-11-24T07:37:31.3335550Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m v3_alt.cc
+2026-11-24T07:37:31.3336010Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m v3_akeya.cc
+2026-11-24T07:37:31.3336330Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m v3_akey.cc
+2026-11-24T07:37:31.3336630Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m urandom.cc
+2026-11-24T07:37:31.3336950Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m unicode.cc
+2026-11-24T07:37:31.3337260Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m trusty.cc
+2026-11-24T07:37:31.3337580Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m trust_token.cc
+2026-11-24T07:37:31.3338000Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m tls_cbc.cc
+2026-11-24T07:37:31.3338330Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m thread_win.cc
+2026-11-24T07:37:31.3338720Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m thread_pthread.cc
+2026-11-24T07:37:31.3339130Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m thread_none.cc
+2026-11-24T07:37:31.3339730Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m thread.cc
+2026-11-24T07:37:31.3340050Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m tasn_utl.cc
+2026-11-24T07:37:31.3340370Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m tasn_typ.cc
+2026-11-24T07:37:31.3340810Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m tasn_new.cc
+2026-11-24T07:37:31.3341140Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m tasn_fre.cc
+2026-11-24T07:37:31.3341560Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m tasn_enc.cc
+2026-11-24T07:37:31.3341960Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m tasn_dec.cc
+2026-11-24T07:37:31.3342360Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m t_x509a.cc
+2026-11-24T07:37:31.3342690Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m t_x509.cc
+2026-11-24T07:37:31.3343000Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m t_req.cc
+2026-11-24T07:37:31.3343310Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m t_crl.cc
+2026-11-24T07:37:31.3343610Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m stack.cc
+2026-11-24T07:37:31.3343920Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m sqrt.cc
+2026-11-24T07:37:31.3344240Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m spake2plus.cc
+2026-11-24T07:37:31.3344580Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m spake25519.cc
+2026-11-24T07:37:31.3344910Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m slhdsa.cc
+2026-11-24T07:37:31.3345220Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m siphash.cc
+2026-11-24T07:37:31.3345530Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m sign.cc
+2026-11-24T07:37:31.3345840Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m sha512.cc
+2026-11-24T07:37:31.3346140Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m sha256.cc
+2026-11-24T07:37:31.3346440Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m sha1.cc
+2026-11-24T07:37:31.3346740Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m scrypt.cc
+2026-11-24T07:37:31.3347060Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m rsa_pss.cc
+2026-11-24T07:37:31.3347390Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m rsa_print.cc
+2026-11-24T07:37:31.3347760Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m rsa_extra.cc
+2026-11-24T07:37:31.3348090Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m rsa_crypt.cc
+2026-11-24T07:37:31.3348510Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m rsa_asn1.cc
+2026-11-24T07:37:31.3348940Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m refcount.cc
+2026-11-24T07:37:31.3349400Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m rc4.cc
+2026-11-24T07:37:31.3349770Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m rand.cc
+2026-11-24T07:37:31.3350140Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m printf.cc
+2026-11-24T07:37:31.3350520Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m print.cc
+2026-11-24T07:37:31.3350890Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m posix_time.cc
+2026-11-24T07:37:31.3351260Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m pool.cc
+2026-11-24T07:37:31.3351660Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m poly1305_vec.cc
+2026-11-24T07:37:31.3352080Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m poly1305_arm.cc
+2026-11-24T07:37:31.3352470Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m poly1305.cc
+2026-11-24T07:37:31.3352780Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m policy.cc
+2026-11-24T07:37:31.3353260Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m pmbtoken.cc
+2026-11-24T07:37:31.3353620Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m pkcs8_x509.cc
+2026-11-24T07:37:31.3353930Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m pkcs8.cc
+2026-11-24T07:37:31.3354250Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m pkcs7_x509.cc
+2026-11-24T07:37:31.3354570Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m pkcs7.cc
+2026-11-24T07:37:31.3354880Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m pem_xaux.cc
+2026-11-24T07:37:31.3355190Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m pem_x509.cc
+2026-11-24T07:37:31.3355500Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m pem_pkey.cc
+2026-11-24T07:37:31.3355820Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m pem_pk8.cc
+2026-11-24T07:37:31.3356360Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m pem_oth.cc
+2026-11-24T07:37:31.3356670Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m pem_lib.cc
+2026-11-24T07:37:31.3356990Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m pem_info.cc
+2026-11-24T07:37:31.3357460Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m pem_all.cc
+2026-11-24T07:37:31.3357770Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m pbkdf.cc
+2026-11-24T07:37:31.3358080Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m passive.cc
+2026-11-24T07:37:31.3358440Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m params.cc
+2026-11-24T07:37:31.3358770Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m pair.cc
+2026-11-24T07:37:31.3359120Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m p_x25519_asn1.cc
+2026-11-24T07:37:31.3359460Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m p_x25519.cc
+2026-11-24T07:37:31.3359790Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m p_rsa_asn1.cc
+2026-11-24T07:37:31.3360110Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m p_rsa.cc
+2026-11-24T07:37:31.3360420Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m p_hkdf.cc
+2026-11-24T07:37:31.3360790Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m p_ed25519_asn1.cc
+2026-11-24T07:37:31.3361150Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m p_ed25519.cc
+2026-11-24T07:37:31.3361490Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m p_ec_asn1.cc
+2026-11-24T07:37:45.6275710Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m p_ec.cc
+2026-11-24T07:37:45.6326470Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m p_dsa_asn1.cc
+2026-11-24T07:37:45.6427750Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m p_dh_asn1.cc
+2026-11-24T07:37:45.6528370Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m p_dh.cc
+2026-11-24T07:37:45.6613430Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m p5_pbev2.cc
+2026-11-24T07:37:45.6627640Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m obj_xref.cc
+2026-11-24T07:37:45.6629950Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m obj.cc
+2026-11-24T07:37:45.6630630Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m name_print.cc
+2026-11-24T07:37:45.6631080Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m mlkem.cc
+2026-11-24T07:37:45.6631480Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m mldsa.cc
+2026-11-24T07:37:45.6631870Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m mem.cc
+2026-11-24T07:37:45.6632300Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m md5.cc
+2026-11-24T07:37:45.6632720Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m md4.cc
+2026-11-24T07:37:45.6633110Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m lhash.cc
+2026-11-24T07:37:45.6633650Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m kyber.cc
+2026-11-24T07:37:45.6634040Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m ios.cc
+2026-11-24T07:37:45.6634430Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m i2d_pr.cc
+2026-11-24T07:37:45.6634820Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m hrss.cc
+2026-11-24T07:37:45.6635210Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m hpke.cc
+2026-11-24T07:37:45.6635620Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m hexdump.cc
+2026-11-24T07:37:45.6636600Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m hash_to_curve.cc
+2026-11-24T07:37:45.6669650Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m getentropy.cc
+2026-11-24T07:37:45.6673170Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m get_cipher.cc
+2026-11-24T07:37:45.6699170Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m fuzzer_mode.cc
+2026-11-24T07:37:45.6716300Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m forkunsafe.cc
+2026-11-24T07:37:45.6831710Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m fork_detect.cc
+2026-11-24T07:37:45.6937950Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m fips_shared_support.cc
+2026-11-24T07:37:45.6962300Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m file.cc
+2026-11-24T07:37:45.7089270Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m fd.cc
+2026-11-24T07:37:45.7212030Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m f_string.cc
+2026-11-24T07:37:45.7316880Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m f_int.cc
+2026-11-24T07:37:45.7419100Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m exponentiation.cc
+2026-11-24T07:37:45.7525510Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m ex_data.cc
+2026-11-24T07:37:45.7649680Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m evp_ctx.cc
+2026-11-24T07:37:45.7750220Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m evp_asn1.cc
+2026-11-24T07:37:45.7751760Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m evp.cc
+2026-11-24T07:37:45.7752320Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m errno.cc
+2026-11-24T07:37:45.7755620Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m err_data.cc
+2026-11-24T07:37:45.7756470Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m err.cc
+2026-11-24T07:37:45.7880630Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m engine.cc
+2026-11-24T07:37:45.7911750Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m ecdsa_p1363.cc
+2026-11-24T07:37:45.8018280Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m ecdsa_asn1.cc
+2026-11-24T07:37:45.8105560Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m ecdh.cc
+2026-11-24T07:37:45.8106190Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m ec_derive.cc
+2026-11-24T07:37:45.8106720Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m ec_asn1.cc
+2026-11-24T07:37:45.8228440Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m e_tls.cc
+2026-11-24T07:37:45.8271010Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m e_rc4.cc
+2026-11-24T07:37:45.8271980Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m e_rc2.cc
+2026-11-24T07:37:45.8342400Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m e_null.cc
+2026-11-24T07:37:45.8364470Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m e_des.cc
+2026-11-24T07:37:45.8378660Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m e_chacha20poly1305.cc
+2026-11-24T07:37:45.8395240Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m e_aesgcmsiv.cc
+2026-11-24T07:37:45.8407310Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m e_aeseax.cc
+2026-11-24T07:37:45.8439830Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m e_aesctrhmac.cc
+2026-11-24T07:37:45.8528910Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m dsa_asn1.cc
+2026-11-24T07:37:45.8635780Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m dsa.cc
+2026-11-24T07:37:45.8737340Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m div.cc
+2026-11-24T07:37:45.8751800Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m digest_extra.cc
+2026-11-24T07:37:45.8775710Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m dh_asn1.cc
+2026-11-24T07:37:45.8813750Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m deterministic.cc
+2026-11-24T07:37:45.8814460Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m des.cc
+2026-11-24T07:37:45.8814980Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m derive_key.cc
+2026-11-24T07:37:45.8915810Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m curve25519_64_adx.cc
+2026-11-24T07:37:45.8941600Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m curve25519.cc
+2026-11-24T07:37:45.8942190Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m crypto.cc
+2026-11-24T07:37:45.8942720Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m cpu_intel.cc
+2026-11-24T07:37:45.8943170Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m cpu_arm_linux.cc
+2026-11-24T07:37:45.8943810Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m cpu_arm_freebsd.cc
+2026-11-24T07:37:45.9018150Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m cpu_aarch64_win.cc
+2026-11-24T07:37:45.9042380Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m cpu_aarch64_sysreg.cc
+2026-11-24T07:37:45.9143540Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m cpu_aarch64_openbsd.cc
+2026-11-24T07:37:45.9245800Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m cpu_aarch64_linux.cc
+2026-11-24T07:37:45.9347400Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m cpu_aarch64_fuchsia.cc
+2026-11-24T07:37:45.9448730Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m cpu_aarch64_apple.cc
+2026-11-24T07:37:45.9484500Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m convert.cc
+2026-11-24T07:37:45.9526830Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m conf.cc
+2026-11-24T07:37:45.9628130Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m cms.cc
+2026-11-24T07:37:45.9655330Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m chacha.cc
+2026-11-24T07:37:45.9722070Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m cbs.cc
+2026-11-24T07:37:45.9775600Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m cbb.cc
+2026-11-24T07:37:45.9876730Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m by_file.cc
+2026-11-24T07:37:45.9976340Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m by_dir.cc
+2026-11-24T07:37:46.0077560Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m buf.cc
+2026-11-24T07:37:46.0134610Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m bn_asn1.cc
+2026-11-24T07:37:46.0135200Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m blake2.cc
+2026-11-24T07:37:46.0135650Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m bio_mem.cc
+2026-11-24T07:37:46.0136050Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m bio.cc
+2026-11-24T07:37:46.0136520Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m ber.cc
+2026-11-24T07:37:46.0137020Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m bcm.cc
+2026-11-24T07:37:46.0137640Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m base64.cc
+2026-11-24T07:37:46.0138310Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m asn_pack.cc
+2026-11-24T07:37:46.0220440Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m asn1_par.cc
+2026-11-24T07:37:46.0294400Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m asn1_lib.cc
+2026-11-24T07:37:46.0395720Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m asn1_gen.cc
+2026-11-24T07:37:46.0460360Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m asn1_compat.cc
+2026-11-24T07:37:46.0461080Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m algorithm.cc
+2026-11-24T07:37:46.0461780Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m aes.cc
+2026-11-24T07:37:46.0462100Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m a_verify.cc
+2026-11-24T07:37:46.0462410Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m a_utctm.cc
+2026-11-24T07:37:46.0462730Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m a_type.cc
+2026-11-24T07:37:46.0463040Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m a_time.cc
+2026-11-24T07:37:46.0463360Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m a_strnid.cc
+2026-11-24T07:37:46.0463750Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m a_strex.cc
+2026-11-24T07:37:46.0464150Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m a_sign.cc
+2026-11-24T07:37:46.0464490Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m a_octet.cc
+2026-11-24T07:37:46.0464860Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m a_object.cc
+2026-11-24T07:37:46.0465260Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m a_mbstr.cc
+2026-11-24T07:37:46.0465650Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m a_int.cc
+2026-11-24T07:37:46.0466020Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m a_i2d_fp.cc
+2026-11-24T07:37:46.0466360Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m a_gentm.cc
+2026-11-24T07:37:46.0466720Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m a_dup.cc
+2026-11-24T07:37:46.0467050Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m a_digest.cc
+2026-11-24T07:37:46.0467370Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m a_d2i_fp.cc
+2026-11-24T07:37:46.0467710Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m a_bool.cc
+2026-11-24T07:37:46.0468040Z [[36mCCryptoBoringSSL[0m] [1mCompiling[0m a_bitstr.cc
+2026-11-24T07:37:46.0468390Z [[36mCCryptoBoringSSL[0m] [1mLinking[0m CCryptoBoringSSL.o
+2026-11-24T07:37:46.0468770Z [[36m_CertificateInternals[0m] [1mCompiling[0m _TinyArray.swift
+2026-11-24T07:37:46.0469110Z [[36mSwiftASN1[0m] [1mCompiling[0m ASN1.swift
+2026-11-24T07:37:46.0469450Z [[36mSwiftASN1[0m] [1mCompiling[0m BER.swift
+2026-11-24T07:37:46.0469760Z [[36mSwiftASN1[0m] [1mCompiling[0m ASN1Any.swift
+2026-11-24T07:37:46.0470150Z [[36mSwiftASN1[0m] [1mCompiling[0m ASN1BitString.swift
+2026-11-24T07:37:46.0470570Z [[36mSwiftASN1[0m] [1mCompiling[0m ASN1Boolean.swift
+2026-11-24T07:37:46.0470900Z [[36mSwiftASN1[0m] [1mCompiling[0m ASN1Identifier.swift
+2026-11-24T07:37:46.0471220Z [[36mSwiftASN1[0m] [1mCompiling[0m ASN1Integer.swift
+2026-11-24T07:37:46.0471570Z [[36mSwiftASN1[0m] [1mCompiling[0m ASN1Null.swift
+2026-11-24T07:37:46.0471990Z [[36mSwiftASN1[0m] [1mCompiling[0m ASN1OctetString.swift
+2026-11-24T07:37:46.0472700Z [[36mSwiftASN1[0m] [1mCompiling[0m ASN1Strings.swift
+2026-11-24T07:37:46.0473130Z [[36mSwiftASN1[0m] [1mCompiling[0m ArraySliceBigint.swift
+2026-11-24T07:37:46.0473610Z [[36mSwiftASN1[0m] [1mCompiling[0m GeneralizedTime.swift
+2026-11-24T07:37:46.0474180Z [[36mCBigNumBoringSSL[0m] [1mCompiling[0m windows.c
+2026-11-24T07:37:46.0474610Z [[36mSwiftASN1[0m] [1mCompiling[0m ObjectIdentifier.swift
+2026-11-24T07:37:46.0475040Z [[36mSwiftASN1[0m] [1mCompiling[0m PEMDocument.swift
+2026-11-24T07:37:46.0475380Z [[36mSwiftASN1[0m] [1mCompiling[0m TimeUtilities.swift
+2026-11-24T07:37:46.0475710Z [[36mSwiftASN1[0m] [1mCompiling[0m UTCTime.swift
+2026-11-24T07:37:46.0476070Z [[36mSwiftASN1[0m] [1mCompiling[0m DER.swift
+2026-11-24T07:37:46.0476540Z [[36mSwiftASN1[0m] [1mCompiling[0m Errors.swift
+2026-11-24T07:37:46.0476900Z [[36mStosSign_Common[0m] [1mCompiling[0m ProvisioningProfile.swift
+2026-11-24T07:37:46.0477320Z [[36mStosSign_Common[0m] [1mCompiling[0m Team.swift
+2026-11-24T07:37:46.0477650Z [[36mCCryptoBoringSSLShims[0m] [1mCompiling[0m shims.c
+2026-11-24T07:37:46.0478000Z [[36mStosSign_Common[0m] [1mCompiling[0m AnisetteData.swift
+2026-11-24T07:37:46.0478370Z [[36mStosSign_Common[0m] [1mCompiling[0m Account.swift
+2026-11-24T07:37:46.0478700Z [[36mStosSign_Common[0m] [1mCompiling[0m AppGroup.swift
+2026-11-24T07:37:46.0479030Z [[36mStosSign_Common[0m] [1mCompiling[0m AppID.swift
+2026-11-24T07:37:46.0479350Z [[36mStosSign_Common[0m] [1mCompiling[0m Capability.swift
+2026-11-24T07:37:46.0479680Z [[36mStosSign_Common[0m] [1mCompiling[0m Device.swift
+2026-11-24T07:37:46.0480100Z [[36mCryptoSwiftResources[0m] [1mCompiling[0m Empty.swift
+2026-11-24T07:37:46.0480600Z [[36mCryptoSwiftResources[0m] [1mCompiling[0m resource_bundle_accessor.swift
+2026-11-24T07:37:46.0481090Z [[36mCryptoBoringWrapper[0m] [1mCompiling[0m FiniteFieldArithmeticContext.swift
+2026-11-24T07:37:46.0481890Z [[36mCryptoBoringWrapper[0m] [1mCompiling[0m RandomBytes.swift
+2026-11-24T07:37:46.0482320Z [[36mCryptoBoringWrapper[0m] [1mCompiling[0m resource_bundle_accessor.swift
+2026-11-24T07:37:46.0482750Z [[36mCryptoBoringWrapper[0m] [1mCompiling[0m BoringSSLAEAD.swift
+2026-11-24T07:37:46.0483330Z [[36mCryptoBoringWrapper[0m] [1mCompiling[0m CryptoKitErrors_boring.swift
+2026-11-24T07:37:46.0483830Z [[36mCryptoBoringWrapper[0m] [1mCompiling[0m EllipticCurve.swift
+2026-11-24T07:37:46.0484250Z [[36mCryptoBoringWrapper[0m] [1mCompiling[0m EllipticCurvePoint.swift
+2026-11-24T07:37:46.0484730Z [[36mCryptoBoringWrapper[0m] [1mCompiling[0m ArbitraryPrecisionInteger.swift
+2026-11-24T07:37:46.0485110Z [[36mCrypto[0m] [1mCompiling[0m Insecure.swift
+2026-11-24T07:37:46.0485430Z [[36mCrypto[0m] [1mCompiling[0m Insecure_HashFunctions.swift
+2026-11-24T07:37:46.0485760Z [[36mCrypto[0m] [1mCompiling[0m MLKEM_boring.swift
+2026-11-24T07:37:46.0486070Z [[36mCrypto[0m] [1mCompiling[0m MLKEM_wrapper.swift
+2026-11-24T07:37:46.0486380Z [[36mCrypto[0m] [1mCompiling[0m XWing_boring.swift
+2026-11-24T07:37:46.0487790Z [[36mCrypto[0m] [1mCompiling[0m KEM-Errors.swift
+2026-11-24T07:37:46.0488100Z [[36mCrypto[0m] [1mCompiling[0m KEM.swift
+2026-11-24T07:37:46.0488370Z [[36mCrypto[0m] [1mCompiling[0m MLKEM.swift
+2026-11-24T07:37:46.0488640Z [[36mCrypto[0m] [1mCompiling[0m XWing.swift
+2026-11-24T07:37:46.0488930Z [[36mCrypto[0m] [1mCompiling[0m ECDH_boring.swift
+2026-11-24T07:37:46.0489200Z [[36mCrypto[0m] [1mCompiling[0m DH.swift
+2026-11-24T07:37:46.0489520Z [[36mCrypto[0m] [1mCompiling[0m ECDH.swift
+2026-11-24T07:37:46.0489870Z [[36mCrypto[0m] [1mCompiling[0m ANSIx963.swift
+2026-11-24T07:37:46.0490150Z [[36mCrypto[0m] [1mCompiling[0m HKDF.swift
+2026-11-24T07:37:46.0490420Z [[36mCrypto[0m] [1mCompiling[0m AESWrap.swift
+2026-11-24T07:37:46.0490710Z [[36mCrypto[0m] [1mCompiling[0m AESWrap_boring.swift
+2026-11-24T07:37:46.0491020Z [[36mCrypto[0m] [1mCompiling[0m Ed25519_boring.swift
+2026-11-24T07:37:46.0491510Z [[36mCrypto[0m] [1mCompiling[0m NISTCurvesKeys_boring.swift
+2026-11-24T07:37:46.0491870Z [[36mCrypto[0m] [1mCompiling[0m X25519Keys_boring.swift
+2026-11-24T07:37:46.0492260Z [[36mCrypto[0m] [1mCompiling[0m Curve25519.swift
+2026-11-24T07:37:46.0492750Z [[36mCrypto[0m] [1mCompiling[0m Ed25519Keys.swift
+2026-11-24T07:37:46.0493050Z [[36mCrypto[0m] [1mCompiling[0m NISTCurvesKeys.swift
+2026-11-24T07:37:46.0493460Z [[36mCrypto[0m] [1mCompiling[0m X25519Keys.swift
+2026-11-24T07:37:46.0493830Z [[36mCrypto[0m] [1mCompiling[0m SymmetricKeys.swift
+2026-11-24T07:37:46.0494140Z [[36mCrypto[0m] [1mCompiling[0m HMAC.swift
+2026-11-24T07:37:46.0494420Z [[36mCrypto[0m] [1mCompiling[0m MACFunctions.swift
+2026-11-24T07:37:46.0494810Z [[36mCrypto[0m] [1mCompiling[0m MessageAuthenticationCode.swift
+2026-11-24T07:37:46.0495140Z [[36mCrypto[0m] [1mCompiling[0m AES.swift
+2026-11-24T07:37:46.0495450Z [[36mCrypto[0m] [1mCompiling[0m ECDSASignature_boring.swift
+2026-11-24T07:37:46.0495770Z [[36mCrypto[0m] [1mCompiling[0m ECDSA_boring.swift
+2026-11-24T07:37:46.0496070Z [[36mCrypto[0m] [1mCompiling[0m EdDSA_boring.swift
+2026-11-24T07:37:46.0496370Z [[36mCrypto[0m] [1mCompiling[0m MLDSA_boring.swift
+2026-11-24T07:37:46.0496670Z [[36mCrypto[0m] [1mCompiling[0m MLDSA_wrapper.swift
+2026-11-24T07:37:46.0497000Z [[36mCrypto[0m] [1mCompiling[0m ECDSA.swift
+2026-11-24T07:37:46.0497280Z [[36mCrypto[0m] [1mCompiling[0m Ed25519.swift
+2026-11-24T07:37:46.0497550Z [[36mCrypto[0m] [1mCompiling[0m MLDSA.swift
+2026-11-24T07:37:46.0497890Z [[36mCrypto[0m] [1mCompiling[0m Signature.swift
+2026-11-24T07:37:46.0498230Z [[36mCrypto[0m] [1mCompiling[0m CryptoKitErrors_boring.swift
+2026-11-24T07:37:46.0498670Z [[36mCrypto[0m] [1mCompiling[0m Optional+withUnsafeBytes_boring.swift
+2026-11-24T07:37:46.0499040Z [[36mCrypto[0m] [1mCompiling[0m RNG_boring.swift
+2026-11-24T07:37:46.0499350Z [[36mCrypto[0m] [1mCompiling[0m SafeCompare_boring.swift
+2026-11-24T07:37:46.0499750Z [[36mCrypto[0m] [1mCompiling[0m Zeroization_boring.swift
+2026-11-24T07:37:46.0500110Z [[36mCrypto[0m] [1mCompiling[0m _CryptoModuleAnchor.swift
+2026-11-24T07:37:46.0500440Z [[36mCrypto[0m] [1mCompiling[0m PrettyBytes.swift
+2026-11-24T07:37:46.0500780Z [[36mCrypto[0m] [1mCompiling[0m SafeCompare.swift
+2026-11-24T07:37:46.0501080Z [[36mCrypto[0m] [1mCompiling[0m SecureBytes.swift
+2026-11-24T07:37:46.0501410Z [[36mCrypto[0m] [1mCompiling[0m Zeroization.swift
+2026-11-24T07:37:46.0501760Z [[36mCrypto[0m] [1mCompiling[0m resource_bundle_accessor.swift
+2026-11-24T07:37:46.0502090Z [[36mCrypto[0m] [1mCompiling[0m AES-GCM.swift
+2026-11-24T07:37:46.0502440Z [[36mCrypto[0m] [1mCompiling[0m AES-GCM_boring.swift
+2026-11-24T07:37:46.0502820Z [[36mCrypto[0m] [1mCompiling[0m ChaChaPoly_boring.swift
+2026-11-24T07:37:46.0503230Z [[36mCrypto[0m] [1mCompiling[0m ChaChaPoly.swift
+2026-11-24T07:37:46.0503570Z [[36mCrypto[0m] [1mCompiling[0m Cipher.swift
+2026-11-24T07:37:46.0503900Z [[36mCrypto[0m] [1mCompiling[0m Nonces.swift
+2026-11-24T07:37:46.0504220Z [[36mCrypto[0m] [1mCompiling[0m ASN1.swift
+2026-11-24T07:37:46.0504550Z [[36mCrypto[0m] [1mCompiling[0m ASN1Any.swift
+2026-11-24T07:37:46.0504840Z [[36mCrypto[0m] [1mCompiling[0m ASN1BitString.swift
+2026-11-24T07:37:46.0505150Z [[36mCrypto[0m] [1mCompiling[0m ASN1Boolean.swift
+2026-11-24T07:37:46.0505450Z [[36mCrypto[0m] [1mCompiling[0m ASN1Identifier.swift
+2026-11-24T07:37:46.0505750Z [[36mCrypto[0m] [1mCompiling[0m ASN1Integer.swift
+2026-11-24T07:37:46.0506100Z [[36mCrypto[0m] [1mCompiling[0m ASN1Null.swift
+2026-11-24T07:37:46.0506450Z [[36mCrypto[0m] [1mCompiling[0m ASN1OctetString.swift
+2026-11-24T07:37:46.0506820Z [[36mCrypto[0m] [1mCompiling[0m ASN1Strings.swift
+2026-11-24T07:37:46.0507130Z [[36mCrypto[0m] [1mCompiling[0m ArraySliceBigint.swift
+2026-11-24T07:37:46.0507450Z [[36mCrypto[0m] [1mCompiling[0m GeneralizedTime.swift
+2026-11-24T07:37:46.0507760Z [[36mCrypto[0m] [1mCompiling[0m ObjectIdentifier.swift
+2026-11-24T07:37:46.0508270Z [[36mCrypto[0m] [1mCompiling[0m ECDSASignature.swift
+2026-11-24T07:37:46.0508580Z [[36mCrypto[0m] [1mCompiling[0m PEMDocument.swift
+2026-11-24T07:37:46.0508940Z [[36mCrypto[0m] [1mCompiling[0m PKCS8PrivateKey.swift
+2026-11-24T07:37:46.0509360Z [[36mCrypto[0m] [1mCompiling[0m SEC1PrivateKey.swift
+2026-11-24T07:37:46.0509940Z [[36mCrypto[0m] [1mCompiling[0m SubjectPublicKeyInfo.swift
+2026-11-24T07:37:46.0525860Z [[36mCrypto[0m] [1mCompiling[0m CryptoError_boring.swift
+2026-11-24T07:37:46.0547610Z [[36mCrypto[0m] [1mCompiling[0m CryptoKitErrors.swift
+2026-11-24T07:37:46.0551620Z [[36mCrypto[0m] [1mCompiling[0m Digest_boring.swift
+2026-11-24T07:37:46.0656020Z [[36mCrypto[0m] [1mCompiling[0m Digest.swift
+2026-11-24T07:37:46.0757950Z [[36mCrypto[0m] [1mCompiling[0m Digests.swift
+2026-11-24T07:37:46.0859060Z [[36mCrypto[0m] [1mCompiling[0m HashFunctions.swift
+2026-11-24T07:37:46.0859480Z [[36mCrypto[0m] [1mCompiling[0m HashFunctions_SHA2.swift
+2026-11-24T07:37:46.0859860Z [[36mCrypto[0m] [1mCompiling[0m HashFunctions_SHA3.swift
+2026-11-24T07:37:46.0860220Z [[36mCrypto[0m] [1mCompiling[0m Digest_xkcp.swift
+2026-11-24T07:37:46.0860530Z [[36mCrypto[0m] [1mCompiling[0m HPKE-AEAD.swift
+2026-11-24T07:37:46.0860840Z [[36mCrypto[0m] [1mCompiling[0m HPKE-Ciphersuite.swift
+2026-11-24T07:37:46.0861140Z [[36mCrypto[0m] [1mCompiling[0m HPKE-KDF.swift
+2026-11-24T07:37:46.0861470Z [[36mCrypto[0m] [1mCompiling[0m HPKE-KexKeyDerivation.swift
+2026-11-24T07:37:46.0861830Z [[36mCrypto[0m] [1mCompiling[0m HPKE-LabeledExtract.swift
+2026-11-24T07:37:46.0862150Z [[36mCrypto[0m] [1mCompiling[0m HPKE-Utils.swift
+2026-11-24T07:37:46.0862430Z [[36mCrypto[0m] [1mCompiling[0m DHKEM.swift
+2026-11-24T07:37:46.0862740Z [[36mCrypto[0m] [1mCompiling[0m HPKE-KEM-Curve25519.swift
+2026-11-24T07:37:46.0863070Z [[36mCrypto[0m] [1mCompiling[0m HPKE-NIST-EC-KEMs.swift
+2026-11-24T07:37:46.0863380Z [[36mCrypto[0m] [1mCompiling[0m HPKE-KEM.swift
+2026-11-24T07:37:46.0863680Z [[36mCrypto[0m] [1mCompiling[0m HPKE-Errors.swift
+2026-11-24T07:37:46.0863950Z [[36mCrypto[0m] [1mCompiling[0m HPKE.swift
+2026-11-24T07:37:46.0864230Z [[36mCrypto[0m] [1mCompiling[0m HPKE-Context.swift
+2026-11-24T07:37:46.0864550Z [[36mCrypto[0m] [1mCompiling[0m HPKE-KeySchedule.swift
+2026-11-24T07:37:46.0864860Z [[36mCrypto[0m] [1mCompiling[0m HPKE-Modes.swift
+2026-11-24T07:37:46.0865160Z [[36mCBigNumBoringSSL[0m] [1mCompiling[0m x86_64-gcc.c
+2026-11-24T07:37:46.0865480Z [[36mCBigNumBoringSSL[0m] [1mCompiling[0m unicode.c
+2026-11-24T07:37:46.0865780Z [[36mCBigNumBoringSSL[0m] [1mCompiling[0m thread.c
+2026-11-24T07:37:46.0866090Z [[36mCBigNumBoringSSL[0m] [1mCompiling[0m thread_win.c
+2026-11-24T07:37:46.0866430Z [[36mCBigNumBoringSSL[0m] [1mCompiling[0m thread_pthread.c
+2026-11-24T07:37:46.0866770Z [[36mCBigNumBoringSSL[0m] [1mCompiling[0m thread_none.c
+2026-11-24T07:37:46.0867090Z [[36mCBigNumBoringSSL[0m] [1mCompiling[0m stack.c
+2026-11-24T07:37:46.0868090Z [[36mCBigNumBoringSSL[0m] [1mCompiling[0m shift.c
+2026-11-24T07:37:46.0868390Z [[36mCBigNumBoringSSL[0m] [1mCompiling[0m sqrt.c
+2026-11-24T07:37:46.0868700Z [[36mCBigNumBoringSSL[0m] [1mCompiling[0m rsaz_exp.c
+2026-11-24T07:37:46.0869040Z [[36mCBigNumBoringSSL[0m] [1mCompiling[0m refcount_lock.c
+2026-11-24T07:37:46.0869360Z [[36mCBigNumBoringSSL[0m] [1mCompiling[0m random.c
+2026-11-24T07:37:46.0869680Z [[36mCBigNumBoringSSL[0m] [1mCompiling[0m refcount_c11.c
+2026-11-24T07:37:46.0870010Z [[36mCBigNumBoringSSL[0m] [1mCompiling[0m rand_extra.c
+2026-11-24T07:37:46.0870320Z [[36mCBigNumBoringSSL[0m] [1mCompiling[0m rand.c
+2026-11-24T07:37:46.0870620Z [[36mCBigNumBoringSSL[0m] [1mCompiling[0m urandom.c
+2026-11-24T07:37:46.0870930Z [[36mCBigNumBoringSSL[0m] [1mCompiling[0m prime.c
+2026-11-24T07:37:46.0871230Z [[36mCBigNumBoringSSL[0m] [1mCompiling[0m polyval.c
+2026-11-24T07:37:46.0871540Z [[36mCBigNumBoringSSL[0m] [1mCompiling[0m passive.c
+2026-11-24T07:37:46.0872210Z [[36mCBigNumBoringSSL[0m] [1mCompiling[0m ofb.c
+2026-11-24T07:37:46.0872500Z [[36mCBigNumBoringSSL[0m] [1mCompiling[0m mul.c
+2026-11-24T07:37:46.0872820Z [[36mCBigNumBoringSSL[0m] [1mCompiling[0m montgomery_inv.c
+2026-11-24T07:37:46.0873370Z [[36mCBigNumBoringSSL[0m] [1mCompiling[0m montgomery.c
+2026-11-24T07:37:46.0873710Z [[36mCBigNumBoringSSL[0m] [1mCompiling[0m mode_wrappers.c
+2026-11-24T07:37:46.0874030Z [[36mCBigNumBoringSSL[0m] [1mCompiling[0m mem.c
+2026-11-24T07:37:46.0874340Z [[36mCBigNumBoringSSL[0m] [1mCompiling[0m key_wrap.c
+2026-11-24T07:37:46.0874640Z [[36mCBigNumBoringSSL[0m] [1mCompiling[0m jacobi.c
+2026-11-24T07:37:46.0874940Z [[36mCBigNumBoringSSL[0m] [1mCompiling[0m generic.c
+2026-11-24T07:37:46.0875250Z [[36mCBigNumBoringSSL[0m] [1mCompiling[0m gcm_nohw.c
+2026-11-24T07:37:46.0875550Z [[36mCBigNumBoringSSL[0m] [1mCompiling[0m gcm.c
+2026-11-24T07:37:46.0875850Z [[36mCBigNumBoringSSL[0m] [1mCompiling[0m gcd_extra.c
+2026-11-24T07:37:46.0876160Z [[36mCBigNumBoringSSL[0m] [1mCompiling[0m gcd.c
+2026-11-24T07:37:46.0876460Z [[36mCBigNumBoringSSL[0m] [1mCompiling[0m fuchsia.c
+2026-11-24T07:37:46.0876860Z [[36mCBigNumBoringSSL[0m] [1mCompiling[0m forkunsafe.c
+2026-11-24T07:37:46.0972200Z [[36mCBigNumBoringSSL[0m] [1mCompiling[0m fork_detect.c
+2026-11-24T07:37:46.1042470Z [[36mCBigNumBoringSSL[0m] [1mCompiling[0m file.c
+2026-11-24T07:37:54.1626120Z [[36mCBigNumBoringSSL[0m] [1mCompiling[0m exponentiation.c
+2026-11-24T07:37:54.1664550Z [[36mCBigNumBoringSSL[0m] [1mCompiling[0m ex_data.c
+2026-11-24T07:37:54.1665170Z [[36mCBigNumBoringSSL[0m] [1mCompiling[0m err_data.c
+2026-11-24T07:37:54.1770420Z [[36mCBigNumBoringSSL[0m] [1mCompiling[0m err.c
+2026-11-24T07:37:54.1871610Z [[36mCBigNumBoringSSL[0m] [1mCompiling[0m e_aes.c
+2026-11-24T07:37:54.1972760Z [[36mCBigNumBoringSSL[0m] [1mCompiling[0m div_extra.c
+2026-11-24T07:37:54.2073980Z [[36mCBigNumBoringSSL[0m] [1mCompiling[0m div.c
+2026-11-24T07:37:54.2175150Z [[36mCBigNumBoringSSL[0m] [1mCompiling[0m deterministic.c
+2026-11-24T07:37:54.2276250Z [[36mCBigNumBoringSSL[0m] [1mCompiling[0m ctx.c
+2026-11-24T07:37:54.2377240Z [[36mCBigNumBoringSSL[0m] [1mCompiling[0m ctrdrbg.c
+2026-11-24T07:37:54.2478250Z [[36mCBigNumBoringSSL[0m] [1mCompiling[0m ctr.c
+2026-11-24T07:37:54.2579300Z [[36mCBigNumBoringSSL[0m] [1mCompiling[0m crypto.c
+2026-11-24T07:37:54.2700630Z [[36mCBigNumBoringSSL[0m] [1mCompiling[0m cpu_ppc64le.c
+2026-11-24T07:37:54.2801890Z [[36mCBigNumBoringSSL[0m] [1mCompiling[0m cpu_intel.c
+2026-11-24T07:37:54.2903060Z [[36mCBigNumBoringSSL[0m] [1mCompiling[0m cpu_arm_linux.c
+2026-11-24T07:37:54.3004360Z [[36mCBigNumBoringSSL[0m] [1mCompiling[0m cpu_arm.c
+2026-11-24T07:37:54.3105660Z [[36mCBigNumBoringSSL[0m] [1mCompiling[0m cpu_aarch64_win.c
+2026-11-24T07:37:54.3207050Z [[36mCBigNumBoringSSL[0m] [1mCompiling[0m cpu_aarch64_linux.c
+2026-11-24T07:37:54.3308750Z [[36mCBigNumBoringSSL[0m] [1mCompiling[0m cpu_aarch64_fuchsia.c
+2026-11-24T07:37:54.3410080Z [[36mCBigNumBoringSSL[0m] [1mCompiling[0m convert.c
+2026-11-24T07:37:54.3511230Z [[36mCBigNumBoringSSL[0m] [1mCompiling[0m cpu_aarch64_apple.c
+2026-11-24T07:37:54.3612520Z [[36mCBigNumBoringSSL[0m] [1mCompiling[0m cmp.c
+2026-11-24T07:37:54.3713780Z [[36mCBigNumBoringSSL[0m] [1mCompiling[0m cipher.c
+2026-11-24T07:37:54.3755600Z [[36mCBigNumBoringSSL[0m] [1mCompiling[0m cfb.c
+2026-11-24T07:37:54.3756300Z [[36mCBigNumBoringSSL[0m] [1mCompiling[0m cbs.c
+2026-11-24T07:37:54.3756850Z [[36mCBigNumBoringSSL[0m] [1mCompiling[0m cbc.c
+2026-11-24T07:37:54.3757210Z [[36mCBigNumBoringSSL[0m] [1mCompiling[0m cbb.c
+2026-11-24T07:37:54.3757510Z [[36mCBigNumBoringSSL[0m] [1mCompiling[0m bytes.c
+2026-11-24T07:37:54.3757810Z [[36mCBigNumBoringSSL[0m] [1mCompiling[0m bn.c
+2026-11-24T07:37:54.3758100Z [[36mCBigNumBoringSSL[0m] [1mCompiling[0m bio.c
+2026-11-24T07:37:54.3758460Z [[36mCBigNumBoringSSL[0m] [1mCompiling[0m ber.c
+2026-11-24T07:37:54.3759160Z [[36mCBigNumBoringSSL[0m] [1mCompiling[0m asn1_compat.c
+2026-11-24T07:37:54.3759560Z [[36mBigNum[0m] [1mCompiling[0m BigNum.swift
+2026-11-24T07:37:54.3759900Z [[36mCBigNumBoringSSL[0m] [1mCompiling[0m aes.c
+2026-11-24T07:37:54.3760470Z [[36mCBigNumBoringSSL[0m] [1mCompiling[0m aes_nohw.c
+2026-11-24T07:37:54.3760780Z [[36mCBigNumBoringSSL[0m] [1mCompiling[0m add.c
+2026-11-24T07:37:54.3761190Z [[36m_CertificateInternals[0m] [1mLinking[0m _CertificateInternals.o
+2026-11-24T07:37:54.3761660Z [[36mCBigNumBoringSSL[0m] [1mLinking[0m CBigNumBoringSSL.o
+2026-11-24T07:37:54.3862660Z [[36m_CertificateInternals[0m] [1mExtract App Intents Metadata[0m
+2026-11-24T07:37:54.3963720Z [[36mSwiftASN1[0m] [1mLinking[0m SwiftASN1.o
+2026-11-24T07:37:54.4064830Z [[36mSwiftASN1[0m] [1mExtract App Intents Metadata[0m
+2026-11-24T07:37:54.4165910Z [[36mStosSign_Common[0m] [1mLinking[0m StosSign_Common.o
+2026-11-24T07:37:54.4267080Z [[36mCryptoSwiftResources[0m] [1mLinking[0m CryptoSwiftResources.o
+2026-11-24T07:37:54.4368250Z [[36mStosSign_Common[0m] [1mExtract App Intents Metadata[0m
+2026-11-24T07:37:54.4469430Z [[36mCryptoSwiftResources[0m] [1mExtract App Intents Metadata[0m
+2026-11-24T07:37:54.4570660Z [[36mStosSign_API[0m] [1mCompiling[0m AppleAPISession.swift
+2026-11-24T07:37:54.4671750Z [[36mStosSign_API[0m] [1mCompiling[0m AppleAPI+Legacy.swift
+2026-11-24T07:37:54.4773020Z [[36mStosSign_API[0m] [1mCompiling[0m Capabilities+Legacy.swift
+2026-11-24T07:37:54.4796840Z [[36mStosSign_API[0m] [1mCopy[0m arm64-apple-ios-simulator.swiftmodule -> StosSign_API.swiftmodule
+2026-11-24T07:37:54.4797890Z [[36mStosSign_API[0m] [1mCopy[0m arm64-apple-ios-simulator.swiftdoc -> StosSign_API.swiftdoc
+2026-11-24T07:37:54.4899580Z [[36mStosSign_API[0m] [1mCopy[0m arm64-apple-ios-simulator.abi.json -> StosSign_API.abi.json
+2026-11-24T07:37:54.4900390Z [[36mStosSign_API[0m] [1mCopy[0m arm64-apple-ios-simulator.swiftsourceinfo -> StosSign_API.swiftsourceinfo
+2026-11-24T07:37:54.5001810Z [[36mStosSign_API[0m] [1mCompiling[0m AppleAPI.swift
+2026-11-24T07:37:54.5103440Z [[36mStosSign_API[0m] [1mCompiling[0m AppleAPIError.swift
+2026-11-24T07:37:54.5204060Z [[36mSRP[0m] [1mCompiling[0m error.swift
+2026-11-24T07:37:54.5304430Z [[36mSRP[0m] [1mCompiling[0m keys.swift
+2026-11-24T07:37:54.5405200Z [[36mSRP[0m] [1mCompiling[0m server.swift
+2026-11-24T07:37:54.5505610Z [[36mSRP[0m] [1mCompiling[0m srp.swift
+2026-11-24T07:37:54.5606240Z [[36mSRP[0m] [1mCompiling[0m Array.swift
+2026-11-24T07:37:54.5706860Z [[36mSRP[0m] [1mCompiling[0m client.swift
+2026-11-24T07:37:54.5807450Z [[36mSRP[0m] [1mCompiling[0m configuration.swift
+2026-11-24T07:37:54.5848920Z [[36mSRP[0m] [1mCopy[0m arm64-apple-ios-simulator.swiftmodule -> SRP.swiftmodule
+2026-11-24T07:37:54.5849490Z [[36mSRP[0m] [1mCopy[0m arm64-apple-ios-simulator.swiftdoc -> SRP.swiftdoc
+2026-11-24T07:37:54.5849980Z [[36mSRP[0m] [1mCopy[0m arm64-apple-ios-simulator.abi.json -> SRP.abi.json
+2026-11-24T07:37:54.5850590Z [[36mSRP[0m] [1mCopy[0m arm64-apple-ios-simulator.swiftsourceinfo -> SRP.swiftsourceinfo
+2026-11-24T07:37:54.5851050Z [[36mCrypto[0m] [1mLinking[0m Crypto.o
+2026-11-24T07:37:54.5851520Z [[36mCrypto[0m] [1mExtract App Intents Metadata[0m
+2026-11-24T07:37:54.5851960Z [[36mCryptoSwift[0m] [1mCompiling[0m RSA+Cipher.swift
+2026-11-24T07:37:54.5852300Z [[36mCryptoSwift[0m] [1mCompiling[0m RSA+Signature.swift
+2026-11-24T07:37:54.5852620Z [[36mCryptoSwift[0m] [1mCompiling[0m RSA.swift
+2026-11-24T07:37:54.5852920Z [[36mCryptoSwift[0m] [1mCompiling[0m Rabbit.swift
+2026-11-24T07:37:54.5853210Z [[36mCryptoSwift[0m] [1mCompiling[0m SHA1.swift
+2026-11-24T07:37:54.5853500Z [[36mCryptoSwift[0m] [1mCompiling[0m SHA2.swift
+2026-11-24T07:37:54.5853840Z [[36mCryptoSwift[0m] [1mCompiling[0m SHA3.swift
+2026-11-24T07:37:54.5854150Z [[36mCryptoSwift[0m] [1mCompiling[0m Scrypt.swift
+2026-11-24T07:37:54.5854980Z [[36mCryptoSwift[0m] [1mCompiling[0m SecureBytes.swift
+2026-11-24T07:37:54.5855320Z [[36mCryptoSwift[0m] [1mCompiling[0m Signature.swift
+2026-11-24T07:37:54.5855660Z [[36mCryptoSwift[0m] [1mCompiling[0m StreamDecryptor.swift
+2026-11-24T07:37:54.5856280Z [[36mCryptoSwift[0m] [1mCompiling[0m StreamEncryptor.swift
+2026-11-24T07:37:54.5856640Z [[36mCryptoSwift[0m] [1mCompiling[0m String+Extension.swift
+2026-11-24T07:37:54.5857070Z [[36mCryptoSwift[0m] [1mCompiling[0m UInt128.swift
+2026-11-24T07:37:54.5857420Z [[36mCryptoSwift[0m] [1mCompiling[0m UInt16+Extension.swift
+2026-11-24T07:37:54.5857780Z [[36mCryptoSwift[0m] [1mCompiling[0m UInt32+Extension.swift
+2026-11-24T07:37:54.5858140Z [[36mCryptoSwift[0m] [1mCompiling[0m UInt64+Extension.swift
+2026-11-24T07:37:54.5858540Z [[36mCryptoSwift[0m] [1mCompiling[0m UInt8+Extension.swift
+2026-11-24T07:37:54.5858920Z [[36mCryptoSwift[0m] [1mCompiling[0m Updatable.swift
+2026-11-24T07:37:54.5859240Z [[36mCryptoSwift[0m] [1mCompiling[0m Utils.swift
+2026-11-24T07:37:54.5859750Z [[36mCryptoSwift[0m] [1mCompiling[0m XChaCha20.swift
+2026-11-24T07:37:54.5860180Z [[36mCryptoSwift[0m] [1mCompiling[0m ZeroPadding.swift
+2026-11-24T07:37:54.5860490Z [[36mStosSign_API[0m] [1mLinking[0m StosSign_API.o
+2026-11-24T07:37:54.5860830Z [[36mCryptoSwift[0m] [1mCompiling[0m Rabbit+Foundation.swift
+2026-11-24T07:37:54.5861220Z [[36mCryptoSwift[0m] [1mCompiling[0m String+FoundationExtension.swift
+2026-11-24T07:37:54.5861610Z [[36mCryptoSwift[0m] [1mCompiling[0m Utils+Foundation.swift
+2026-11-24T07:37:54.5861980Z [[36mCryptoSwift[0m] [1mCompiling[0m XChaCha20+Foundation.swift
+2026-11-24T07:37:54.5862330Z [[36mCryptoSwift[0m] [1mCompiling[0m Generics.swift
+2026-11-24T07:37:54.5862630Z [[36mCryptoSwift[0m] [1mCompiling[0m HKDF.swift
+2026-11-24T07:37:54.5862990Z [[36mCryptoSwift[0m] [1mCompiling[0m HMAC.swift
+2026-11-24T07:37:54.5863320Z [[36mCryptoSwift[0m] [1mCompiling[0m ISO10126Padding.swift
+2026-11-24T07:37:54.5863670Z [[36mCryptoSwift[0m] [1mCompiling[0m ISO78164Padding.swift
+2026-11-24T07:37:54.5864010Z [[36mCryptoSwift[0m] [1mCompiling[0m Int+Extension.swift
+2026-11-24T07:37:54.5864320Z [[36mCryptoSwift[0m] [1mCompiling[0m MD5.swift
+2026-11-24T07:37:54.5864620Z [[36mCryptoSwift[0m] [1mCompiling[0m NoPadding.swift
+2026-11-24T07:37:54.5864940Z [[36mCryptoSwift[0m] [1mCompiling[0m Operators.swift
+2026-11-24T07:37:54.5865230Z [[36mCryptoSwift[0m] [1mCompiling[0m DER.swift
+2026-11-24T07:37:54.5865590Z [[36mCryptoSwift[0m] [1mCompiling[0m PBKDF1.swift
+2026-11-24T07:37:54.5865920Z [[36mCryptoSwift[0m] [1mCompiling[0m PBKDF2.swift
+2026-11-24T07:37:54.5866280Z [[36mCryptoSwift[0m] [1mCompiling[0m PKCS1v15.swift
+2026-11-24T07:37:54.5866630Z [[36mCryptoSwift[0m] [1mCompiling[0m PKCS5.swift
+2026-11-24T07:37:54.5866930Z [[36mCryptoSwift[0m] [1mCompiling[0m PKCS7.swift
+2026-11-24T07:37:54.5867240Z [[36mCryptoSwift[0m] [1mCompiling[0m PKCS7Padding.swift
+2026-11-24T07:37:54.5867570Z [[36mCryptoSwift[0m] [1mCompiling[0m Padding.swift
+2026-11-24T07:37:54.5867870Z [[36mCryptoSwift[0m] [1mCompiling[0m Poly1305.swift
+2026-11-24T07:37:54.5868430Z [[36mCryptoSwift[0m] [1mCopy[0m arm64-apple-ios-simulator.swiftmodule -> CryptoSwift.swiftmodule
+2026-11-24T07:37:54.5869070Z [[36mCryptoSwift[0m] [1mCopy[0m arm64-apple-ios-simulator.swiftdoc -> CryptoSwift.swiftdoc
+2026-11-24T07:37:54.5869610Z [[36mCryptoSwift[0m] [1mCopy[0m arm64-apple-ios-simulator.abi.json -> CryptoSwift.abi.json
+2026-11-24T07:37:54.5870280Z [[36mCryptoSwift[0m] [1mCopy[0m arm64-apple-ios-simulator.swiftsourceinfo -> CryptoSwift.swiftsourceinfo
+2026-11-24T07:37:54.5870910Z [[36mCryptoExtras[0m] [1mCopy[0m arm64-apple-ios-simulator.swiftmodule -> CryptoExtras.swiftmodule
+2026-11-24T07:37:54.5871480Z [[36mCryptoExtras[0m] [1mCopy[0m arm64-apple-ios-simulator.swiftdoc -> CryptoExtras.swiftdoc
+2026-11-24T07:37:54.5872020Z [[36mCryptoExtras[0m] [1mCopy[0m arm64-apple-ios-simulator.abi.json -> CryptoExtras.abi.json
+2026-11-24T07:37:54.5872830Z [[36mCryptoExtras[0m] [1mCopy[0m arm64-apple-ios-simulator.swiftsourceinfo -> CryptoExtras.swiftsourceinfo
+2026-11-24T07:37:54.5873420Z [[36mCryptoSwift[0m] [1mCompiling[0m ECB.swift
+2026-11-24T07:37:54.5873880Z [[36mCryptoSwift[0m] [1mCompiling[0m GCM.swift
+2026-11-24T07:37:54.5874210Z [[36mCryptoSwift[0m] [1mCompiling[0m OCB.swift
+2026-11-24T07:37:54.5874480Z [[36mCryptoSwift[0m] [1mCompiling[0m OFB.swift
+2026-11-24T07:37:54.5874760Z [[36mCryptoSwift[0m] [1mCompiling[0m PCBC.swift
+2026-11-24T07:37:54.5875070Z [[36mCryptoSwift[0m] [1mCompiling[0m Blowfish.swift
+2026-11-24T07:37:54.5875380Z [[36mCryptoSwift[0m] [1mCompiling[0m CBCMAC.swift
+2026-11-24T07:37:54.5875670Z [[36mCryptoSwift[0m] [1mCompiling[0m CMAC.swift
+2026-11-24T07:37:54.5875970Z [[36mCryptoSwift[0m] [1mCompiling[0m Addition.swift
+2026-11-24T07:37:54.5876270Z [[36mCryptoSwift[0m] [1mCompiling[0m BigInt.swift
+2026-11-24T07:37:54.5876570Z [[36mCryptoSwift[0m] [1mCompiling[0m BigUInt.swift
+2026-11-24T07:37:54.5876950Z [[36mCryptoSwift[0m] [1mCompiling[0m BitwiseOps.swift
+2026-11-24T07:37:54.5877250Z [[36mCryptoSwift[0m] [1mCompiling[0m CS.swift
+2026-11-24T07:37:54.5877550Z [[36mCryptoSwift[0m] [1mCompiling[0m Codable.swift
+2026-11-24T07:37:54.5877940Z [[36mCryptoSwift[0m] [1mCompiling[0m Comparable.swift
+2026-11-24T07:37:54.5878340Z [[36mCryptoSwift[0m] [1mCompiling[0m DataConversion.swift
+2026-11-24T07:37:54.5878680Z [[36mCryptoSwift[0m] [1mCompiling[0m Division.swift
+2026-11-24T07:37:54.5879010Z [[36mCryptoSwift[0m] [1mCompiling[0m Exponentiation.swift
+2026-11-24T07:37:54.5879420Z [[36mCryptoSwift[0m] [1mCompiling[0m FloatingPointConversion.swift
+2026-11-24T07:37:54.5879760Z [[36mCryptoSwift[0m] [1mCompiling[0m GCD.swift
+2026-11-24T07:37:54.5880060Z [[36mCryptoSwift[0m] [1mCompiling[0m Hashable.swift
+2026-11-24T07:37:54.5880400Z [[36mCryptoSwift[0m] [1mCompiling[0m IntegerConversion.swift
+2026-11-24T07:37:54.5880760Z [[36mCryptoSwift[0m] [1mCompiling[0m Multiplication.swift
+2026-11-24T07:37:54.5881140Z [[36mCryptoSwift[0m] [1mCompiling[0m PrimeTest.swift
+2026-11-24T07:37:54.5881450Z [[36mCryptoSwift[0m] [1mCompiling[0m Random.swift
+2026-11-24T07:37:54.5881750Z [[36mCryptoSwift[0m] [1mCompiling[0m Shifts.swift
+2026-11-24T07:37:54.5882060Z [[36mCryptoSwift[0m] [1mCompiling[0m SquareRoot.swift
+2026-11-24T07:37:54.5882380Z [[36mCryptoSwift[0m] [1mCompiling[0m Strideable.swift
+2026-11-24T07:37:54.5882710Z [[36mCryptoSwift[0m] [1mCompiling[0m StringConversion.swift
+2026-11-24T07:37:54.5883060Z [[36mCryptoSwift[0m] [1mCompiling[0m Subtraction.swift
+2026-11-24T07:37:54.5883400Z [[36mCryptoSwift[0m] [1mCompiling[0m WordsAndBits.swift
+2026-11-24T07:37:54.5883720Z [[36mCryptoSwift[0m] [1mCompiling[0m ChaCha20.swift
+2026-11-24T07:37:54.5884080Z [[36mCryptoSwift[0m] [1mCompiling[0m Checksum.swift
+2026-11-24T07:37:54.5884400Z [[36mCryptoSwift[0m] [1mCompiling[0m Cipher.swift
+2026-11-24T07:37:54.5884750Z [[36mCryptoSwift[0m] [1mCompiling[0m Collection+Extension.swift
+2026-11-24T07:37:54.5885100Z [[36mCryptoSwift[0m] [1mCompiling[0m CompactMap.swift
+2026-11-24T07:37:54.5885400Z [[36mCryptoSwift[0m] [1mCompiling[0m Cryptor.swift
+2026-11-24T07:37:54.5885710Z [[36mCryptoSwift[0m] [1mCompiling[0m Cryptors.swift
+2026-11-24T07:37:54.5886010Z [[36mCryptoSwift[0m] [1mCompiling[0m Digest.swift
+2026-11-24T07:37:54.5886320Z [[36mCryptoSwift[0m] [1mCompiling[0m DigestType.swift
+2026-11-24T07:37:54.5886640Z [[36mCryptoSwift[0m] [1mCompiling[0m AES+Foundation.swift
+2026-11-24T07:37:54.5887000Z [[36mCryptoSwift[0m] [1mCompiling[0m Array+Foundation.swift
+2026-11-24T07:37:54.5887370Z [[36mCryptoSwift[0m] [1mCompiling[0m Blowfish+Foundation.swift
+2026-11-24T07:37:54.5887740Z [[36mCryptoSwift[0m] [1mCompiling[0m ChaCha20+Foundation.swift
+2026-11-24T07:37:54.5888110Z [[36mCryptoSwift[0m] [1mCompiling[0m Data+Extension.swift
+2026-11-24T07:37:54.5888640Z [[36mCryptoSwift[0m] [1mCompiling[0m HMAC+Foundation.swift
+2026-11-24T07:37:54.5888970Z [[36mCryptoSwift[0m] [1mCompiling[0m AEAD.swift
+2026-11-24T07:37:54.5889300Z [[36mCryptoSwift[0m] [1mCompiling[0m AEADChaCha20Poly1305.swift
+2026-11-24T07:37:54.5889870Z [[36mCryptoSwift[0m] [1mCompiling[0m AEADXChaCha20Poly1305.swift
+2026-11-24T07:37:54.5890230Z [[36mCryptoSwift[0m] [1mCompiling[0m AES.Cryptors.swift
+2026-11-24T07:37:54.5890540Z [[36mCryptoSwift[0m] [1mCompiling[0m AES.swift
+2026-11-24T07:37:54.5890820Z [[36mCryptoSwift[0m] [1mCompiling[0m ASN1.swift
+2026-11-24T07:37:54.5891130Z [[36mCryptoSwift[0m] [1mCompiling[0m ASN1Decoder.swift
+2026-11-24T07:37:54.5891530Z [[36mCryptoSwift[0m] [1mCompiling[0m ASN1Encoder.swift
+2026-11-24T07:37:54.5891860Z [[36mCryptoSwift[0m] [1mCompiling[0m ASN1Scanner.swift
+2026-11-24T07:37:54.5892250Z [[36mCryptoSwift[0m] [1mCompiling[0m Array+Extension.swift
+2026-11-24T07:37:54.5892610Z [[36mCryptoSwift[0m] [1mCompiling[0m Authenticator.swift
+2026-11-24T07:37:54.5892970Z [[36mCryptoSwift[0m] [1mCompiling[0m BatchedCollection.swift
+2026-11-24T07:37:54.5893290Z [[36mCryptoSwift[0m] [1mCompiling[0m Bit.swift
+2026-11-24T07:37:54.5893590Z [[36mCryptoSwift[0m] [1mCompiling[0m BlockCipher.swift
+2026-11-24T07:37:54.5893930Z [[36mCryptoSwift[0m] [1mCompiling[0m BlockDecryptor.swift
+2026-11-24T07:37:54.5894280Z [[36mCryptoSwift[0m] [1mCompiling[0m BlockEncryptor.swift
+2026-11-24T07:37:54.5894600Z [[36mCryptoSwift[0m] [1mCompiling[0m BlockMode.swift
+2026-11-24T07:37:54.5894930Z [[36mCryptoSwift[0m] [1mCompiling[0m BlockModeOptions.swift
+2026-11-24T07:37:54.5895260Z [[36mCryptoSwift[0m] [1mCompiling[0m CBC.swift
+2026-11-24T07:37:54.5895550Z [[36mCryptoSwift[0m] [1mCompiling[0m CCM.swift
+2026-11-24T07:37:54.5895820Z [[36mCryptoSwift[0m] [1mCompiling[0m CFB.swift
+2026-11-24T07:37:54.5896100Z [[36mCryptoSwift[0m] [1mCompiling[0m CTR.swift
+2026-11-24T07:37:54.5896420Z [[36mCryptoSwift[0m] [1mCompiling[0m CipherModeWorker.swift
+2026-11-24T07:37:54.5896770Z [[36mCryptoExtras[0m] [1mCompiling[0m SHA512256.swift
+2026-11-24T07:37:54.5897100Z [[36mCryptoExtras[0m] [1mCompiling[0m SHA512256Digest.swift
+2026-11-24T07:37:54.5897460Z [[36mCryptoExtras[0m] [1mCompiling[0m Curve25519+PEM.swift
+2026-11-24T07:37:54.5897820Z [[36mCryptoExtras[0m] [1mCompiling[0m ObjectIdentifier.swift
+2026-11-24T07:37:54.5898200Z [[36mCryptoExtras[0m] [1mCompiling[0m PKCS8DERRepresentation.swift
+2026-11-24T07:37:54.5898580Z [[36mCryptoExtras[0m] [1mCompiling[0m PKCS8PrivateKey.swift
+2026-11-24T07:37:54.5899050Z [[36mCryptoExtras[0m] [1mCompiling[0m RFC8410AlgorithmIdentifier.swift
+2026-11-24T07:37:54.5899500Z [[36mCryptoExtras[0m] [1mCompiling[0m ECToolbox_boring.swift
+2026-11-24T07:37:54.5899840Z [[36mCryptoExtras[0m] [1mCompiling[0m ECToolbox.swift
+2026-11-24T07:37:54.5900170Z [[36mCryptoExtras[0m] [1mCompiling[0m HashToField.swift
+2026-11-24T07:37:54.5900530Z [[36mCryptoExtras[0m] [1mCompiling[0m KDF.swift
+2026-11-24T07:37:54.5900850Z [[36mCryptoExtras[0m] [1mCompiling[0m PBKDF2_boring.swift
+2026-11-24T07:37:54.5901220Z [[36mCryptoExtras[0m] [1mCompiling[0m PBKDF2_commoncrypto.swift
+2026-11-24T07:37:54.5901560Z [[36mCryptoExtras[0m] [1mCompiling[0m PBKDF2.swift
+2026-11-24T07:37:54.5901940Z [[36mCryptoExtras[0m] [1mCompiling[0m Scrypt_boring.swift
+2026-11-24T07:37:54.5902270Z [[36mCryptoExtras[0m] [1mCompiling[0m Scrypt.swift
+2026-11-24T07:37:54.5902620Z [[36mCryptoExtras[0m] [1mCompiling[0m OPRF.swift
+2026-11-24T07:37:54.5902950Z [[36mCryptoExtras[0m] [1mCompiling[0m OPRFClient.swift
+2026-11-24T07:37:54.5903270Z [[36mCryptoExtras[0m] [1mCompiling[0m OPRFServer.swift
+2026-11-24T07:37:54.5903600Z [[36mCryptoExtras[0m] [1mCompiling[0m VOPRF+API.swift
+2026-11-24T07:37:54.5903930Z [[36mCryptoExtras[0m] [1mCompiling[0m VOPRFClient.swift
+2026-11-24T07:37:54.5904260Z [[36mCryptoExtras[0m] [1mCompiling[0m VOPRFServer.swift
+2026-11-24T07:37:54.5904670Z [[36mCryptoExtras[0m] [1mCompiling[0m BoringSSLPassphraseCallbackManager.swift
+2026-11-24T07:37:54.5905240Z [[36mCryptoExtras[0m] [1mCompiling[0m resource_bundle_accessor.swift
+2026-11-24T07:37:54.5905610Z [[36mCryptoExtras[0m] [1mCompiling[0m AES_CBC.swift
+2026-11-24T07:37:54.5906030Z [[36mCryptoExtras[0m] [1mCompiling[0m AES_CFB.swift
+2026-11-24T07:37:54.5906350Z [[36mCryptoExtras[0m] [1mCompiling[0m AES_CTR.swift
+2026-11-24T07:37:54.5906670Z [[36mCryptoExtras[0m] [1mCompiling[0m AES_GCM_SIV.swift
+2026-11-24T07:37:54.5907010Z [[36mCryptoExtras[0m] [1mCompiling[0m Block\ Function.swift
+2026-11-24T07:37:54.5907670Z [[36mCryptoExtras[0m] [1mCompiling[0m AES_CBC_boring.swift
+2026-11-24T07:37:54.5908250Z [[36mCryptoExtras[0m] [1mCompiling[0m AES_CFB_boring.swift
+2026-11-24T07:37:54.5908920Z [[36mCryptoExtras[0m] [1mCompiling[0m AES_CTR_boring.swift
+2026-11-24T07:37:54.5916840Z [[36mCryptoExtras[0m] [1mCompiling[0m AES_GCM_SIV_boring.swift
+2026-11-24T07:37:54.5917190Z [[36mCryptoExtras[0m] [1mCompiling[0m CMAC.swift
+2026-11-24T07:37:54.5917510Z [[36mCryptoExtras[0m] [1mCompiling[0m ARC+API.swift
+2026-11-24T07:37:54.5917810Z [[36mCryptoExtras[0m] [1mCompiling[0m ARC.swift
+2026-11-24T07:37:54.5918130Z [[36mCryptoExtras[0m] [1mCompiling[0m ARCCredential.swift
+2026-11-24T07:37:54.5918470Z [[36mCryptoExtras[0m] [1mCompiling[0m ARCEncoding.swift
+2026-11-24T07:37:54.5918830Z [[36mCryptoExtras[0m] [1mCompiling[0m ARCPrecredential.swift
+2026-11-24T07:37:54.5919190Z [[36mCryptoExtras[0m] [1mCompiling[0m ARCPresentation.swift
+2026-11-24T07:37:54.5919530Z [[36mCryptoExtras[0m] [1mCompiling[0m ARCRequest.swift
+2026-11-24T07:37:54.5919860Z [[36mCryptoExtras[0m] [1mCompiling[0m ARCResponse.swift
+2026-11-24T07:37:54.5920190Z [[36mCryptoExtras[0m] [1mCompiling[0m ARCServer.swift
+2026-11-24T07:37:54.5920540Z [[36mCryptoExtras[0m] [1mCompiling[0m ChaCha20CTR_boring.swift
+2026-11-24T07:37:54.5920890Z [[36mCryptoExtras[0m] [1mCompiling[0m ChaCha20CTR.swift
+2026-11-24T07:37:54.5921300Z [[36mCryptoExtras[0m] [1mCompiling[0m BoringSSLSHA512256Context.swift
+2026-11-24T07:37:54.5921770Z [[36mCryptoExtras[0m] [1mCompiling[0m BoringSSLSHA512256HashFunction.swift
+2026-11-24T07:37:54.5922180Z [[36mCryptoExtras[0m] [1mCompiling[0m RSA+BlindSigning.swift
+2026-11-24T07:37:54.5922520Z [[36mCryptoExtras[0m] [1mCompiling[0m RSA.swift
+2026-11-24T07:37:54.5922830Z [[36mCryptoExtras[0m] [1mCompiling[0m RSA_boring.swift
+2026-11-24T07:37:54.5923150Z [[36mCryptoExtras[0m] [1mCompiling[0m Reexport.swift
+2026-11-24T07:37:54.5923490Z [[36mCryptoExtras[0m] [1mCompiling[0m Zeroization_boring.swift
+2026-11-24T07:37:54.5923850Z [[36mCryptoExtras[0m] [1mCompiling[0m BoringSSLHelpers.swift
+2026-11-24T07:37:54.5924240Z [[36mCryptoExtras[0m] [1mCompiling[0m CryptoKitErrors_boring.swift
+2026-11-24T07:37:54.5924620Z [[36mCryptoExtras[0m] [1mCompiling[0m Data+Extensions.swift
+2026-11-24T07:37:54.5924970Z [[36mCryptoExtras[0m] [1mCompiling[0m DigestType.swift
+2026-11-24T07:37:54.5925280Z [[36mCryptoExtras[0m] [1mCompiling[0m Error.swift
+2026-11-24T07:37:54.5925580Z [[36mCryptoExtras[0m] [1mCompiling[0m I2OSP.swift
+2026-11-24T07:37:54.5925910Z [[36mCryptoExtras[0m] [1mCompiling[0m IntegerEncoding.swift
+2026-11-24T07:37:54.5926270Z [[36mCryptoExtras[0m] [1mCompiling[0m PEMDocument.swift
+2026-11-24T07:37:54.5926600Z [[36mCryptoExtras[0m] [1mCompiling[0m PrettyBytes.swift
+2026-11-24T07:37:54.5926970Z [[36mCryptoExtras[0m] [1mCompiling[0m SubjectPublicKeyInfo.swift
+2026-11-24T07:37:54.5927320Z [[36mCryptoExtras[0m] [1mCompiling[0m ThreadOps.swift
+2026-11-24T07:37:54.5927650Z [[36mCryptoExtras[0m] [1mCompiling[0m ThreadPosix.swift
+2026-11-24T07:37:54.5927990Z [[36mCryptoExtras[0m] [1mCompiling[0m ThreadSpecific.swift
+2026-11-24T07:37:54.5928350Z [[36mCryptoExtras[0m] [1mCompiling[0m ThreadWindows.swift
+2026-11-24T07:37:54.5928670Z [[36mCryptoExtras[0m] [1mCompiling[0m DLEQ.swift
+2026-11-24T07:37:54.5928970Z [[36mCryptoExtras[0m] [1mCompiling[0m Prover.swift
+2026-11-24T07:37:54.5929600Z [[36mCryptoExtras[0m] [1mCompiling[0m Verifier.swift
+2026-11-24T07:37:54.5929920Z [[36mCryptoExtras[0m] [1mCompiling[0m ZKPToolbox.swift
+2026-11-24T07:37:54.5930240Z [[36mCryptoSwift[0m] [1mLinking[0m CryptoSwift.o
+2026-11-24T07:37:54.5930740Z [[36mStosSign_API[0m] [1mExtract App Intents Metadata[0m
+2026-11-24T07:37:54.5931080Z [[36mCryptoSwift[0m] [1mExtract App Intents Metadata[0m
+2026-11-24T07:37:54.5931400Z [[36m_CryptoExtras[0m] [1mCompiling[0m Exports.swift
+2026-11-24T07:37:54.5931870Z [[36m_CryptoExtras[0m] [1mCopy[0m arm64-apple-ios-simulator.swiftmodule -> _CryptoExtras.swiftmodule
+2026-11-24T07:37:54.5932450Z [[36m_CryptoExtras[0m] [1mCopy[0m arm64-apple-ios-simulator.swiftdoc -> _CryptoExtras.swiftdoc
+2026-11-24T07:37:54.5933010Z [[36m_CryptoExtras[0m] [1mCopy[0m arm64-apple-ios-simulator.abi.json -> _CryptoExtras.abi.json
+2026-11-24T07:38:08.6076160Z Testing failed:
+2026-11-24T07:38:08.6077210Z 	Cannot find 'MockAppleAuthenticationProvider' in scope
+2026-11-24T07:38:08.6078220Z 	Cannot find 'MockAppleAuthenticationProvider' in scope
+2026-11-24T07:38:08.6096780Z 	Cannot find 'MockAppleAuthenticationProvider' in scope
+2026-11-24T07:38:08.6097570Z 	Testing cancelled because the build failed.
+2026-11-24T07:38:08.6097940Z 
+2026-11-24T07:38:08.6098120Z ** TEST FAILED **
+2026-11-24T07:38:08.6098410Z 
+2026-11-24T07:38:08.6098550Z 
+2026-11-24T07:38:08.6098810Z The following build commands failed:
+2026-11-24T07:38:08.6099790Z 	SwiftCompile normal arm64 Compiling\ IPAForgeTests.swift /Users/runner/work/IPAForge/IPAForge/Tests/IPAForgeTests.swift (in target 'AppStoreIPADownloaderTests' from project 'AppStoreIPADownloader')
+2026-11-24T07:38:08.6103510Z 	SwiftCompile normal arm64 /Users/runner/work/IPAForge/IPAForge/Tests/IPAForgeTests.swift (in target 'AppStoreIPADownloaderTests' from project 'AppStoreIPADownloader')
+2026-11-24T07:38:08.6161520Z 	Testing project AppStoreIPADownloader with scheme AppStoreIPADownloader
+2026-11-24T07:38:08.6162370Z (3 failures)
+2026-11-24T07:38:08.7084500Z [[36m_CryptoExtras[0m] [1mCopy[0m arm64-apple-ios-simulator.swiftsourceinfo -> _CryptoExtras.swiftsourceinfo
+2026-11-24T07:38:08.7112200Z [[36mX509[0m] [1mCompiling[0m CustomPrivateKey.swift
+2026-11-24T07:38:08.7116150Z [[36mX509[0m] [1mCompiling[0m Digests.swift
+2026-11-24T07:38:08.7117310Z [[36mX509[0m] [1mCompiling[0m DistinguishedName.swift
+2026-11-24T07:38:08.7117830Z [[36mX509[0m] [1mCompiling[0m CommonName.swift
+2026-11-24T07:38:08.7120030Z [[36mX509[0m] [1mCompiling[0m CountryName.swift
+2026-11-24T07:38:08.7120900Z [[36mX509[0m] [1mCompiling[0m DNBuilder.swift
+2026-11-24T07:38:08.7121450Z [[36mX509[0m] [1mCompiling[0m DomainComponent.swift
+2026-11-24T07:38:08.7122060Z [[36mX509[0m] [1mCompiling[0m EmailAddress.swift
+2026-11-24T07:38:08.7122530Z [[36mX509[0m] [1mCompiling[0m LocalityName.swift
+2026-11-24T07:38:08.7123260Z [[36mX509[0m] [1mCompiling[0m OrganizationName.swift
+2026-11-24T07:38:08.7123830Z [[36mX509[0m] [1mCompiling[0m OrganizationalUnitName.swift
+2026-11-24T07:38:08.7124590Z [[36mX509[0m] [1mCompiling[0m StateOrProvinceName.swift
+2026-11-24T07:38:08.7125100Z [[36mX509[0m] [1mCompiling[0m StreetAddress.swift
+2026-11-24T07:38:08.7125810Z [[36mX509[0m] [1mCompiling[0m Error.swift
+2026-11-24T07:38:08.7126390Z [[36mX509[0m] [1mCompiling[0m AuthorityInformationAccess.swift
+2026-11-24T07:38:08.7128440Z [[36mX509[0m] [1mCompiling[0m AuthorityKeyIdentifier.swift
+2026-11-24T07:38:08.7134490Z [[36mX509[0m] [1mCompiling[0m BasicConstraints.swift
+2026-11-24T07:38:08.7135380Z [[36mX509[0m] [1mCompiling[0m ExtendedKeyUsage.swift
+2026-11-24T07:38:08.7136680Z [[36mX509[0m] [1mCompiling[0m ExtensionIdentifiers.swift
+2026-11-24T07:38:08.7137870Z [[36mX509[0m] [1mCompiling[0m KeyUsage.swift
+2026-11-24T07:38:08.7139130Z [[36mX509[0m] [1mCompiling[0m NameConstraints.swift
+2026-11-24T07:38:08.7139950Z [[36mX509[0m] [1mCompiling[0m SubjectAlternativeName.swift
+2026-11-24T07:38:08.7194630Z [[36mX509[0m] [1mCompiling[0m SubjectKeyIdentifier.swift
+2026-11-24T07:38:08.7195020Z [[36mX509[0m] [1mCompiling[0m Extension.swift
+2026-11-24T07:38:08.7195330Z [[36mX509[0m] [1mCompiling[0m Extensions.swift
+2026-11-24T07:38:08.7257890Z [[36mX509[0m] [1mCompiling[0m ExtensionsBuilder.swift
+2026-11-24T07:38:08.7258330Z [[36mX509[0m] [1mCompiling[0m GeneralName.swift
+2026-11-24T07:38:08.7258710Z [[36mX509[0m] [1mCompiling[0m Lock.swift
+2026-11-24T07:38:08.7259050Z [[36mX509[0m] [1mCompiling[0m LockedValueBox.swift
+2026-11-24T07:38:08.7259470Z [[36mX509[0m] [1mCompiling[0m BasicOCSPResponse.swift
+2026-11-24T07:38:08.7259930Z [[36mX509[0m] [1mCompiling[0m DirectoryString.swift
+2026-11-24T07:38:08.7260320Z [[36mX509[0m] [1mCompiling[0m OCSPCertID.swift
+2026-11-24T07:38:08.7260710Z [[36mX509[0m] [1mCompiling[0m OCSPCertStatus.swift
+2026-11-24T07:38:08.7261090Z [[36mX509[0m] [1mCompiling[0m OCSPExtensionID.swift
+2026-11-24T07:38:08.7261430Z [[36mX509[0m] [1mCompiling[0m OCSPNonce.swift
+2026-11-24T07:38:08.7261770Z [[36mX509[0m] [1mCompiling[0m OCSPPolicy.swift
+2026-11-24T07:38:08.7262110Z [[36mX509[0m] [1mCompiling[0m OCSPRequest.swift
+2026-11-24T07:38:08.7262420Z [[36mX509[0m] [1mCompiling[0m OCSPResponse.swift
+2026-11-24T07:38:08.7262780Z [[36mX509[0m] [1mCompiling[0m OCSPResponseBytes.swift
+2026-11-24T07:38:08.7263140Z [[36mX509[0m] [1mCompiling[0m OCSPResponseData.swift
+2026-11-24T07:38:08.7263500Z [[36mX509[0m] [1mCompiling[0m OCSPResponseStatus.swift
+2026-11-24T07:38:08.7263890Z [[36mX509[0m] [1mCompiling[0m OCSPSignature.swift
+2026-11-24T07:38:08.7264270Z [[36mX509[0m] [1mCompiling[0m OCSPSingleRequest.swift
+2026-11-24T07:38:08.7264630Z [[36mX509[0m] [1mCompiling[0m OCSPSingleResponse.swift
+2026-11-24T07:38:08.7264990Z [[36mX509[0m] [1mCompiling[0m OCSPTBSRequest.swift
+2026-11-24T07:38:08.7265270Z [[36mX509[0m] [1mCompiling[0m OCSPVersion.swift
+2026-11-24T07:38:08.7265560Z [[36mX509[0m] [1mCompiling[0m PKCS8PrivateKey.swift
+2026-11-24T07:38:08.7265920Z [[36mX509[0m] [1mCompiling[0m PromiseAndFuture.swift
+2026-11-24T07:38:08.7266260Z [[36mX509[0m] [1mCompiling[0m RDNAttribute.swift
+2026-11-24T07:38:08.7266670Z [[36mX509[0m] [1mCompiling[0m RandomNumberGenerator+bytes.swift
+2026-11-24T07:38:08.7267170Z [[36mX509[0m] [1mCompiling[0m RelativeDistinguishedName.swift
+2026-11-24T07:38:08.7267610Z [[36mX509[0m] [1mCompiling[0m SEC1PrivateKey.swift
+2026-11-24T07:38:08.7267970Z [[36mX509[0m] [1mCompiling[0m SecKeyWrapper.swift
+2026-11-24T07:38:08.7268360Z [[36mX509[0m] [1mCompiling[0m Signature.swift
+2026-11-24T07:38:08.7268800Z [[36mX509[0m] [1mCompiling[0m SignatureAlgorithm.swift
+2026-11-24T07:38:08.7269160Z [[36mX509[0m] [1mCompiling[0m AllOfPolicies.swift
+2026-11-24T07:38:08.7269460Z [[36mX509[0m] [1mCompiling[0m AnyPolicy.swift
+2026-11-24T07:38:08.7269840Z [[36mX509[0m] [1mCompiling[0m CertificateStore.swift
+2026-11-24T07:38:08.7270220Z [[36mX509[0m] [1mCompiling[0m CustomCertificateStore.swift
+2026-11-24T07:38:08.7270580Z [[36mX509[0m] [1mCompiling[0m OneOfPolicies.swift
+2026-11-24T07:38:08.7270890Z [[36mX509[0m] [1mCompiling[0m PolicyBuilder.swift
+2026-11-24T07:38:08.7271260Z [[36mX509[0m] [1mCompiling[0m BasicConstraintsPolicy.swift
+2026-11-24T07:38:08.7271630Z [[36mX509[0m] [1mCompiling[0m DNSNames.swift
+2026-11-24T07:38:08.7271930Z [[36mX509[0m] [1mCompiling[0m ExpiryPolicy.swift
+2026-11-24T07:38:08.7272230Z [[36mX509[0m] [1mCompiling[0m CSRAttribute.swift
+2026-11-24T07:38:08.7272590Z [[36mX509[0m] [1mCompiling[0m CSRAttributes.swift
+2026-11-24T07:38:08.7272920Z [[36mX509[0m] [1mCompiling[0m CSRVersion.swift
+2026-11-24T07:38:08.7273240Z [[36mX509[0m] [1mCompiling[0m CertificateSigningRequest.swift
+2026-11-24T07:38:08.7273680Z [[36mX509[0m] [1mCompiling[0m CertificationRequestInfo.swift
+2026-11-24T07:38:08.7274020Z [[36mX509[0m] [1mCompiling[0m ExtensionRequest.swift
+2026-11-24T07:38:08.7274500Z [[36mX509[0m] [1mCompiling[0m Certificate.swift
+2026-11-24T07:38:08.7274850Z [[36mX509[0m] [1mCompiling[0m CertificatePrivateKey.swift
+2026-11-24T07:38:08.7275200Z [[36mX509[0m] [1mCompiling[0m CertificatePublicKey.swift
+2026-11-24T07:38:08.7275890Z [[36mX509[0m] [1mCompiling[0m CertificateSerialNumber.swift
+2026-11-24T07:38:08.7276230Z [[36mX509[0m] [1mCompiling[0m CertificateVersion.swift
+2026-11-24T07:38:08.7276530Z [[36mX509[0m] [1mCompiling[0m CMSAttribute.swift
+2026-11-24T07:38:08.7276820Z [[36mX509[0m] [1mCompiling[0m CMSContentInfo.swift
+2026-11-24T07:38:08.7277140Z [[36mX509[0m] [1mCompiling[0m CMSEncapsulatedContentInfo.swift
+2026-11-24T07:38:08.7277500Z [[36mX509[0m] [1mCompiling[0m CMSIssuerAndSerialNumber.swift
+2026-11-24T07:38:08.7277820Z [[36mX509[0m] [1mCompiling[0m CMSOperations.swift
+2026-11-24T07:38:08.7278160Z [[36mX509[0m] [1mCompiling[0m CMSSignature.swift
+2026-11-24T07:38:08.7278480Z [[36mX509[0m] [1mCompiling[0m CMSSignedData.swift
+2026-11-24T07:38:08.7278800Z [[36mX509[0m] [1mCompiling[0m CMSSignerIdentifier.swift
+2026-11-24T07:38:08.7279140Z [[36mX509[0m] [1mCompiling[0m CMSSignerInfo.swift
+2026-11-24T07:38:08.7279510Z [[36mX509[0m] [1mCompiling[0m CMSVersion.swift
+2026-11-24T07:38:08.7279840Z [[36mX509[0m] [1mCompiling[0m Curve25519+DER.swift
+2026-11-24T07:38:08.7280160Z [[36mX509[0m] [1mCompiling[0m IPConstraints.swift
+2026-11-24T07:38:08.7280490Z [[36mX509[0m] [1mCompiling[0m NameConstraintsPolicy.swift
+2026-11-24T07:38:08.7280840Z [[36mX509[0m] [1mCompiling[0m RFC5280Policy.swift
+2026-11-24T07:38:08.7281160Z [[36mX509[0m] [1mCompiling[0m URIConstraints.swift
+2026-11-24T07:38:08.7281530Z [[36mX509[0m] [1mCompiling[0m VersionPolicy.swift
+2026-11-24T07:38:08.7281850Z [[36mX509[0m] [1mCompiling[0m ServerIdentityPolicy.swift
+2026-11-24T07:38:08.7282160Z [[36mX509[0m] [1mCompiling[0m TrustRootLoading.swift
+2026-11-24T07:38:08.7282450Z [[36mX509[0m] [1mCompiling[0m UnverifiedChain.swift
+2026-11-24T07:38:08.7282770Z [[36mX509[0m] [1mCompiling[0m ValidatedCertificateChain.swift
+2026-11-24T07:38:08.7283120Z [[36mX509[0m] [1mCompiling[0m VerificationDiagnostic.swift
+2026-11-24T07:38:08.7283420Z [[36mX509[0m] [1mCompiling[0m Verifier.swift
+2026-11-24T07:38:08.7283700Z [[36mX509[0m] [1mCompiling[0m VerifierPolicy.swift
+2026-11-24T07:38:08.7284190Z [[36mX509[0m] [1mCompiling[0m AlgorithmIdentifier.swift
+2026-11-24T07:38:08.7284560Z [[36mX509[0m] [1mCompiling[0m ECDSASignature.swift
+2026-11-24T07:38:08.7284910Z [[36mX509[0m] [1mCompiling[0m RSAPKCS1PublicKey.swift
+2026-11-24T07:38:08.7285290Z [[36mX509[0m] [1mCompiling[0m SubjectPublicKeyInfo.swift
+2026-11-24T07:38:08.7285660Z [[36mX509[0m] [1mCompiling[0m TBSCertificate.swift
+2026-11-24T07:38:08.7285980Z [[36mX509[0m] [1mCompiling[0m Time.swift
+2026-11-24T07:38:08.7286310Z [[36mX509[0m] [1mCompiling[0m TimeCalculations.swift
+2026-11-24T07:38:08.7286650Z [[36mX509[0m] [1mCompiling[0m Validity.swift
+2026-11-24T07:38:08.7286960Z [[36mX509[0m] [1mCompiling[0m X509SendableMetatype.swift
+2026-11-24T07:38:08.7287480Z [[36mX509[0m] [1mCopy[0m arm64-apple-ios-simulator.swiftmodule -> X509.swiftmodule
+2026-11-24T07:38:08.7288050Z [[36mX509[0m] [1mCopy[0m arm64-apple-ios-simulator.swiftdoc -> X509.swiftdoc
+2026-11-24T07:38:08.7288530Z [[36mX509[0m] [1mCopy[0m arm64-apple-ios-simulator.abi.json -> X509.abi.json
+2026-11-24T07:38:08.7289110Z [[36mX509[0m] [1mCopy[0m arm64-apple-ios-simulator.swiftsourceinfo -> X509.swiftsourceinfo
+2026-11-24T07:38:08.7289600Z [[36mStosSign_Auth[0m] [1mCompiling[0m AES256CBC.swift
+2026-11-24T07:38:08.7290000Z [[36mStosSign_Auth[0m] [1mCompiling[0m AppleAPI+Auth.swift
+2026-11-24T07:38:08.7290380Z [[36mStosSign_Auth[0m] [1mCompiling[0m Authentication.swift
+2026-11-24T07:38:08.7290780Z [[36mStosSign_Auth[0m] [1mCompiling[0m GSAContext.swift
+2026-11-24T07:38:08.7291310Z [[36mStosSign_Auth[0m] [1mCopy[0m arm64-apple-ios-simulator.swiftmodule -> StosSign_Auth.swiftmodule
+2026-11-24T07:38:08.7292010Z [[36mStosSign_Auth[0m] [1mCopy[0m arm64-apple-ios-simulator.swiftdoc -> StosSign_Auth.swiftdoc
+2026-11-24T07:38:08.7292600Z [[36mStosSign_Auth[0m] [1mCopy[0m arm64-apple-ios-simulator.abi.json -> StosSign_Auth.abi.json
+2026-11-24T07:38:08.7293300Z [[36mStosSign_Auth[0m] [1mCopy[0m arm64-apple-ios-simulator.swiftsourceinfo -> StosSign_Auth.swiftsourceinfo
+2026-11-24T07:38:08.7293830Z [[36mCCryptoBoringSSLShims[0m] [1mLinking[0m CCryptoBoringSSLShims.o
+2026-11-24T07:38:08.7294200Z [[36mBigNum[0m] [1mLinking[0m BigNum.o
+2026-11-24T07:38:08.7294470Z [[36mBigNum[0m] [1mExtract App Intents Metadata[0m
+2026-11-24T07:38:08.7294820Z [[36mCryptoBoringWrapper[0m] [1mLinking[0m CryptoBoringWrapper.o
+2026-11-24T07:38:08.7295200Z [[36mCryptoBoringWrapper[0m] [1mExtract App Intents Metadata[0m
+2026-11-24T07:38:08.7295550Z [[36mSRP[0m] [1mLinking[0m SRP.o
+2026-11-24T07:38:08.7295850Z [[36mSRP[0m] [1mExtract App Intents Metadata[0m
+2026-11-24T07:38:08.7296140Z [[36mCryptoExtras[0m] [1mLinking[0m CryptoExtras.o
+2026-11-24T07:38:08.7296450Z [[36mCryptoExtras[0m] [1mExtract App Intents Metadata[0m
+2026-11-24T07:38:08.7296790Z [[36m_CryptoExtras[0m] [1mLinking[0m _CryptoExtras.o
+2026-11-24T07:38:08.7297250Z [[36m_CryptoExtras[0m] [1mExtract App Intents Metadata[0m
+2026-11-24T07:38:08.7297640Z [[36mX509[0m] [1mLinking[0m X509.o
+2026-11-24T07:38:08.7297970Z [[36mX509[0m] [1mExtract App Intents Metadata[0m
+2026-11-24T07:38:08.7298310Z [[36mStosSign_Auth[0m] [1mLinking[0m StosSign_Auth.o
+2026-11-24T07:38:08.7298710Z [[36mStosSign_Auth[0m] [1mExtract App Intents Metadata[0m
+2026-11-24T07:38:08.7299240Z [[36mAppStoreIPADownloader[0m] [1mCopy[0m swift-crypto_CryptoExtras.bundle -> swift-crypto_CryptoExtras.bundle
+2026-11-24T07:38:08.7299940Z [[36mAppStoreIPADownloader[0m] [1mCopy[0m swift-crypto_CryptoBoringWrapper.bundle -> swift-crypto_CryptoBoringWrapper.bundle
+2026-11-24T07:38:08.7300630Z [[36mAppStoreIPADownloader[0m] [1mCopy[0m swift-crypto_Crypto.bundle -> swift-crypto_Crypto.bundle
+2026-11-24T07:38:08.7301390Z [[36mAppStoreIPADownloader[0m] [1mCopy[0m swift-crypto_CCryptoBoringSSLShims.bundle -> swift-crypto_CCryptoBoringSSLShims.bundle
+2026-11-24T07:38:08.7302180Z [[36mAppStoreIPADownloader[0m] [1mCopy[0m swift-crypto_CCryptoBoringSSL.bundle -> swift-crypto_CCryptoBoringSSL.bundle
+2026-11-24T07:38:08.7302950Z [[36mAppStoreIPADownloader[0m] [1mCopy[0m CryptoSwift_CryptoSwiftResources.bundle -> CryptoSwift_CryptoSwiftResources.bundle
+2026-11-24T07:38:08.7303620Z [[36mAppStoreIPADownloader[0m] [1mProcessing[0m empty-AppStoreIPADownloader.plist
+2026-11-24T07:38:08.7304100Z [[36mAppStoreIPADownloader[0m] [1mCompiling[0m ExportService.swift
+2026-11-24T07:38:08.7304590Z [[36mAppStoreIPADownloader[0m] [1mCompiling[0m AppEnvironment.swift
+2026-11-24T07:38:08.7305000Z [[36mAppStoreIPADownloader[0m] [1mCompiling[0m RootView.swift
+2026-11-24T07:38:08.7305370Z [[36mAppStoreIPADownloader[0m] [1mCompiling[0m LoginView.swift
+2026-11-24T07:38:08.7305810Z [[36mAppStoreIPADownloader[0m] [1mCompiling[0m MainTabView.swift
+2026-11-24T07:38:08.7306220Z [[36mAppStoreIPADownloader[0m] [1mCompiling[0m AppStoreSearchView.swift
+2026-11-24T07:38:08.7306880Z [[36mAppStoreIPADownloader[0m] [1mCompiling[0m AppDetailView.swift
+2026-11-24T07:38:08.7337030Z ##[warning]'regionCode' was deprecated in iOS 16: renamed to 'region.identifier' [#DeprecatedDeclaration]
+2026-11-24T07:38:08.7346740Z  63 |             return Locale.current.region?.identifier.lowercased() ?? "us"
+2026-11-24T07:38:08.7347070Z  64 |         }
+2026-11-24T07:38:08.7347600Z [[36mAppStoreIPADownloader[0m] [1mCompiling[0m DownloadManagerView.swift
+2026-11-24T07:38:08.7348110Z [[36mAppStoreIPADownloader[0m] [1mCompiling[0m LogViewerView.swift
+2026-11-24T07:38:08.7348570Z [[36mAppStoreIPADownloader[0m] [1mCompiling[0m SettingsView.swift
+2026-11-24T07:38:08.7349040Z [[36mAppStoreIPADownloader[0m] [1mCompiling[0m DownloadDetailView.swift
+2026-11-24T07:38:08.7349830Z [[36mAppStoreIPADownloader[0m] [1mCompiling[0m AnisetteServersView.swift
+2026-11-24T07:38:08.7350260Z [[36mAppStoreIPADownloader[0m] [1mCompiling[0m AppleAccountVault.swift
+2026-11-24T07:38:08.7350950Z [[36mAppStoreIPADownloader[0m] [1mCompiling[0m StosSignAuthenticationProvider.swift
+2026-11-24T07:38:08.7351490Z [[36mAppStoreIPADownloader[0m] [1mCompiling[0m AppStoreIPADownloaderApp.swift
+2026-11-24T07:38:08.7361460Z [[36mAppStoreIPADownloader[0m] [1mCompiling[0m Models.swift
+2026-11-24T07:38:08.7361870Z [[36mAppStoreIPADownloader[0m] [1mCompiling[0m LoggingService.swift
+2026-11-24T07:38:08.7362270Z [[36mAppStoreIPADownloader[0m] [1mCompiling[0m AnisetteService.swift
+2026-11-24T07:38:08.7362750Z [[36mAppStoreIPADownloader[0m] [1mCompiling[0m AuthenticationService.swift
+2026-11-24T07:38:08.7363210Z [[36mAppStoreIPADownloader[0m] [1mCompiling[0m AppStoreService.swift
+2026-11-24T07:38:08.7363670Z [[36mAppStoreIPADownloader[0m] [1mCompiling[0m DownloadService.swift
+2026-11-24T07:38:08.7364290Z [[36mAppStoreIPADownloader[0m] [1mCopy[0m arm64-apple-ios-simulator.swiftmodule -> AppStoreIPADownloader.swiftmodule
+2026-11-24T07:38:08.7365020Z [[36mAppStoreIPADownloader[0m] [1mCopy[0m arm64-apple-ios-simulator.swiftdoc -> AppStoreIPADownloader.swiftdoc
+2026-11-24T07:38:08.7365700Z [[36mAppStoreIPADownloader[0m] [1mCopy[0m arm64-apple-ios-simulator.abi.json -> AppStoreIPADownloader.abi.json
+2026-11-24T07:38:08.7366460Z [[36mAppStoreIPADownloader[0m] [1mCopy[0m arm64-apple-ios-simulator.swiftsourceinfo -> AppStoreIPADownloader.swiftsourceinfo
+2026-11-24T07:38:08.7367060Z [[36mAppStoreIPADownloader[0m] [1mCompiling[0m AppStoreIPADownloader_vers.c
+2026-11-24T07:38:08.7368880Z ##[error]cannot find 'MockAppleAuthenticationProvider' in scope
+2026-11-24T07:38:08.7369620Z 354 |         let keychain = MockKeychainDataStore()
+2026-11-24T07:38:08.7369910Z 355 |         let account = makeAccount()
+2026-11-24T07:38:08.7370800Z ##[warning]no 'async' operations occur within 'await' expression [#UnnecessaryEffectMarker]
+2026-11-24T07:38:08.7371490Z 374 | 
+2026-11-24T07:38:08.7371730Z 375 |         try service.submitVerificationCode("123456")
+2026-11-24T07:38:08.7372720Z ##[warning]no calls to throwing functions occur within 'try' expression [#UnnecessaryEffectMarker]
+2026-11-24T07:38:08.7373460Z 374 | 
+2026-11-24T07:38:08.7373650Z 375 |         try service.submitVerificationCode("123456")
+2026-11-24T07:38:08.7374660Z ##[error]cannot find 'MockAppleAuthenticationProvider' in scope
+2026-11-24T07:38:08.7375690Z 392 |         let service = AuthenticationService(
+2026-11-24T07:38:08.7376160Z 393 |             vault: vault,
+2026-11-24T07:38:08.7377230Z ##[warning]no 'async' operations occur within 'await' expression [#UnnecessaryEffectMarker]
+2026-11-24T07:38:08.7378050Z 408 | 
+2026-11-24T07:38:08.7378210Z 409 |         do {
+2026-11-24T07:38:08.7379120Z ##[warning]no calls to throwing functions occur within 'try' expression [#UnnecessaryEffectMarker]
+2026-11-24T07:38:08.7380050Z 408 | 
+2026-11-24T07:38:08.7380200Z 409 |         do {
+2026-11-24T07:38:08.7380930Z ##[warning]'catch' block is unreachable because no errors are thrown in 'do' block
+2026-11-24T07:38:08.7381600Z 410 |             _ = try await loginTask.value
+2026-11-24T07:38:08.7381920Z 411 |             XCTFail("Cancelling 2FA must not report a successful sign-in.")
+2026-11-24T07:38:08.7382730Z ##[error]cannot find 'MockAppleAuthenticationProvider' in scope
+2026-11-24T07:38:08.7383550Z 422 |         let vault = AppleAccountVault(keychain: MockKeychainDataStore())
+2026-11-24T07:38:08.7383900Z 423 |         try vault.save(account)
+2026-11-24T07:38:08.7384290Z [[36mAppStoreIPADownloaderTests[0m] [1mCompiling[0m IPAForgeTests.swift
+2026-11-24T07:38:08.7386350Z ##[warning]Traditional headermap style is no longer supported; please migrate to using separate headermaps and set 'ALWAYS_SEARCH_USER_PATHS' to NO. (in target 'AppStoreIPADownloaderTests' from project 'AppStoreIPADownloader')
+2026-11-24T07:38:08.7388920Z ##[warning]Traditional headermap style is no longer supported; please migrate to using separate headermaps and set 'ALWAYS_SEARCH_USER_PATHS' to NO. (in target 'AppStoreIPADownloader' from project 'AppStoreIPADownloader')
+2026-11-24T07:38:08.7390400Z [1mTest session results:[0m /Users/runner/work/IPAForge/IPAForge/build/DerivedData/Logs/Test/Test-AppStoreIPADownloader-2026.11.24_07-37-09-+0000.xcresult
+2026-11-24T07:38:08.7395580Z ##[error]Process completed with exit code 65.

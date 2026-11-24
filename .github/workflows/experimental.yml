@@ -25,23 +25,33 @@ jobs:
         run: xcodebuild -version
       - name: Install xcbeautify
         run: brew install xcbeautify
+      - name: Start test simulator
+        run: |
+          DEVICE_ID="$(xcrun simctl list devices available | awk -F '[()]' '/iPhone 16 \(/ { print $2; exit }')"
+          test -n "$DEVICE_ID"
+          echo "TEST_SIMULATOR_ID=$DEVICE_ID" >> "$GITHUB_ENV"
+          xcrun simctl boot "$DEVICE_ID" >/dev/null 2>&1 || true
       - name: Restore build cache
-        uses: actions/cache@v4
+        id: build-cache
+        uses: actions/cache/restore@v4
         with:
-          path: ~/Library/Caches/org.swift.swiftpm
-          key: xcode-${{ runner.os }}-27.2-${{ github.ref_name }}-${{ hashFiles('AppStoreIPADownloader.xcodeproj/**', '**/*.swift') }}
+          path: |
+            build/DerivedData/Build/Products
+            build/DerivedData/Build/Intermediates.noindex
+            build/DerivedData/ModuleCache.noindex
+            build/DerivedData/SourcePackages
+            ~/Library/Caches/org.swift.swiftpm
+          key: xcode-${{ runner.os }}-${{ runner.arch }}-27.2-${{ hashFiles('AppStoreIPADownloader.xcodeproj/project.pbxproj', 'AppStoreIPADownloader.xcodeproj/xcshareddata/xcschemes/**', '**/Package.resolved') }}-${{ hashFiles('**/*.swift') }}
           restore-keys: |
-            xcode-${{ runner.os }}-27.2-${{ github.ref_name }}-
-            xcode-${{ runner.os }}-27.2-
+            xcode-${{ runner.os }}-${{ runner.arch }}-27.2-${{ hashFiles('AppStoreIPADownloader.xcodeproj/project.pbxproj', 'AppStoreIPADownloader.xcodeproj/xcshareddata/xcschemes/**', '**/Package.resolved') }}-
       - name: Run unit tests
         run: |
-          DEVICE_ID="$(xcrun simctl list devices available | awk -F '[()]' '/iPhone/ { print $2; exit }')"
-          test -n "$DEVICE_ID"
+          xcrun simctl bootstatus "$TEST_SIMULATOR_ID" -b
           set -o pipefail
           xcodebuild test \
             -project AppStoreIPADownloader.xcodeproj \
             -scheme AppStoreIPADownloader \
-            -destination "platform=iOS Simulator,id=$DEVICE_ID" \
+            -destination "platform=iOS Simulator,id=$TEST_SIMULATOR_ID" \
             -derivedDataPath "$DERIVED_DATA_PATH" \
             -parallel-testing-enabled NO \
             ONLY_ACTIVE_ARCH=YES \
@@ -79,3 +89,14 @@ jobs:
           path: build/artifacts/IPAForge-1.0.0-${{ github.run_number }}-unsigned.ipa
           if-no-files-found: error
           retention-days: 14
+      - name: Save build cache
+        if: always() && !cancelled() && steps.build-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            build/DerivedData/Build/Products
+            build/DerivedData/Build/Intermediates.noindex
+            build/DerivedData/ModuleCache.noindex
+            build/DerivedData/SourcePackages
+            ~/Library/Caches/org.swift.swiftpm
+          key: xcode-${{ runner.os }}-${{ runner.arch }}-27.2-${{ hashFiles('AppStoreIPADownloader.xcodeproj/project.pbxproj', 'AppStoreIPADownloader.xcodeproj/xcshareddata/xcschemes/**', '**/Package.resolved') }}-${{ hashFiles('**/*.swift') }}

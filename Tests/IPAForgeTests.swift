@@ -663,42 +663,6 @@ private final class MockKeychainDataStore: KeychainDataStoring {
         values[key]
     }
 
-    @MainActor
-    private final class MockAppleAuthenticationProvider: AppleAuthenticationProviding {
-        let account: StoredAppleAccount
-        let requiresTwoFactor: Bool
-        private(set) var receivedVerificationCode: String?
-        private(set) var restoreCallCount = 0
-
-        init(account: StoredAppleAccount, requiresTwoFactor: Bool = false) {
-            self.account = account
-            self.requiresTwoFactor = requiresTwoFactor
-        }
-
-        func signIn(
-            appleID: String,
-            password: String,
-            anisetteHeaders: [String: String],
-            requestVerificationCode: @escaping () async -> String?
-        ) async throws -> StoredAppleAccount {
-            if requiresTwoFactor {
-                guard let code = await requestVerificationCode() else {
-                    throw CancellationError()
-                }
-                receivedVerificationCode = code
-            }
-            return account
-        }
-
-        func restore(
-            account: StoredAppleAccount,
-            anisetteHeaders: [String: String]
-        ) async throws -> StoredAppleAccount {
-            restoreCallCount += 1
-            return self.account
-        }
-    }
-
     func setData(_ data: Data, for key: String) throws {
         values[key] = data
     }
@@ -709,6 +673,42 @@ private final class MockKeychainDataStore: KeychainDataStoring {
 
     func keys(withPrefix prefix: String) throws -> [String] {
         values.keys.filter { $0.hasPrefix(prefix) }
+    }
+}
+
+@MainActor
+private final class MockAppleAuthenticationProvider: AppleAuthenticationProviding {
+    let account: StoredAppleAccount
+    let requiresTwoFactor: Bool
+    private(set) var receivedVerificationCode: String?
+    private(set) var restoreCallCount = 0
+
+    init(account: StoredAppleAccount, requiresTwoFactor: Bool = false) {
+        self.account = account
+        self.requiresTwoFactor = requiresTwoFactor
+    }
+
+    func signIn(
+        appleID: String,
+        password: String,
+        anisetteHeaders: [String: String],
+        requestVerificationCode: @escaping () async -> String?
+    ) async throws -> StoredAppleAccount {
+        if requiresTwoFactor {
+            guard let code = await requestVerificationCode() else {
+                throw CancellationError()
+            }
+            receivedVerificationCode = code
+        }
+        return account
+    }
+
+    func restore(
+        account: StoredAppleAccount,
+        anisetteHeaders: [String: String]
+    ) async throws -> StoredAppleAccount {
+        restoreCallCount += 1
+        return self.account
     }
 }
 
