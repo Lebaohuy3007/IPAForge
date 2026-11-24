@@ -1,40 +1,42 @@
 # IPAForge
 
-Ứng dụng SwiftUI cho iOS 16+ để duyệt App Store, cấu hình endpoint Anisette và theo dõi các giới hạn của quy trình tải IPA.
+SwiftUI app for iOS 16+ to browse the App Store, configure Anisette endpoints, and track the current limits of the IPA download workflow.
 
-### Thử nghiệm
+**Read this in:** English | [Tiếng Việt](./README_vi.md)
 
-| iOS Version | Trạng thái |
+### Testing
+
+| iOS Version | Status |
 |:---:|:---:|
-| 18.7.9 | Đã thử nghiệm |
-| Phiên bản khác | Chưa xác minh |
+| 18.7.9 | Tested |
+| Other versions | Not verified |
 
-> **Tình trạng hiện tại:** IPAForge hiện đã có chức năng tìm kiếm ứng dụng trên App Store và tích hợp đăng nhập Apple ID. Tuy nhiên, chức năng tải ứng dụng dưới dạng IPA vẫn chưa được triển khai. Đăng nhập Apple và các tính năng liên quan chưa được xác minh đầy đủ với tài khoản thật.
+> **Current status:** IPAForge can search the App Store and sign in with an Apple ID. Downloading apps as IPA files has not been implemented. Apple sign-in and related features have not been fully verified with a real account.
 
-## Tính năng hiện có
+## Features
 
-* Giao diện SwiftUI, hỗ trợ iOS 16+ trở lên.
-* Tìm kiếm ứng dụng trên App Store theo tên hoặc App ID.
-* Hiển thị vùng App Store dạng chỉ đọc và dùng vùng đó khi tìm kiếm.
-* Chọn ngôn ngữ
-* Xem thông tin ứng dụng: icon, Bundle ID, nhà phát triển và phiên bản.
-* Quản lý và tùy chỉnh Anisette Server.
-* Đăng nhập Apple ID, hỗ trợ xác minh 2FA và chọn Developer Team.
-* Lưu và khôi phục phiên đăng nhập an toàn.
-* Theo dõi nhật ký đăng nhập và hoạt động.
-* Hỗ trợ kiểm thử và build tự động qua GitHub Actions.
+* SwiftUI interface for iOS 16 and later.
+* Search the App Store by name or App ID.
+* Show the App Store storefront as read-only and use it for searches.
+* Choose the app language.
+* View app icons, bundle IDs, developers, and versions.
+* Manage and customize Anisette servers.
+* Sign in with an Apple ID, complete two-factor verification, and select a Developer Team.
+* Securely save and restore sign-in sessions.
+* View sign-in and activity logs.
+* Automated builds and tests through GitHub Actions.
 
-## Đối chiếu thư viện / giao thức
+## Library and protocol review
 
-- [ipatool](https://github.com/majd/ipatool) là công cụ Go có quy trình App Store thực tế (auth, purchase, download), mã nguồn MIT. Đây là CLI đa nền tảng, không phải Swift/iOS SDK; chưa tích hợp hoặc port vào app vì phải xác nhận đầy đủ khả năng build/chạy trong sandbox iOS, vòng đời credentials, luồng 2FA và Anisette trước.
-- [SideStore](https://github.com/SideStore/SideStore) và [AltStore](https://github.com/altstoreio/AltStore) dùng nền tảng Apple signing/sideloading riêng; cả hai README công bố AGPLv3. Không sao chép mã của hai dự án vào project MIT này. Tài liệu SideStore khuyến nghị Anisette v3 và nhấn mạnh không gửi account info đến Anisette server; app hiện chỉ áp dụng nguyên tắc tách biệt đó, chưa triển khai protocol.
-- Tài liệu tham khảo: [SideStore Anisette](https://docs.sidestore.io/docs/advanced/anisette), [ipatool](https://github.com/majd/ipatool), [AltStore](https://github.com/altstoreio/AltStore).
-- Anisette v3 dùng client Swift nội bộ, không thêm dependency hoặc sao chép mã thư viện bên thứ ba. `swift-anisette` không hỗ trợ iOS; `RemoteAnisette` không khai báo license; AnisetteKit công bố AGPL-3.0. Các dự án này không được tích hợp.
-- [StosSign](https://github.com/stossy11/StosSign) là Swift Package (không phải HTTP service), được pin trực tiếp tại revision `01dd7bc4f5084ade9e2ebbc7e338dc2e3f454d77` và chỉ liên kết các product API/Auth/Common cần thiết. Revision này hỗ trợ iOS 14; ứng dụng yêu cầu iOS 16. StosSign xử lý SRP/2FA và Developer Team API; IPAForge chuyển `AnisetteData` từ headers v3 và lưu DTO session đã mã hóa trong vault. Người dùng xác nhận đã được maintainer cho phép sử dụng; repository hiện không công bố tệp LICENSE hoặc license metadata, nên tài liệu này không khẳng định một license công khai cụ thể. Không dùng helper của GetMoreRam vốn log payload Anisette.
+- [ipatool](https://github.com/majd/ipatool) is a MIT-licensed Go tool with an App Store workflow for authentication, purchasing, and downloading. It is a cross-platform CLI, not a Swift/iOS SDK. It has not been integrated or ported because iOS sandbox compatibility, credential lifecycle, two-factor authentication, and Anisette support need to be validated first.
+- [SideStore](https://github.com/SideStore/SideStore) and [AltStore](https://github.com/altstoreio/AltStore) use their own Apple signing and sideloading implementations; both READMEs publish AGPLv3. Their code is not copied into this MIT project. SideStore documentation recommends Anisette v3 and warns against sending account information to Anisette servers. IPAForge follows that separation but has not implemented the full protocol.
+- References: [SideStore Anisette](https://docs.sidestore.io/docs/advanced/anisette), [ipatool](https://github.com/majd/ipatool), and [AltStore](https://github.com/altstoreio/AltStore).
+- Anisette v3 uses an internal Swift client without adding a dependency or copying third-party library code. `swift-anisette` does not support iOS; `RemoteAnisette` does not declare a license; AnisetteKit publishes AGPL-3.0. These projects are not integrated.
+- [StosSign](https://github.com/stossy11/StosSign) is a Swift package, not an HTTP service. The project pins revision `01dd7bc4f5084ade9e2ebbc7e338dc2e3f454d77` and links only its API/Auth/Common products. That revision supports iOS 14; this app requires iOS 16. StosSign handles SRP, two-factor authentication, and the Developer Team API. IPAForge passes Anisette v3 headers as `AnisetteData` and stores an encrypted session DTO in its vault. The user confirmed permission from the maintainer; the repository publishes no LICENSE file or license metadata, so this README does not claim a specific public license. Helpers from GetMoreRam that log Anisette payloads are not used.
 
-## Build và test bằng Xcode
+## Build and test with Xcode
 
-Mở `AppStoreIPADownloader.xcodeproj`, chọn scheme `AppStoreIPADownloader`, sau đó build/run trên iOS 16 trở lên. Để chạy test:
+Open `AppStoreIPADownloader.xcodeproj`, select the `AppStoreIPADownloader` scheme, then build and run on iOS 16 or later. To run tests:
 
 ```sh
 xcodebuild test \
@@ -44,19 +46,19 @@ xcodebuild test \
   CODE_SIGNING_ALLOWED=NO
 ```
 
-Thiết bị đã thử: iOS 18.7.9 (theo xác nhận của người dùng; không nêu model thiết bị). Đây là thông tin thử nghiệm thủ công, không đồng nghĩa mọi chức năng đã hoàn thiện hoặc IPA đã được ký.
+The user reported testing on iOS 18.7.9; the device model was not provided. This is a manual test report and does not mean every feature is complete or that the IPA is signed.
 
-CI cần được xác nhận bằng lần chạy workflow gần nhất trên GitHub Actions. Workflow Experimental Build dùng Xcode 27.2 trên runner `xcode-27`; runner phải có runtime iOS Simulator tương thích.
+Confirm CI status from the latest GitHub Actions run. The Experimental Build workflow uses Xcode 27.2 on the `xcode-27` runner, which must have a compatible iOS Simulator runtime.
 
 ## GitHub Actions
 
-- **Experimental Build**: tự chạy khi push lên bất kỳ branch nào, hoặc chạy thủ công qua workflow dispatch. Mặc định bỏ qua unit tests để tạo IPA nhanh; khi chạy thủ công, có thể bật input `run_tests` để chạy test Simulator. Version trong app lấy theo `MARKETING_VERSION` khai báo trong Xcode (hiện là `1.0.0`); build number là GitHub Actions run number. Workflow upload artifact `IPAForge-1.0.0-<build>-Unsigned` chứa IPA unsigned cùng version. Đây chưa phải bản cài đặt đã ký.
-- **Release Build**: chạy khi push tag `v*` hoặc workflow dispatch với `release_tag`; test, archive Release unsigned và tạo GitHub Release. Artifact tên `AppStoreIPA-Release`, file đính kèm là unsigned `.xcarchive.zip`, không phải IPA.
-- Chưa cần certificate/secret để compile unsigned. Không thêm private key, certificate hay mật khẩu vào repository.
+- **Experimental Build** runs on pushes to any branch or through workflow dispatch. Unit tests are skipped by default for faster IPA builds; enable the `run_tests` input on a manual run to test in the Simulator. The app version comes from Xcode's `MARKETING_VERSION` (currently `1.0.0`); the build number is the GitHub Actions run number. The workflow uploads an unsigned IPA artifact named `IPAForge-1.0.0-<build>-Unsigned`. It is not a signed installable build.
+- **Release Build** runs when pushing a `v*` tag or through workflow dispatch with `release_tag`; it tests, archives an unsigned Release build, and creates a GitHub Release. The artifact is named `AppStoreIPA-Release` and contains an unsigned `.xcarchive.zip`, not an IPA.
+- No certificate or secret is needed to compile an unsigned build. Do not add private keys, certificates, or passwords to the repository.
 
-Workflow tạo GitHub Release cần quyền `contents: write` được bật cho Actions trong repository settings. Với workflow dispatch, cung cấp tag, ví dụ `v1.0.0`.
+The workflow that creates a GitHub Release requires Actions `contents: write` permission in repository settings. For workflow dispatch, provide a tag such as `v1.0.0`.
 
-## Cấu trúc
+## Structure
 
 ```text
 App/                 SwiftUI app entry
@@ -73,6 +75,6 @@ Tests/
 .github/workflows/   Experimental and release builds
 ```
 
-## Giấy phép
+## License
 
-Project hiện giữ [MIT License](./LICENSE). Chưa đưa mã nguồn hoặc dependency từ SideStore/AltStore vào repository. Việc tích hợp ipatool trong tương lai cần giữ nguyên notice MIT và kiểm tra tương thích kỹ thuật trước khi triển khai.
+The project currently retains the [MIT License](./LICENSE). No source code or dependencies from SideStore or AltStore have been added. A future ipatool integration must preserve its MIT notice and be checked for technical compatibility first.
