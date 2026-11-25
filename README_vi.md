@@ -11,7 +11,7 @@
 | 18.7.9 | Đã thử nghiệm |
 | Phiên bản khác | Chưa xác minh |
 
-> **Tình trạng hiện tại:** IPAForge hiện đã có chức năng tìm kiếm ứng dụng trên App Store và tích hợp đăng nhập Apple ID. Tuy nhiên, chức năng tải ứng dụng dưới dạng IPA vẫn chưa được triển khai. Đăng nhập Apple và các tính năng liên quan chưa được xác minh đầy đủ với tài khoản thật.
+> **Tình trạng hiện tại:** IPAForge tìm kiếm App Store và đăng nhập Apple ID vào Developer Portal. App chưa tích hợp phiên đăng nhập App Store riêng và chưa tải IPA. Hai luồng đăng nhập này không thể dùng thay cho nhau.
 
 ## Tính năng hiện có
 
@@ -21,14 +21,14 @@
 * Tự chọn tiếng Việt khi storefront App Store là Việt Nam và tiếng Anh ở các vùng khác; có thể đổi thủ công giữa tiếng Việt và tiếng Anh trong Cài đặt.
 * Xem thông tin ứng dụng: icon, Bundle ID, nhà phát triển và phiên bản.
 * Quản lý và tùy chỉnh Anisette Server.
-* Đăng nhập Apple ID, hỗ trợ xác minh 2FA và chọn Developer Team.
+* Đăng nhập Apple ID vào Developer Portal, hỗ trợ xác minh 2FA. Đây không phải phiên đăng nhập để tải từ App Store.
 * Lưu và khôi phục phiên đăng nhập an toàn.
 * Theo dõi nhật ký đăng nhập và hoạt động.
 * Hỗ trợ kiểm thử và build tự động qua GitHub Actions.
 
 ## Đối chiếu thư viện / giao thức
 
-- [ipatool](https://github.com/majd/ipatool) là công cụ Go có quy trình App Store thực tế (auth, purchase, download), mã nguồn MIT. Đây là CLI đa nền tảng, không phải Swift/iOS SDK; chưa tích hợp hoặc port vào app vì phải xác nhận đầy đủ khả năng build/chạy trong sandbox iOS, vòng đời credentials, luồng 2FA và Anisette trước.
+- [ipatool](https://github.com/majd/ipatool) là dự án Go mã nguồn MIT. README upstream liệt kê iOS là hệ điều hành được hỗ trợ; API `pkg/appstore` có đăng nhập App Store bằng email, mật khẩu và mã 2FA. Đây không phải Swift SDK. IPAForge chưa tích hợp. Luồng đăng nhập hiện tại của upstream tạo Store Anisette/AMD rồi vẫn yêu cầu địa chỉ MAC của máy; bước tải cũng yêu cầu địa chỉ này. Cần xác minh luồng đó và cách lưu dữ liệu Anisette trên iOS trước khi dùng. Hướng tích hợp và điểm cần xử lý được ghi ở [Downloader/ROADMAP.md](./Downloader/ROADMAP.md).
 - [SideStore](https://github.com/SideStore/SideStore) và [AltStore](https://github.com/altstoreio/AltStore) dùng nền tảng Apple signing/sideloading riêng; cả hai README công bố AGPLv3. Không sao chép mã của hai dự án vào project MIT này. Tài liệu SideStore khuyến nghị Anisette v3 và nhấn mạnh không gửi account info đến Anisette server; app hiện chỉ áp dụng nguyên tắc tách biệt đó, chưa triển khai protocol.
 - Tài liệu tham khảo: [SideStore Anisette](https://docs.sidestore.io/docs/advanced/anisette), [ipatool](https://github.com/majd/ipatool), [AltStore](https://github.com/altstoreio/AltStore).
 - Anisette v3 dùng client Swift nội bộ, không thêm dependency hoặc sao chép mã thư viện bên thứ ba. `swift-anisette` không hỗ trợ iOS; `RemoteAnisette` không khai báo license; AnisetteKit công bố AGPL-3.0. Các dự án này không được tích hợp.
@@ -53,6 +53,7 @@ CI cần được xác nhận bằng lần chạy workflow gần nhất trên Gi
 ## GitHub Actions
 
 - **Experimental Build**: tự chạy khi push lên bất kỳ branch nào, hoặc chạy thủ công qua workflow dispatch. Mặc định bỏ qua unit tests để tạo IPA nhanh; khi chạy thủ công, có thể bật input `run_tests` để chạy test Simulator. Version trong app lấy theo `MARKETING_VERSION` khai báo trong Xcode (hiện là `1.0.0`); build number là GitHub Actions run number. Workflow upload artifact `IPAForge-1.0.0-<build>-Unsigned` chứa IPA unsigned cùng version. Đây chưa phải bản cài đặt đã ký.
+- GitHub Actions đã có runner macOS/Xcode để build thử ipatool, không cần cài Xcode ở máy local. Workflow hiện tại chưa build framework ipatool. Khi bổ sung xong, IPA artifact có thể được cài lên thiết bị thật để bạn thử đăng nhập và kiểm tra machine identity.
 - **Release Build**: chạy khi push tag `v*` hoặc workflow dispatch với `release_tag`; test, archive Release unsigned và tạo GitHub Release. Artifact tên `AppStoreIPA-Release`, file đính kèm là unsigned `.xcarchive.zip`, không phải IPA.
 - Chưa cần certificate/secret để compile unsigned. Không thêm private key, certificate hay mật khẩu vào repository.
 
@@ -77,4 +78,4 @@ Tests/
 
 ## Giấy phép
 
-Project hiện giữ [MIT License](./LICENSE). Chưa đưa mã nguồn hoặc dependency từ SideStore/AltStore vào repository. Việc tích hợp ipatool trong tương lai cần giữ nguyên notice MIT và kiểm tra tương thích kỹ thuật trước khi triển khai.
+Project hiện giữ [MIT License](./LICENSE). Chưa đưa mã nguồn hoặc dependency từ SideStore/AltStore vào repository. Nếu tích hợp ipatool, cần giữ notice MIT và vượt qua các bước kiểm tra khả năng chạy trên iOS trong [Downloader/ROADMAP.md](./Downloader/ROADMAP.md).

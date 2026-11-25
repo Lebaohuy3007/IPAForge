@@ -11,7 +11,7 @@ SwiftUI app for iOS 16+ to browse the App Store, configure Anisette endpoints, a
 | 18.7.9 | Tested |
 | Other versions | Not verified |
 
-> **Current status:** IPAForge can search the App Store and sign in with an Apple ID. Downloading apps as IPA files has not been implemented. Apple sign-in and related features have not been fully verified with a real account.
+> **Current status:** IPAForge can search the App Store and sign in to Apple's Developer Portal with an Apple ID. A separate App Store login and IPA downloads have not been implemented. These sign-in flows are not interchangeable.
 
 ## Features
 
@@ -21,14 +21,14 @@ SwiftUI app for iOS 16+ to browse the App Store, configure Anisette endpoints, a
 * Automatically choose Vietnamese for the Vietnam App Store storefront and English for other regions; manually switch between Vietnamese and English in Settings.
 * View app icons, bundle IDs, developers, and versions.
 * Manage and customize Anisette servers.
-* Sign in with an Apple ID, complete two-factor verification, and select a Developer Team.
+* Sign in to Apple's Developer Portal with an Apple ID and complete two-factor verification. This is not an App Store download session.
 * Securely save and restore sign-in sessions.
 * View sign-in and activity logs.
 * Automated builds and tests through GitHub Actions.
 
 ## Library and protocol review
 
-- [ipatool](https://github.com/majd/ipatool) is a MIT-licensed Go tool with an App Store workflow for authentication, purchasing, and downloading. It is a cross-platform CLI, not a Swift/iOS SDK. It has not been integrated or ported because iOS sandbox compatibility, credential lifecycle, two-factor authentication, and Anisette support need to be validated first.
+- [ipatool](https://github.com/majd/ipatool) is a MIT-licensed Go project. Its README lists iOS as a supported operating system; its exported `pkg/appstore` API includes App Store login with email, password, and a 2FA code. It is not a Swift SDK. IPAForge has not integrated it. Current upstream login provisions Store Anisette/AMD state, then still requests a machine MAC address; downloads also request that identity. The ordinary iOS app path and storage needs must be verified before using it. The proposed route and blocker are documented in [Downloader/ROADMAP.md](./Downloader/ROADMAP.md).
 - [SideStore](https://github.com/SideStore/SideStore) and [AltStore](https://github.com/altstoreio/AltStore) use their own Apple signing and sideloading implementations; both READMEs publish AGPLv3. Their code is not copied into this MIT project. SideStore documentation recommends Anisette v3 and warns against sending account information to Anisette servers. IPAForge follows that separation but has not implemented the full protocol.
 - References: [SideStore Anisette](https://docs.sidestore.io/docs/advanced/anisette), [ipatool](https://github.com/majd/ipatool), and [AltStore](https://github.com/altstoreio/AltStore).
 - Anisette v3 uses an internal Swift client without adding a dependency or copying third-party library code. `swift-anisette` does not support iOS; `RemoteAnisette` does not declare a license; AnisetteKit publishes AGPL-3.0. These projects are not integrated.
@@ -53,6 +53,7 @@ Confirm CI status from the latest GitHub Actions run. The Experimental Build wor
 ## GitHub Actions
 
 - **Experimental Build** runs on pushes to any branch or through workflow dispatch. Unit tests are skipped by default for faster IPA builds; enable the `run_tests` input on a manual run to test in the Simulator. The app version comes from Xcode's `MARKETING_VERSION` (currently `1.0.0`); the build number is the GitHub Actions run number. The workflow uploads an unsigned IPA artifact named `IPAForge-1.0.0-<build>-Unsigned`. It is not a signed installable build.
+- GitHub Actions already provides the macOS/Xcode runner for an ipatool integration spike; local Xcode is not required. The current workflow does not yet build an ipatool framework. Once added, its IPA artifact can be installed for your real-device login and machine-identity test.
 - **Release Build** runs when pushing a `v*` tag or through workflow dispatch with `release_tag`; it tests, archives an unsigned Release build, and creates a GitHub Release. The artifact is named `AppStoreIPA-Release` and contains an unsigned `.xcarchive.zip`, not an IPA.
 - No certificate or secret is needed to compile an unsigned build. Do not add private keys, certificates, or passwords to the repository.
 
@@ -77,4 +78,4 @@ Tests/
 
 ## License
 
-The project currently retains the [MIT License](./LICENSE). No source code or dependencies from SideStore or AltStore have been added. A future ipatool integration must preserve its MIT notice and be checked for technical compatibility first.
+The project currently retains the [MIT License](./LICENSE). No source code or dependencies from SideStore or AltStore have been added. Any ipatool integration must preserve its MIT notice and pass the iOS feasibility checks in [Downloader/ROADMAP.md](./Downloader/ROADMAP.md).

@@ -20,6 +20,28 @@ enum DownloadStatus: String, Equatable {
     case completed = "Completed"
     case failed = "Failed"
     case cancelled = "Cancelled"
+
+    var message: String {
+        switch self {
+        case .waiting: return "Đang chờ tải..."
+        case .authenticating: return "Đang xác thực tài khoản App Store..."
+        case .fetchingMetadata: return "Đang lấy thông tin ứng dụng..."
+        case .downloading: return "Đang tải ứng dụng trên App Store..."
+        case .verifying: return "Đang lưu tệp IPA..."
+        case .completed: return "Đã tải xong"
+        case .failed: return "Tải thất bại"
+        case .cancelled: return "Đã hủy"
+        }
+    }
+
+    var isInProgress: Bool {
+        switch self {
+        case .waiting, .authenticating, .fetchingMetadata, .downloading, .verifying:
+            return true
+        case .completed, .failed, .cancelled:
+            return false
+        }
+    }
 }
 
 struct DownloadTask: Identifiable {
@@ -31,6 +53,10 @@ struct DownloadTask: Identifiable {
     var totalBytes: Int64
     var fileURL: URL?
     var errorMessage: String?
+
+    var statusMessage: String {
+        status == .verifying ? "Đang lưu \(app.name).ipa..." : status.message
+    }
 }
 
 enum AuthPhase: Equatable {
@@ -45,6 +71,6 @@ enum IPAForgeVersion {
         shortVersion: String? = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
     ) -> String {
         let version = shortVersion?.trimmingCharacters(in: .whitespacesAndNewlines)
-        return version?.isEmpty == false ? version! : "1.0.0"
+        return version?.isEmpty == false ? version! : "Unknown"
     }
 }

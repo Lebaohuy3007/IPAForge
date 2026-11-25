@@ -1,12 +1,21 @@
 import SwiftUI
+import UIKit
 
 struct MainTabView: View {
+    @EnvironmentObject private var environment: AppEnvironment
+    @State private var selectedTab = 0
+
     var body: some View {
-        TabView {
-            AppStoreSearchView()
+        TabView(selection: $selectedTab) {
+            AppStoreSearchView(onDownloadStarted: { selectedTab = 2 })
                 .tabItem { Label("App Store", systemImage: "bag") }
+                .tag(0)
             ProfileView()
                 .tabItem { Label("Profile", systemImage: "person.crop.circle") }
+                .tag(1)
+            DownloadManagerView(downloads: environment.downloads)
+                .tabItem { Label("iPA Downloader", systemImage: "arrow.down.circle") }
+                .tag(2)
         }
     }
 }
@@ -46,8 +55,16 @@ private struct ProfileView: View {
                     profileRow("Activity Log", symbol: "text.alignleft", destination: .logs)
                 }
 
-                Section {
-                    LabeledContent("Version", value: IPAForgeVersion.displayValue())
+                Section("Project") {
+                    Link(destination: URL(string: "https://github.com/Lebaohuy3007")!) {
+                        Label("GitHub Repository", systemImage: "heart.fill")
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    .foregroundStyle(.primary)
+                } footer: {
+                    Text("Version \(IPAForgeVersion.displayValue()) • iOS \(UIDevice.current.systemVersion)")
+                        .frame(maxWidth: .infinity, alignment: .center)
+                        .multilineTextAlignment(.center)
                 }
             }
             .navigationTitle("Profile")
@@ -56,7 +73,7 @@ private struct ProfileView: View {
                 case .login:
                     LoginView()
                 case .downloads:
-                    DownloadManagerView()
+                    DownloadManagerView(downloads: environment.downloads)
                 case .anisette:
                     AnisetteServersView(store: environment.anisetteServers)
                 case .logs:

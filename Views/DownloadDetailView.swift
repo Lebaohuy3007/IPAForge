@@ -3,59 +3,134 @@ import UIKit
 
 struct DownloadDetailView: View {
     @EnvironmentObject private var environment: AppEnvironment
-    let task: DownloadTask
+    @Environment(\.dismiss) private var dismiss
+    let taskID: UUID
+    @ObservedObject var downloads: DownloadService
     @State private var shareItems: [URL] = []
     @State private var showingShareSheet = false
     @State private var errorMessage: String?
+    @State private var isShowingDeleteConfirmation = false
 
     var body: some View {
-        Form {
-            Section("Application") {
-                Text(task.app.name)
-                Text("Version \(task.app.version)")
-            }
-            Section("Progress") {
-                Text(task.status.rawValue)
-                ProgressView(value: task.progress)
-                Text("\(Int(task.progress * 100))%")
-            }
-            if let error = task.errorMessage {
-                Section("Status") { Text(error).foregroundStyle(.secondary) }
-            }
-            if task.status == .completed, let fileURL = task.fileURL {
-                Section("Download Completed") {
-                    Text("File: \(fileURL.lastPathComponent)")
-                    if let values = try? FileManager.default.attributesOfItem(atPath: fileURL.path),
-                       let size = values[.size] as? NSNumber {
-                        Text("Size: \(ByteCountFormatter.string(fromByteCount: size.int64Value, countStyle: .file))")
+        Group {
+            if let task {
+                Form {
+                    Section {
+                        HStack(spacing: 14) {
+                            appIcon(task.app.iconURL)
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(task.app.name).font(.headline)
+                                Text(task.app.developer).foregroundStyle(.secondary)
+                            }
+                        }
+                        .padding(.vertical, 4)
                     }
-                    Text("Path: \(fileURL.path)")
-                        .font(.caption)
-                        .textSelection(.enabled)
-                    Button("Share IPA") { share(fileURL) }
-                    Button("Save to Files") { share(fileURL) }
-                }
-            } else if task.status == .waiting || task.status == .downloading {
-                Section {
-                    Button("Cancel Download", role: .destructive) {
-                        environment.downloads.cancel(taskID: task.id)
+                    if task.status.isInProgress {
+                        Section(task.statusMessage) {
+                            ProgressView(value: task.progress)
+                            Text("\(Int(task.progress * 100))%")
+                                .foregroundStyle(.secondary)
+                            Text("\(ByteCountFormatter.string(fromByteCount: task.downloadedBytes, countStyle: .file)) / \(ByteCountFormatter.string(fromByteCount: task.totalBytes, countStyle: .file))")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                    } else if let error = task.errorMessage {
+                        Section("Trạng thái") {
+                            Text(error).foregroundStyle(.secondary)
+                        }
+                    }
+                    Section {
+                        metadataRow("Version", task.app.version)
+                        metadataRow("Size", appSize(task))
+                        metadataRow("Minimum iOS", task.app.minimumOSVersion ?? "—")
+                        metadataRow("Bundle ID", task.app.bundleID)
+                        metadataRow("Đã giải mã", "Encrypted")
+                    }
+                    if let errorMessage {
+                        Section("Lỗi chia sẻ") { Text(errorMessage).foregroundStyle(.red) }
+                    }
+                    Section("Tùy chọn") {
+                        if task.status == .completed, let fileURL = task.fileURL {
+                            Button {
+                                share(fileURL)
+                            } label: {
+                                Label("Export", systemImage: "square.and.arrow.up")
+                                    .frame(maxWidth: .infinity)
+                            }
+                            .buttonStyle(.bordered)
+                        }
+                        Button(role: .destructive) {
+                            isShowingDeleteConfirmation = true
+                        } label: {
+                            Label("Delete", systemImage: "trash")
+                                .frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(.bordered)
                     }
                 }
-            }
-            if let errorMessage {
-                Section("Export Error") { Text(errorMessage).foregroundStyle(.red) }
+            } else {
+                VStack(spacing: 8) {
+                    Image(systemName: "arrow.down.circle").font(.largeTitle)
+                    Text("Không tìm thấy lượt tải").font(.headline)
+                }
+                .foregroundStyle(.secondary)
             }
         }
-        .navigationTitle("Download")
+        .navigationTitle("iPA Downloader")
         .sheet(isPresented: $showingShareSheet) {
             ActivityView(activityItems: shareItems)
         }
+        .alert("Cảnh báo", isPresented: $isShowingDeleteConfirmation) {
+            Button("Hủy", role: .cancel) { }
+            Button("OK", role: .destructive) { deleteTask() }
+        } message: {
+            Text("Bạn có chắc muốn xoá ứng dụng này ra khỏi máy bạn không?")
+        }
+    }
+
+    private var task: DownloadTask? {
+        downloads.tasks.first { $0.id == taskID }
+    }
+
+    private func metadataRow(_ title: String, _ value: String) -> some View {
+        LabeledContent(title, value: value)
+            .textSelection(.enabled)
+    }
+
+    private func appSize(_ task: DownloadTask) -> String {
+        if let size = task.app.fileSizeBytes {
+            return ByteCountFormatter.string(fromByteCount: size, countStyle: .file)
+        }
+        if task.totalBytes > 0 {
+            return ByteCountFormatter.string(fromByteCount: task.totalBytes, countStyle: .file)
+        }
+        return "—"
+    }
+
+    private func appIcon(_ url: URL?) -> some View {
+        AsyncImage(url: url) { image in
+            image.resizable().scaledToFill()
+        } placeholder: {
+            RoundedRectangle(cornerRadius: 14).fill(.gray.opacity(0.2))
+                .overlay { Image(systemName: "app.fill").foregroundStyle(.secondary) }
+        }
+        .frame(width: 68, height: 68)
+        .clipShape(RoundedRectangle(cornerRadius: 14))
     }
 
     private func share(_ url: URL) {
         do {
             shareItems = try environment.export.shareItems(for: url)
             showingShareSheet = true
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+
+    private func deleteTask() {
+        do {
+            try downloads.remove(taskID: taskID)
+            dismiss()
         } catch {
             errorMessage = error.localizedDescription
         }
