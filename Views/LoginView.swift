@@ -28,20 +28,6 @@ struct LoginView: View {
                                         .font(.caption)
                                         .foregroundStyle(.secondary)
                                 }
-                                if let selectedID = environment.anisetteServers.selectedServerID,
-                                   let result = environment.anisetteServers.probeResults[selectedID] {
-                                    AnisetteProbeStatusView(
-                                        serverID: selectedID,
-                                        store: environment.anisetteServers
-                                    )
-                                    if result.state != .unchecked,
-                                       !result.state.isUsable,
-                                       !environment.anisetteServers.checkingIDs.contains(selectedID) {
-                                        Text("Server chưa sẵn sàng (\(result.state.title)).")
-                                            .font(.caption)
-                                            .foregroundStyle(.orange)
-                                    }
-                                }
                             }
                             Spacer(minLength: 8)
                             Image(systemName: "chevron.right")
@@ -52,18 +38,6 @@ struct LoginView: View {
                     }
                     .buttonStyle(.plain)
 
-                    if environment.anisetteServers.hasFinishedInitialChecks &&
-                        !environment.anisetteServers.hasUsableServer {
-                        Label(
-                            "Không có Anisette Server khả dụng. Hãy thử lại hoặc thêm nguồn.",
-                            systemImage: "exclamationmark.triangle"
-                        )
-                        .font(.footnote)
-                        .foregroundStyle(.orange)
-                        Button("Thử lại") {
-                            environment.anisetteServers.refreshAll(force: true)
-                        }
-                    }
                 }
 
                 Section("Apple Account") {
@@ -184,20 +158,6 @@ struct LoginView: View {
                 }
             }
             .navigationTitle("Apple Account")
-            .onAppear {
-                environment.anisetteServers.refreshAll()
-            }
-            .task(id: environment.anisetteServers.selectedServerID) {
-                guard let selectedID = environment.anisetteServers.selectedServerID else { return }
-                while !Task.isCancelled {
-                    await environment.anisetteServers.refresh(serverID: selectedID)
-                    do {
-                        try await Task.sleep(nanoseconds: 1_000_000_000)
-                    } catch {
-                        return
-                    }
-                }
-            }
             .sheet(isPresented: $showingAnisetteServers) {
                 NavigationStack {
                     AnisetteServersView(store: environment.anisetteServers)

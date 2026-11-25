@@ -3,28 +3,16 @@ import Combine
 import CryptoKit
 
 enum AnisetteProbeState: Equatable {
-    case unchecked
     case invalidURL
     case noResponse
     case responded
     case validV3
-
-    var title: String {
-        switch self {
-        case .unchecked: return "Chưa kiểm tra"
-        case .invalidURL: return "URL không hợp lệ"
-        case .noResponse: return "Không phản hồi"
-        case .responded: return "Có phản hồi · chưa xác minh Anisette"
-        case .validV3: return "Metadata Anisette v3 hợp lệ"
-        }
-    }
 
     var isUsable: Bool { self == .validV3 }
 }
 
 struct AnisetteProbeResult: Equatable {
     let state: AnisetteProbeState
-    let durationMilliseconds: Int?
 }
 
 struct AnisetteServer: Codable, Identifiable, Equatable {
@@ -252,12 +240,27 @@ final class AnisetteService: AnisetteServiceProtocol {
     }
 
     func testConnection(serverURL: String) async -> AnisetteProbeResult {
-        let startTime = ProcessInfo.processInfo.systemUptime
         guard let baseURL = AnisetteURLValidator.validatedBaseURL(serverURL) else {
-            return AnisetteProbeResult(state: .invalidURL, durationMilliseconds: nil)
+            return AnisetteProbeResult(state: .invalidURL)
         }
 
-        var request = URLRequest(url: Self.endpoint("client_info", at: baseURL))
+        let clientInfoResult = await probe(
+            url: Self.endpoint("client_info", at: baseURL),
+            isValidResponse: Self.isValidV3ClientInfo
+        )
+        guard clientInfoResult.state != .validV3 else {
+            return clientInfoResult
+        }
+        guard clientInfoResult.state == .responded else {
+            return clientInfoResult
+        }
+
+        let rootResult = await probe(url: baseURL, isValidResponse: Self.isValidV3HeadersResponse)
+        return rootResult.state == .validV3 ? rootResult : clientInfoResult
+    }
+
+    private func probe(url: URL, isValidResponse: (Data) -> Bool) async -> AnisetteProbeResult {
+        var request = URLRequest(url: url)
         request.httpMethod = "GET"
         request.timeoutInterval = 8
         request.cachePolicy = .reloadIgnoringLocalCacheData
@@ -265,24 +268,19 @@ final class AnisetteService: AnisetteServiceProtocol {
         do {
             let (data, response) = try await session.data(for: request)
             guard let http = response as? HTTPURLResponse else {
-                return probeResult(.responded, since: startTime)
+                return AnisetteProbeResult(state: .responded)
             }
             guard AnisetteURLValidator.hasSameHTTPSOrigin(http.url, request.url) else {
-                return probeResult(.responded, since: startTime)
+                return AnisetteProbeResult(state: .responded)
             }
             guard (200...299).contains(http.statusCode) else {
-                return probeResult(.responded, since: startTime)
+                return AnisetteProbeResult(state: .responded)
             }
-            let state = Self.isValidV3ClientInfo(data) ? AnisetteProbeState.validV3 : .responded
-            return probeResult(state, since: startTime)
+            let state = isValidResponse(data) ? AnisetteProbeState.validV3 : .responded
+            return AnisetteProbeResult(state: state)
         } catch {
-            return probeResult(.noResponse, since: startTime)
+            return AnisetteProbeResult(state: .noResponse)
         }
-    }
-
-    private func probeResult(_ state: AnisetteProbeState, since startTime: TimeInterval) -> AnisetteProbeResult {
-        let elapsed = max(0, ProcessInfo.processInfo.systemUptime - startTime)
-        return AnisetteProbeResult(state: state, durationMilliseconds: Int((elapsed * 1_000).rounded()))
     }
 
     func clearIdentity(forServer serverURL: String) throws {
@@ -298,6 +296,14 @@ final class AnisetteService: AnisetteServiceProtocol {
         }
         return nonEmptyString(raw["client_info"] as? String) != nil
             && nonEmptyString(raw["user_agent"] as? String) != nil
+    }
+
+    private static func isValidV3HeadersResponse(_ data: Data) -> Bool {
+        guard let raw = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+            return false
+        }
+        return nonEmptyString(raw["X-Apple-I-MD"] as? String) != nil
+            && nonEmptyString(raw["X-Apple-I-MD-M"] as? String) != nil
     }
 
     private static func nonEmptyString(_ value: String?) -> String? {
@@ -665,16 +671,12 @@ extension AnisetteService {
 @MainActor
 final class AnisetteServerStore: ObservableObject {
     @Published private(set) var servers: [AnisetteServer]
-    @Published private(set) var probeResults: [UUID: AnisetteProbeResult] = [:]
-    @Published private(set) var checkingIDs: Set<UUID> = []
     @Published private(set) var selectedServerID: UUID?
 
     private let service: AnisetteServiceProtocol
     private let defaults: UserDefaults
     private let serversKey = "anisette.servers.v1"
     private let selectedIDKey = "anisette.selectedServerID.v1"
-    private let refreshInterval: TimeInterval = 30
-    private var probeDates: [UUID: Date] = [:]
 
     init(service: AnisetteServiceProtocol, defaults: UserDefaults = .standard) {
         self.service = service
@@ -713,23 +715,10 @@ final class AnisetteServerStore: ObservableObject {
         if didMigrateDefaults {
             persistServers()
         }
-        for server in servers {
-            probeResults[server.id] = AnisetteProbeResult(state: .unchecked, durationMilliseconds: nil)
-        }
     }
 
     var selectedServer: AnisetteServer? {
         servers.first { $0.id == selectedServerID }
-    }
-
-    var hasFinishedInitialChecks: Bool {
-        checkingIDs.isEmpty && servers.allSatisfy {
-            probeResults[$0.id]?.state != .unchecked
-        }
-    }
-
-    var hasUsableServer: Bool {
-        servers.contains { probeResults[$0.id]?.state.isUsable == true }
     }
 
     func add(name: String, url: String) async throws -> UUID {
@@ -748,7 +737,6 @@ final class AnisetteServerStore: ObservableObject {
             url: normalizedURL
         )
         servers.append(server)
-        probeResults[server.id] = AnisetteProbeResult(state: .unchecked, durationMilliseconds: nil)
         persistServers()
         return server.id
     }
@@ -775,7 +763,6 @@ final class AnisetteServerStore: ObservableObject {
         servers[index].name = cleanName.isEmpty ? (URL(string: normalizedURL)?.host ?? "Server") : cleanName
         servers[index].url = normalizedURL
         if oldURL != normalizedURL {
-            probeResults[serverID] = AnisetteProbeResult(state: .unchecked, durationMilliseconds: nil)
             if selectedServerID == serverID {
                 selectID(nil)
                 selectSideStoreIfNeeded()
@@ -791,7 +778,6 @@ final class AnisetteServerStore: ObservableObject {
         guard !server.isDefault else { throw AnisetteServerError.cannotModifyDefault }
         try service.clearIdentity(forServer: server.url)
         servers.removeAll { $0.id == serverID }
-        probeResults.removeValue(forKey: serverID)
         if selectedServerID == serverID {
             selectID(nil)
             selectSideStoreIfNeeded()
@@ -804,35 +790,6 @@ final class AnisetteServerStore: ObservableObject {
             throw AnisetteServerError.notFound
         }
         selectID(serverID)
-    }
-
-    func refresh(serverID: UUID) async {
-        guard let server = servers.first(where: { $0.id == serverID }),
-              !checkingIDs.contains(serverID) else { return }
-        checkingIDs.insert(serverID)
-        probeResults[serverID] = AnisetteProbeResult(state: .unchecked, durationMilliseconds: nil)
-        await performProbe(server: server)
-    }
-
-    func refreshAll(force: Bool = false) {
-        for server in servers {
-            guard !checkingIDs.contains(server.id) else { continue }
-            if !force,
-               let lastProbe = probeDates[server.id],
-               Date().timeIntervalSince(lastProbe) < refreshInterval {
-                continue
-            }
-            checkingIDs.insert(server.id)
-            probeResults[server.id] = AnisetteProbeResult(state: .unchecked, durationMilliseconds: nil)
-            Task { await performProbe(server: server) }
-        }
-    }
-
-    private func performProbe(server: AnisetteServer) async {
-        let result = await service.testConnection(serverURL: server.url)
-        probeResults[server.id] = result
-        probeDates[server.id] = Date()
-        checkingIDs.remove(server.id)
     }
 
     private func selectID(_ id: UUID?) {

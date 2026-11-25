@@ -10,7 +10,6 @@ struct AnisetteServersView: View {
     @State private var provisioningServerID: UUID?
     @State private var provisioningRequestID: UUID?
     @State private var provisioningTask: Task<Void, Never>?
-    @State private var checkingAllServers = false
 
     init(store: AnisetteServerStore) {
         _store = ObservedObject(wrappedValue: store)
@@ -27,8 +26,7 @@ struct AnisetteServersView: View {
                             AnisetteServerRow(
                                 index: index,
                                 server: server,
-                                isSelected: store.selectedServerID == server.id,
-                                store: store
+                                isSelected: store.selectedServerID == server.id
                             )
                         }
                         .buttonStyle(.plain)
@@ -80,20 +78,6 @@ struct AnisetteServersView: View {
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
                 Button("Đóng") { dismiss() }
-            }
-            ToolbarItem(placement: .confirmationAction) {
-                Button(checkingAllServers ? "Đang kiểm tra…" : "Kiểm tra") {
-                    guard !checkingAllServers else { return }
-                    checkingAllServers = true
-                    store.refreshAll(force: true)
-                    Task { @MainActor in
-                        while !store.checkingIDs.isEmpty {
-                            try? await Task.sleep(for: .milliseconds(100))
-                        }
-                        checkingAllServers = false
-                    }
-                }
-                .disabled(checkingAllServers)
             }
         }
         .sheet(item: $editorRoute) { route in
@@ -164,7 +148,6 @@ private struct AnisetteServerRow: View {
     let index: Int
     let server: AnisetteServer
     let isSelected: Bool
-    @ObservedObject var store: AnisetteServerStore
 
     var body: some View {
         HStack(alignment: .top, spacing: 10) {
@@ -181,32 +164,10 @@ private struct AnisetteServerRow: View {
                 Text(server.url)
                     .font(.caption)
                     .foregroundStyle(.secondary)
-                AnisetteProbeStatusView(serverID: server.id, store: store)
             }
         }
         .padding(.vertical, 3)
         .contentShape(Rectangle())
-    }
-}
-
-struct AnisetteProbeStatusView: View {
-    let serverID: UUID
-    @ObservedObject var store: AnisetteServerStore
-
-    var body: some View {
-        if store.checkingIDs.contains(serverID) {
-            ProgressView()
-                .controlSize(.small)
-                .foregroundStyle(.secondary)
-        } else if let result = store.probeResults[serverID] {
-            if result.state != .unchecked, let milliseconds = result.durationMilliseconds {
-                Text(result.state == .noResponse || result.state == .invalidURL
-                     ? "Không kết nối được · \(milliseconds) ms"
-                     : "\(milliseconds) ms")
-                    .font(.caption)
-                    .foregroundStyle(result.state == .noResponse || result.state == .invalidURL ? .red : .secondary)
-            }
-        }
     }
 }
 

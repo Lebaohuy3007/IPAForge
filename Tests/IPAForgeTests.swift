@@ -55,18 +55,26 @@ final class AnisetteURLValidatorTests: XCTestCase {
         ))
     }
 
-    func testConnectionRecognizesOnlyAnisetteV3ClientInfo() async {
+    func testConnectionRecognizesV3ClientInfoOrAnisetteHeaderResponse() async {
         MockURLProtocol.statusCode = 200
         MockURLProtocol.stubbedError = nil
-        MockURLProtocol.responseData = Data(#"{"X-Apple-I-MD":"otp","X-Apple-I-MD-M":"machine"}"#.utf8)
+        MockURLProtocol.requests = []
         let configuration = URLSessionConfiguration.ephemeral
         configuration.protocolClasses = [MockURLProtocol.self]
         let service = AnisetteService(session: URLSession(configuration: configuration))
-        let result = await service.testConnection(serverURL: "https://anisette.example")
-        XCTAssertEqual(result.state, .responded)
-        XCTAssertNotNil(result.durationMilliseconds)
-        XCTAssertGreaterThanOrEqual(result.durationMilliseconds ?? -1, 0)
 
+        MockURLProtocol.responseHandler = { request in
+            if request.url?.path == "/" {
+                return Data(#"{"X-Apple-I-MD":"test-md","X-Apple-I-MD-M":"test-machine"}"#.utf8)
+            }
+            return Data(#"{"message":"not client info"}"#.utf8)
+        }
+        defer { MockURLProtocol.responseHandler = nil }
+        let result = await service.testConnection(serverURL: "https://anisette.example")
+        XCTAssertEqual(result.state, .validV3)
+        XCTAssertEqual(MockURLProtocol.requests.map { $0.url?.path }, ["/v3/client_info", "/"])
+
+        MockURLProtocol.responseHandler = nil
         MockURLProtocol.responseData = Data(#"{"message":"ok"}"#.utf8)
         let responseOnly = await service.testConnection(serverURL: "https://anisette.example")
         XCTAssertEqual(responseOnly.state, .responded)
@@ -77,7 +85,6 @@ final class AnisetteURLValidatorTests: XCTestCase {
 
         let invalidURLResult = await service.testConnection(serverURL: "http://anisette.example")
         XCTAssertEqual(invalidURLResult.state, .invalidURL)
-        XCTAssertNil(invalidURLResult.durationMilliseconds)
     }
 
     func testTimeoutAndHTTPErrorAreNotUsable() async {
@@ -239,7 +246,6 @@ final class AnisetteServerStoreTests: XCTestCase {
     }
 
     func testSideStoreIsDefaultAndCustomSelectionPersists() async throws {
-        configureValidAnisetteResponse()
         let (defaults, suite) = makeDefaults()
         defer { defaults.removePersistentDomain(forName: suite) }
         let store = makeStore(defaults: defaults)
@@ -248,15 +254,9 @@ final class AnisetteServerStoreTests: XCTestCase {
             store.servers.first(where: { $0.name == "SideStore" })?.id
         )
         XCTAssertEqual(store.selectedServerID, sideStoreID)
-        XCTAssertTrue(store.servers.allSatisfy {
-            store.probeResults[$0.id]?.state == .unchecked
-        })
 
         let id = try await store.add(name: "  Personal  ", url: "https://personal.example/")
         XCTAssertEqual(store.servers.last?.name, "Personal")
-        XCTAssertEqual(store.probeResults[id]?.state, .unchecked)
-        await store.refresh(serverID: id)
-        XCTAssertEqual(store.probeResults[id]?.state, .validV3)
         XCTAssertEqual(store.selectedServerID, sideStoreID)
 
         try store.select(serverID: id)
@@ -270,10 +270,7 @@ final class AnisetteServerStoreTests: XCTestCase {
         XCTAssertFalse(store.servers.contains(where: { $0.id == id }))
     }
 
-    func testRejectsInvalidDuplicateAndAllowsSelectingUnavailableServer() async throws {
-        MockURLProtocol.responseData = Data(#"{"message":"not anisette"}"#.utf8)
-        MockURLProtocol.statusCode = 200
-        MockURLProtocol.stubbedError = nil
+    func testRejectsInvalidDuplicateAndAllowsSelectingServer() async throws {
         let (defaults, suite) = makeDefaults()
         defer { defaults.removePersistentDomain(forName: suite) }
         let store = makeStore(defaults: defaults)
@@ -286,9 +283,6 @@ final class AnisetteServerStoreTests: XCTestCase {
         }
 
         let id = try await store.add(name: "Invalid response", url: "https://invalid.example")
-        XCTAssertEqual(store.probeResults[id]?.state, .unchecked)
-        await store.refresh(serverID: id)
-        XCTAssertEqual(store.probeResults[id]?.state, .responded)
         try store.select(serverID: id)
         XCTAssertEqual(store.selectedServerID, id)
 
@@ -301,7 +295,6 @@ final class AnisetteServerStoreTests: XCTestCase {
     }
 
     func testUpdatePersistsAndDefaultServerCannotBeDeleted() async throws {
-        configureValidAnisetteResponse()
         let (defaults, suite) = makeDefaults()
         defer { defaults.removePersistentDomain(forName: suite) }
         let store = makeStore(defaults: defaults)
@@ -326,23 +319,6 @@ final class AnisetteServerStoreTests: XCTestCase {
         }
     }
 
-    func testAllServersUnavailableKeepsDefaultWithoutFailingOver() async throws {
-        MockURLProtocol.stubbedError = URLError(.cannotConnectToHost)
-        let (defaults, suite) = makeDefaults()
-        defer { defaults.removePersistentDomain(forName: suite) }
-        let store = makeStore(defaults: defaults)
-        let sideStoreID = try XCTUnwrap(
-            store.servers.first(where: { $0.name == "SideStore" })?.id
-        )
-
-        for server in store.servers {
-            await store.refresh(serverID: server.id)
-        }
-        XCTAssertTrue(store.hasFinishedInitialChecks)
-        XCTAssertFalse(store.hasUsableServer)
-        XCTAssertEqual(store.selectedServerID, sideStoreID)
-    }
-
     private func makeStore(defaults: UserDefaults) -> AnisetteServerStore {
         let configuration = URLSessionConfiguration.ephemeral
         configuration.protocolClasses = [MockURLProtocol.self]
@@ -357,13 +333,6 @@ final class AnisetteServerStoreTests: XCTestCase {
         return (UserDefaults(suiteName: suite)!, suite)
     }
 
-    private func configureValidAnisetteResponse() {
-        MockURLProtocol.statusCode = 200
-        MockURLProtocol.stubbedError = nil
-        MockURLProtocol.responseData = Data(
-            #"{"client_info":"v3 client","user_agent":"v3 agent"}"#.utf8
-        )
-    }
 }
 
 final class LogSanitizerTests: XCTestCase {
