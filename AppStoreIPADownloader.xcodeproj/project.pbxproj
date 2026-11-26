@@ -89,7 +89,7 @@
 				110000000000000000000017,
 				110000000000000000000018,
 				110000000000000000000019,
-				11000000000000000000001A,
+				300000000000000000000003,
 				11000000000000000000001B,
 				11000000000000000000001C,
 				11000000000000000000001D,
@@ -106,6 +106,13 @@
 			isa = PBXGroup;
 			name = Products;
 			children = (110000000000000000000013, 110000000000000000000014);
+			sourceTree = "<group>";
+		};
+		300000000000000000000003 = {
+			isa = PBXGroup;
+			name = Localization;
+			path = Resources/Localization;
+			children = (11000000000000000000001A);
 			sourceTree = "<group>";
 		};
 
@@ -163,7 +170,7 @@
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
-			knownRegions = (en, Base);
+			knownRegions = (en, vi, Base);
 			mainGroup = 300000000000000000000001;
 			packageReferences = (730000000000000000000001, 730000000000000000000002);
 			productRefGroup = 300000000000000000000002;
