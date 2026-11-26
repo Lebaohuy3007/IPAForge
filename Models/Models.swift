@@ -9,6 +9,29 @@ struct AppRecord: Identifiable, Hashable, Sendable {
     let version: String
     let fileSizeBytes: Int64?
     let minimumOSVersion: String?
+    let price: Double?
+
+    init(
+        id: Int,
+        bundleID: String,
+        name: String,
+        developer: String,
+        iconURL: URL?,
+        version: String,
+        fileSizeBytes: Int64?,
+        minimumOSVersion: String?,
+        price: Double? = nil
+    ) {
+        self.id = id
+        self.bundleID = bundleID
+        self.name = name
+        self.developer = developer
+        self.iconURL = iconURL
+        self.version = version
+        self.fileSizeBytes = fileSizeBytes
+        self.minimumOSVersion = minimumOSVersion
+        self.price = price
+    }
 }
 
 enum DownloadStatus: String, Equatable {

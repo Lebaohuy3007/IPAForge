@@ -25,9 +25,10 @@
 * Đọc CRC của ZIP, `Payload/*.app/Info.plist`, bundle/version, MinimumOSVersion, UIDeviceFamily, capability, platform và Mach-O architecture trong IPA đã chọn.
 * Quản lý và tùy chỉnh Anisette Server.
 * Đăng nhập Apple ID vào Developer Portal, hỗ trợ xác minh 2FA. Đây không phải phiên đăng nhập để tải từ App Store.
-* Lưu và khôi phục phiên đăng nhập an toàn.
+* Lưu và khôi phục an toàn phiên Developer Portal; đây không phải phiên App Store.
 * Theo dõi nhật ký đăng nhập và hoạt động.
 * Hỗ trợ kiểm thử và build tự động qua GitHub Actions.
+* Chạy thử nghiệm API công khai không cần đăng nhập; kết quả hai thử nghiệm được ghi trong Activity Log.
 
 ## Kiểm tra Swift trên Codespaces
 
@@ -43,29 +44,30 @@ Linux script biên dịch trực tiếp `Models.swift`, `DeviceProfile.swift` v�
 
 Các thay đổi hiện còn ở working tree. Vì yêu cầu không commit/push, GitHub Actions chưa được chạy trên chính những thay đổi này; lần chạy Actions của một commit khác không xác nhận được chúng.
 
-Trong 15 test mới của Device Profile / Compatibility / IPA inspection / Download queue:
+Trong 23 test mới của Device Profile / Compatibility / IPA inspection / Download queue / public App Store API:
 
 | Test trong `Tests/IPAForgeTests.swift` | Số test | Môi trường |
 | --- | ---: | --- |
 | `testDefaultProfileIsAnIOS27SimulatedProfile`, `testVersionComparisonAndProfileValidation`; sáu test `CompatibilityCheckerTests` | 8 | Logic tương đương đã chạy trong Linux harness; XCTest methods vẫn thuộc target Xcode |
 | `testProfilesPersistAndRestoreSelectedModelAndVersion`, `testMultipleProfilesCanBeSelectedAndLastProfileCannotBeDeleted` | 2 | `DeviceProfileStore` dùng Combine; XCTest của app |
-| `testValidIPAReadsMetadataAndMachOArchitecture`, `testInspectorRejectsWrongExtensionAndCorruptedZIP` | 2 | Foundation + ZIPFoundation; Linux có thể dùng được sau khi giải quyết dependency, nhưng chưa nằm trong harness hiện tại |
-| `testProgressUsesActualBytesAndCancellationReachesProvider`, `testDownloadCompletesOnlyAfterIPAInspectionAndSavesValidatedFile`, `testFailureCanBeRetriedAsANewQueueTask` | 3 | `DownloadService` dùng Combine và app Documents; cần XCTest trên Apple platform |
+| Năm test `IPAInspectorTests` cho IPA hợp lệ, thiếu Payload/Info.plist, plist/executable sai, Mach-O sai và CRC hỏng | 5 | Foundation + ZIPFoundation; chưa chạy trong XCTest của môi trường hiện tại |
+| Bốn test `DownloadServiceTests` cho progress/cancel, validate/save, retry và timeout/xoá partial IPA | 4 | `DownloadService` dùng Combine và app Documents; cần XCTest trên Apple platform |
+| Ba test HTTP status, JSON sai, network failure và `AppStoreExperimentServiceTests.testAnonymousExperimentReportsMetadataAndBlockedAuthentication` | 4 | XCTest dùng `MockURLProtocol`; không gọi Apple thật và không xác minh đăng nhập/tải IPA thật |
 
 Các test Anisette, Keychain/Security, UI và tích hợp với iOS của bộ cũ vẫn cần Xcode. Full XCTest target và iOS build chưa được xác nhận. Xem [bảng trạng thái kiểm thử](./Downloader/ROADMAP.md).
 
 ## Giới hạn App Store Downloader
 
-Đăng nhập Apple ID hiện có trong app là phiên Developer Portal. Nó không thể dùng để mua license hay tải IPA từ App Store. Nút tải IPA hiện bị vô hiệu hóa; queue/provider chưa có backend App Store thật. Unit test dùng fixture/provider giả chỉ kiểm tra cơ chế queue và xác thực IPA, không chứng minh đăng nhập hoặc tải thật. IPAForge không tạo Device Identity giả và không giải mã FairPlay. Chi tiết nghiên cứu 20 repository, bằng chứng mã nguồn, blocker và trạng thái kiểm thử nằm trong [Downloader/ROADMAP.md](./Downloader/ROADMAP.md).
+Đăng nhập Apple ID hiện có trong app là phiên Developer Portal. Nó không thể dùng để mua license hay tải IPA từ App Store. Nút tải IPA hiện bị vô hiệu hóa; queue/provider chưa có backend App Store thật. Nút thử nghiệm công khai kiểm tra Search/Lookup không cần tài khoản và ghi kết quả cùng blocker xác thực vào Activity Log. Test dùng fixture/provider giả chỉ kiểm tra logic; không chứng minh đăng nhập hoặc tải thật. IPAForge không tạo Device Identity giả và không giải mã FairPlay. Xem [nghiên cứu xác thực và bảng chấm điểm](./Downloader/AUTHENTICATION_RESEARCH.md) cùng [roadmap](./Downloader/ROADMAP.md).
 
 ## Đối chiếu thư viện / giao thức
 
 - [ApplePackage](https://github.com/Lakr233/ApplePackage) là Swift Package MIT, manifest khai báo iOS 15+, nhưng yêu cầu Swift 6.2 và dùng SAP-signed App Store authentication. Source `DeviceIdentifier.system()` chủ động lỗi trên iOS; package đề xuất GUID ngẫu nhiên đã lưu, trái yêu cầu không tự tạo Device Identifier. Chưa tích hợp và chưa xác minh đăng nhập thực trên iOS.
-- [ipatool](https://github.com/majd/ipatool) là dự án Go MIT với API App Store login/2FA. Luồng hiện tại có SAP signing và machine identity phụ thuộc MAC; không phải Swift SDK và chưa xác minh được chạy đăng nhập trên iOS thông thường.
-- [ipaverse](https://github.com/bahattinkoc/ipaverse) tham khảo được quy trình GSA/SRP-6a, 2FA và App Store session, nhưng là app macOS dùng IOKit/`ifconfig`/Anisette macOS. Không thể sao chép thẳng vào target iOS.
+- [ipatool](https://github.com/majd/ipatool) là dự án Go MIT với API App Store login/2FA và download. Bản iOS dành cho thiết bị jailbreak; issue của v2.8.1 báo lỗi Unicorn ARM64 trước khi xác thực trên iPhone jailbreak. Không phải Swift SDK và chưa có đường đã xác minh cho IPAForge iOS thông thường.
+- [ipaverse](https://github.com/bahattinkoc/ipaverse) tham khảo được quy trình GSA/SRP-6a, 2FA, PET-to-Store, license và download, nhưng là app macOS dùng IOKit/`ifconfig`; mã nguồn còn có UUID ngẫu nhiên làm định danh dự phòng. Không thể sao chép thẳng vào target iOS theo yêu cầu không tạo identity giả.
 - GSA/SRP-6a và SAP-signed authentication là hai đường triển khai khác nhau trong các nguồn đã xem. ApplePackage hiện không triển khai GSA/SRP-6a. Chi tiết blocker, phạm vi và các kiểm tra còn thiếu được ghi ở [Downloader/ROADMAP.md](./Downloader/ROADMAP.md).
 - [SideStore](https://github.com/SideStore/SideStore) và [AltStore](https://github.com/altstoreio/AltStore) dùng nền tảng Apple signing/sideloading riêng; cả hai README công bố AGPLv3. Không sao chép mã của hai dự án vào project MIT này. Tài liệu SideStore khuyến nghị Anisette v3 và nhấn mạnh không gửi account info đến Anisette server; app hiện chỉ áp dụng nguyên tắc tách biệt đó, chưa triển khai protocol.
-- Tài liệu tham khảo: [SideStore Anisette](https://docs.sidestore.io/docs/advanced/anisette), [ipatool](https://github.com/majd/ipatool), [AltStore](https://github.com/altstoreio/AltStore).
+- Tài liệu tham khảo: [SideStore Anisette](https://docs.sidestore.io/docs/advanced/anisette), [ipatool](https://github.com/majd/ipatool), [AltStore](https://github.com/altstoreio/AltStore), [nghiên cứu và bảng chấm điểm](./Downloader/AUTHENTICATION_RESEARCH.md).
 - Anisette v3 dùng client Swift nội bộ, không thêm dependency hoặc sao chép mã thư viện bên thứ ba. `swift-anisette` không hỗ trợ iOS; `RemoteAnisette` không khai báo license; AnisetteKit công bố AGPL-3.0. Các dự án này không được tích hợp.
 - [StosSign](https://github.com/stossy11/StosSign) là Swift Package (không phải HTTP service), được pin trực tiếp tại revision `01dd7bc4f5084ade9e2ebbc7e338dc2e3f454d77` và chỉ liên kết các product API/Auth/Common cần thiết. Revision này hỗ trợ iOS 14; ứng dụng yêu cầu iOS 16. StosSign xử lý SRP/2FA và Developer Team API; IPAForge chuyển `AnisetteData` từ headers v3 và lưu DTO session đã mã hóa trong vault. Người dùng xác nhận đã được maintainer cho phép sử dụng; repository hiện không công bố tệp LICENSE hoặc license metadata, nên tài liệu này không khẳng định một license công khai cụ thể. Không dùng helper của GetMoreRam vốn log payload Anisette.
 
@@ -113,4 +115,4 @@ Tests/
 
 ## Giấy phép
 
-Project hiện giữ [MIT License](./LICENSE). Chưa đưa mã nguồn hoặc dependency từ SideStore/AltStore vào repository. Nếu tích hợp ipatool, cần giữ notice MIT và vượt qua các bước kiểm tra khả năng chạy trên iOS trong [Downloader/ROADMAP.md](./Downloader/ROADMAP.md).
+Project hiện giữ [MIT License](./LICENSE.txt). Chưa đưa mã nguồn hoặc dependency từ SideStore/AltStore vào repository. Xem [nghiên cứu](./Downloader/AUTHENTICATION_RESEARCH.md) trước khi cân nhắc engine App Store.

@@ -1,5 +1,6 @@
 import Foundation
 import XCTest
+import ZIPFoundation
 @testable import AppStoreIPADownloader
 
 final class AppLanguageTests: XCTestCase {
@@ -623,22 +624,27 @@ final class ExportServiceTests: XCTestCase {
 
 final class AppStoreServiceTests: XCTestCase {
     func testSearchDecodesAppStoreResponse() async throws {
-        MockURLProtocol.responseData = Data(#"{"results":[{"trackId":42,"bundleId":"com.example.app","trackName":"Example","sellerName":"Example Inc.","version":"1.2","artworkUrl100":"https://example.com/icon.png"}]}"#.utf8)
+        MockURLProtocol.responseData = Data(#"{"results":[{"trackId":42,"bundleId":"com.example.app","trackName":"Example","sellerName":"Example Inc.","version":"1.2","price":0,"artworkUrl100":"https://example.com/icon.png"}]}"#.utf8)
         MockURLProtocol.statusCode = 200
         MockURLProtocol.stubbedError = nil
+        MockURLProtocol.responseHandler = nil
         let configuration = URLSessionConfiguration.ephemeral
         configuration.protocolClasses = [MockURLProtocol.self]
         let service = AppStoreService(session: URLSession(configuration: configuration))
-        let app = try await service.search("example").first
+        var statusCode: Int?
+        let app = try await service.search("example", onHTTPStatus: { statusCode = $0 }).first
         XCTAssertEqual(app?.id, 42)
         XCTAssertEqual(app?.bundleID, "com.example.app")
         XCTAssertEqual(app?.name, "Example")
+        XCTAssertEqual(app?.price, 0)
+        XCTAssertEqual(statusCode, 200)
     }
 
     func testBundleIDSearchUsesLookupEndpoint() async throws {
         MockURLProtocol.responseData = Data(#"{"results":[{"trackId":42,"bundleId":"com.example.app","trackName":"Example","sellerName":"Example Inc.","version":"1.2","artworkUrl100":"https://example.com/icon.png"}]}"#.utf8)
         MockURLProtocol.statusCode = 200
         MockURLProtocol.stubbedError = nil
+        MockURLProtocol.responseHandler = nil
         let configuration = URLSessionConfiguration.ephemeral
         configuration.protocolClasses = [MockURLProtocol.self]
         let service = AppStoreService(session: URLSession(configuration: configuration))
@@ -652,6 +658,7 @@ final class AppStoreServiceTests: XCTestCase {
         MockURLProtocol.responseData = Data(#"{"results":[{"trackId":123456,"bundleId":"com.example.app","trackName":"Example","sellerName":"Example Inc.","version":"1.2"}]}"#.utf8)
         MockURLProtocol.statusCode = 200
         MockURLProtocol.stubbedError = nil
+        MockURLProtocol.responseHandler = nil
         let configuration = URLSessionConfiguration.ephemeral
         configuration.protocolClasses = [MockURLProtocol.self]
         let service = AppStoreService(session: URLSession(configuration: configuration))
@@ -659,6 +666,94 @@ final class AppStoreServiceTests: XCTestCase {
         let apps = try await service.search("123456", country: "us")
 
         XCTAssertEqual(apps.map(\.id), [123456])
+    }
+
+    func testNonSuccessHTTPStatusIsReported() async {
+        MockURLProtocol.responseData = Data(#"{"results":[]}"#.utf8)
+        MockURLProtocol.statusCode = 503
+        MockURLProtocol.stubbedError = nil
+        MockURLProtocol.responseHandler = nil
+        let configuration = URLSessionConfiguration.ephemeral
+        configuration.protocolClasses = [MockURLProtocol.self]
+        let service = AppStoreService(session: URLSession(configuration: configuration))
+        var statusCode: Int?
+
+        do {
+            _ = try await service.search("example", onHTTPStatus: { statusCode = $0 })
+            XCTFail("Expected an HTTP status error.")
+        } catch {
+            XCTAssertEqual(error as? AppStoreServiceError, AppStoreServiceError.httpStatus(503))
+        }
+        XCTAssertEqual(statusCode, 503)
+    }
+
+    func testMalformedPublicResponseIsRejected() async {
+        MockURLProtocol.responseData = Data("not json".utf8)
+        MockURLProtocol.statusCode = 200
+        MockURLProtocol.stubbedError = nil
+        MockURLProtocol.responseHandler = nil
+        let configuration = URLSessionConfiguration.ephemeral
+        configuration.protocolClasses = [MockURLProtocol.self]
+        let service = AppStoreService(session: URLSession(configuration: configuration))
+
+        do {
+            _ = try await service.lookup(appID: 375_380_948)
+            XCTFail("Expected malformed JSON to be rejected.")
+        } catch {
+            XCTAssertEqual(error as? AppStoreServiceError, AppStoreServiceError.invalidResponse)
+        }
+    }
+
+    func testPublicRequestNetworkFailurePropagates() async {
+        MockURLProtocol.stubbedError = URLError(.notConnectedToInternet)
+        MockURLProtocol.responseHandler = nil
+        let configuration = URLSessionConfiguration.ephemeral
+        configuration.protocolClasses = [MockURLProtocol.self]
+        let service = AppStoreService(session: URLSession(configuration: configuration))
+
+        do {
+            _ = try await service.search("example")
+            XCTFail("Expected the network error to propagate.")
+        } catch let error as URLError {
+            XCTAssertEqual(error.code, .notConnectedToInternet)
+        } catch {
+            XCTFail("Unexpected error: \(error)")
+        }
+        MockURLProtocol.stubbedError = nil
+    }
+}
+
+@MainActor
+final class AppStoreExperimentServiceTests: XCTestCase {
+    func testAnonymousExperimentReportsMetadataAndBlockedAuthentication() async {
+        let response = Data(#"{"resultCount":1,"results":[{"trackId":375380948,"bundleId":"com.apple.store.Jolly","trackName":"Apple Store","sellerName":"Apple Inc.","version":"6.10","price":0,"minimumOsVersion":"26.0"}]}"#.utf8)
+        MockURLProtocol.responseData = response
+        MockURLProtocol.statusCode = 200
+        MockURLProtocol.stubbedError = nil
+        MockURLProtocol.responseHandler = nil
+        let configuration = URLSessionConfiguration.ephemeral
+        configuration.protocolClasses = [MockURLProtocol.self]
+        let logger = LoggingService()
+        let experiments = AppStoreExperimentService(
+            appStore: AppStoreService(session: URLSession(configuration: configuration)),
+            logger: logger
+        )
+
+        await experiments.run()
+
+        guard let checks = experiments.report?.checks else {
+            return XCTFail("The experiment should publish its report.")
+        }
+        XCTAssertEqual(checks.first(where: { $0.name == "A · Search" })?.status, .passed)
+        XCTAssertEqual(checks.first(where: { $0.name == "A · Metadata" })?.status, .passed)
+        XCTAssertEqual(checks.first(where: { $0.name == "A · Binary access" })?.status, .unsupported)
+        XCTAssertEqual(checks.first(where: { $0.name == "A · IPA download" })?.status, .notTested)
+        XCTAssertEqual(checks.first(where: { $0.name == "B · Authentication" })?.status, .blocked)
+        XCTAssertTrue(logger.text.contains("HTTP 200"))
+        XCTAssertTrue(logger.text.contains("Experiment A final result"))
+        XCTAssertTrue(logger.text.contains("Experiment B final result"))
+        XCTAssertFalse(logger.text.localizedCaseInsensitiveContains("password="))
+        XCTAssertFalse(logger.text.localizedCaseInsensitiveContains("session token="))
     }
 }
 
@@ -1051,12 +1146,67 @@ final class IPAInspectorTests: XCTestCase {
         }
 
         var corrupted = fixture
-        corrupted[100] ^= 0x01
+        let centralDirectorySignature = Data([0x50, 0x4B, 0x01, 0x02])
+        let centralDirectory = try XCTUnwrap(corrupted.range(of: centralDirectorySignature))
+        corrupted[centralDirectory.lowerBound + 16] ^= 0x01
         let damagedIPA = FileManager.default.temporaryDirectory
             .appendingPathComponent(UUID().uuidString + ".ipa")
         try corrupted.write(to: damagedIPA)
         defer { try? FileManager.default.removeItem(at: damagedIPA) }
-        XCTAssertThrowsError(try IPAInspector().inspect(damagedIPA))
+        XCTAssertThrowsError(try IPAInspector().inspect(damagedIPA)) { error in
+            guard case IPAInspectionError.invalidArchive(let reason) = error else {
+                return XCTFail("Expected a CRC/archive error, got \(error).")
+            }
+            XCTAssertTrue(reason.localizedCaseInsensitiveContains("crc"), reason)
+        }
+    }
+
+    func testInspectorRequiresPayloadAndAppInfoPlist() throws {
+        let (noPayload, noPayloadRoot) = try makeArchive(files: [("README.txt", Data("test".utf8))])
+        defer { try? FileManager.default.removeItem(at: noPayloadRoot) }
+        XCTAssertThrowsError(try IPAInspector().inspect(noPayload)) {
+            XCTAssertEqual($0 as? IPAInspectionError, .missingAppInfo)
+        }
+
+        let (noInfoPlist, noInfoRoot) = try makeArchive(files: [
+            ("Payload/Example.app/Example", Data([0x00, 0x01]))
+        ])
+        defer { try? FileManager.default.removeItem(at: noInfoRoot) }
+        XCTAssertThrowsError(try IPAInspector().inspect(noInfoPlist)) {
+            XCTAssertEqual($0 as? IPAInspectionError, .missingAppInfo)
+        }
+    }
+
+    func testInspectorRejectsInvalidInfoPlistAndMissingExecutable() throws {
+        let (invalidPlist, invalidPlistRoot) = try makeArchive(files: [
+            ("Payload/Example.app/Info.plist", Data("not a property list".utf8))
+        ])
+        defer { try? FileManager.default.removeItem(at: invalidPlistRoot) }
+        XCTAssertThrowsError(try IPAInspector().inspect(invalidPlist)) {
+            XCTAssertEqual($0 as? IPAInspectionError, .invalidInfoPlist)
+        }
+
+        let info = try makeInfoPlist()
+        let (missingExecutable, missingExecutableRoot) = try makeArchive(files: [
+            ("Payload/Example.app/Info.plist", info)
+        ])
+        defer { try? FileManager.default.removeItem(at: missingExecutableRoot) }
+        XCTAssertThrowsError(try IPAInspector().inspect(missingExecutable)) {
+            XCTAssertEqual($0 as? IPAInspectionError, .missingExecutable)
+        }
+    }
+
+    func testInspectorRejectsInvalidMachO() throws {
+        let info = try makeInfoPlist()
+        let (ipa, root) = try makeArchive(files: [
+            ("Payload/Example.app/Info.plist", info),
+            ("Payload/Example.app/Example", Data([0x00, 0x01, 0x02, 0x03]))
+        ])
+        defer { try? FileManager.default.removeItem(at: root) }
+
+        XCTAssertThrowsError(try IPAInspector().inspect(ipa)) {
+            XCTAssertEqual($0 as? IPAInspectionError, .invalidExecutable)
+        }
     }
 
     private func writeFixtureIPA() throws -> URL {
@@ -1068,6 +1218,39 @@ final class IPAInspectorTests: XCTestCase {
     static func fixtureDataForDownload() throws -> Data {
         let encoded = "UEsDBBQAAAAIALIoel27S+DZXAEAAOcCAAAeAAAAUGF5bG9hZC9FeGFtcGxlLmFwcC9JbmZvLnBsaXN0fZLRboIwFIav51Mw7qXTGLMsiJmACYmbZMCSXVZ61JMV6EqZ+vYrokZRd9eec/6vX9ra423GjV+QJRb5yOxZT6YBeVowzFcjM4mn3Wdz7HTsR2/uxl+hbwiOpTLCZDILXMPsEvIqBAdCvNgzwlkQxYZmEOK/m4a5Vkq8ELLZbCxaT1lpkdWDJQllIUCq3UzDujpgMcVMfUxDv9DRVYapcjoP9jfsHHc6qXLGwd9CWim64GCTuq7bpZLa2vG3NBN1+bBvBQMGucIlgmwHtZ0FTdgSslgiB3aPEq0LqT4bz2g/0ab1LW1/N14JoQHAQk7VspBZeYpTKWm9OIEwXBc5zKNzFjlOXVAPPm2TQb+t8YY5ZlU2j+4kesNr9STw4BdTmNIM+e6GLuYKViCdnk2OyyvTJPiAnwolsAbmUkEXyFEh/HMDVGbDwZnPqbHR73jrWmzSfBmb7D+U0/kDUEsDBBQAAAAIALIoel31qLUoDQAAACAAAAAbAAAAUGF5bG9hZC9FeGFtcGxlLmFwcC9FeGFtcGxlO//r7T8eBgZGBhwAAFBLAQIUAxQAAAAIALIoel27S+DZXAEAAOcCAAAeAAAAAAAAAAAAAACAAQAAAABQYXlsb2FkL0V4YW1wbGUuYXBwL0luZm8ucGxpc3RQSwECFAMUAAAACACyKHpd9ai1KA0AAAAgAAAAGwAAAAAAAAAAAAAAgAGYAQAAUGF5bG9hZC9FeGFtcGxlLmFwcC9FeGFtcGxlUEsFBgAAAAACAAIAlQAAAN4BAAAAAA=="
         return try XCTUnwrap(Data(base64Encoded: encoded))
+    }
+
+    private func makeInfoPlist() throws -> Data {
+        let values: [String: Any] = [
+            "CFBundleIdentifier": "com.example.archivecheck",
+            "CFBundleExecutable": "Example"
+        ]
+        return try PropertyListSerialization.data(fromPropertyList: values, format: .xml, options: 0)
+    }
+
+    private func makeArchive(files: [(String, Data)]) throws -> (URL, URL) {
+        let root = FileManager.default.temporaryDirectory
+            .appendingPathComponent(UUID().uuidString, isDirectory: true)
+        let input = root.appendingPathComponent("input", isDirectory: true)
+        let archiveURL = root.appendingPathComponent("fixture.ipa")
+        try FileManager.default.createDirectory(at: input, withIntermediateDirectories: true)
+
+        for (path, data) in files {
+            let fileURL = input.appendingPathComponent(path)
+            try FileManager.default.createDirectory(
+                at: fileURL.deletingLastPathComponent(),
+                withIntermediateDirectories: true
+            )
+            try data.write(to: fileURL)
+        }
+
+        do {
+            let archive = try Archive(url: archiveURL, accessMode: .create)
+            for (path, _) in files {
+                try archive.addEntry(with: path, fileURL: input.appendingPathComponent(path))
+            }
+        }
+        return (archiveURL, root)
     }
 }
 
@@ -1130,6 +1313,23 @@ final class DownloadServiceTests: XCTestCase {
         XCTAssertTrue(service.retry(taskID: firstID))
         XCTAssertEqual(service.tasks.count, 2)
         XCTAssertNotEqual(service.tasks[0].id, service.tasks[1].id)
+    }
+
+    func testTimeoutRemovesPartialIPAAndLogsConnectionFailure() async throws {
+        let provider = PartialTimeoutDownloadProvider()
+        let logger = LoggingService()
+        let service = DownloadService(provider: provider, logger: logger)
+
+        XCTAssertFalse(service.start(app: makeApp()))
+        for _ in 0..<100 where service.tasks.first?.status.isInProgress == true {
+            try await Task.sleep(nanoseconds: 10_000_000)
+        }
+
+        XCTAssertEqual(service.tasks.first?.status, .failed)
+        let recordedURL = await provider.partialFileURL()
+        let partialURL = try XCTUnwrap(recordedURL)
+        XCTAssertFalse(FileManager.default.fileExists(atPath: partialURL.path))
+        XCTAssertTrue(logger.text.contains("connection error code \(URLError.timedOut.rawValue)"))
     }
 
     private func makeApp() -> AppRecord {
@@ -1196,5 +1396,25 @@ private struct FailingDownloadProvider: AppStoreDownloadProviding {
     ) async throws -> URL {
         _ = (app, destination, progress)
         throw URLError(.notConnectedToInternet)
+    }
+}
+
+private actor PartialTimeoutDownloadProvider: AppStoreDownloadProviding {
+    private var recordedPartialFileURL: URL?
+
+    func download(
+        app: AppRecord,
+        destination: URL,
+        progress: @escaping @Sendable (Int64, Int64) -> Void
+    ) async throws -> URL {
+        _ = app
+        try Data([0x50, 0x4B, 0x03, 0x04]).write(to: destination)
+        recordedPartialFileURL = destination
+        progress(4, 100)
+        throw URLError(.timedOut)
+    }
+
+    func partialFileURL() -> URL? {
+        recordedPartialFileURL
     }
 }

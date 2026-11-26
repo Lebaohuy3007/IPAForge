@@ -20,13 +20,14 @@ enum AppLanguage: String, CaseIterable, Identifiable {
 
 @MainActor
 final class AppEnvironment: ObservableObject {
-    let logger = LoggingService()
+    let logger: LoggingService
     let anisette: AnisetteService
     let anisetteServers: AnisetteServerStore
     let authentication: AuthenticationService
     let accountVault: AppleAccountVault
-    let appStore = AppStoreService()
-    let downloads = DownloadService()
+    let appStore: AppStoreService
+    let appStoreExperiments: AppStoreExperimentService
+    let downloads: DownloadService
     let export = ExportService()
     let deviceProfiles = DeviceProfileStore()
     @Published var authPhase: AuthPhase = .signedOut
@@ -50,6 +51,12 @@ final class AppEnvironment: ObservableObject {
     private var loginAttemptID: UUID?
 
     init(accountVault: AppleAccountVault = AppleAccountVault()) {
+        let logger = LoggingService()
+        let appStore = AppStoreService()
+        self.logger = logger
+        self.appStore = appStore
+        self.appStoreExperiments = AppStoreExperimentService(appStore: appStore, logger: logger)
+        self.downloads = DownloadService(logger: logger)
         self.accountVault = accountVault
         country = Self.defaultAppStoreCountry
         let savedLanguage = UserDefaults.standard.string(forKey: Self.languagePreferenceKey)

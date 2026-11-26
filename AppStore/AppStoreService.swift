@@ -1,10 +1,16 @@
 import Foundation
 
-enum AppStoreServiceError: LocalizedError {
+enum AppStoreServiceError: LocalizedError, Equatable {
     case invalidResponse
+    case httpStatus(Int)
 
     var errorDescription: String? {
-        "Apple App Store returned an invalid response."
+        switch self {
+        case .invalidResponse:
+            return "Apple App Store returned an invalid response."
+        case .httpStatus(let status):
+            return "Apple App Store returned HTTP \(status)."
+        }
     }
 }
 
@@ -15,11 +21,15 @@ final class AppStoreService {
         self.session = session
     }
 
-    func search(_ query: String, country: String = "us") async throws -> [AppRecord] {
+    func search(
+        _ query: String,
+        country: String = "us",
+        onHTTPStatus: ((Int) -> Void)? = nil
+    ) async throws -> [AppRecord] {
         let trimmed = query.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return [] }
         if let appID = Int(trimmed), appID > 0 {
-            return try await lookup(appID: appID, country: country)
+            return try await lookup(appID: appID, country: country, onHTTPStatus: onHTTPStatus)
         }
         if trimmed.contains(".") {
             var bundleComponents = URLComponents(string: "https://itunes.apple.com/lookup")!
@@ -28,9 +38,12 @@ final class AppStoreService {
                 URLQueryItem(name: "country", value: country)
             ]
             let (bundleData, bundleResponse) = try await session.data(from: bundleComponents.url!)
-            guard let bundleHTTP = bundleResponse as? HTTPURLResponse,
-                  (200...299).contains(bundleHTTP.statusCode) else {
+            guard let bundleHTTP = bundleResponse as? HTTPURLResponse else {
                 throw AppStoreServiceError.invalidResponse
+            }
+            onHTTPStatus?(bundleHTTP.statusCode)
+            guard (200...299).contains(bundleHTTP.statusCode) else {
+                throw AppStoreServiceError.httpStatus(bundleHTTP.statusCode)
             }
             let bundleResults = try decode(bundleData)
             if !bundleResults.isEmpty {
@@ -47,14 +60,21 @@ final class AppStoreService {
             URLQueryItem(name: "limit", value: "50")
         ]
         let (data, response) = try await session.data(from: components.url!)
-        guard let http = response as? HTTPURLResponse,
-              (200...299).contains(http.statusCode) else {
+        guard let http = response as? HTTPURLResponse else {
             throw AppStoreServiceError.invalidResponse
+        }
+        onHTTPStatus?(http.statusCode)
+        guard (200...299).contains(http.statusCode) else {
+            throw AppStoreServiceError.httpStatus(http.statusCode)
         }
         return try decode(data)
     }
 
-    func lookup(appID: Int, country: String = "us") async throws -> [AppRecord] {
+    func lookup(
+        appID: Int,
+        country: String = "us",
+        onHTTPStatus: ((Int) -> Void)? = nil
+    ) async throws -> [AppRecord] {
         guard appID > 0 else { return [] }
         var components = URLComponents(string: "https://itunes.apple.com/lookup")!
         components.queryItems = [
@@ -62,9 +82,12 @@ final class AppStoreService {
             URLQueryItem(name: "country", value: country)
         ]
         let (data, response) = try await session.data(from: components.url!)
-        guard let http = response as? HTTPURLResponse,
-              (200...299).contains(http.statusCode) else {
+        guard let http = response as? HTTPURLResponse else {
             throw AppStoreServiceError.invalidResponse
+        }
+        onHTTPStatus?(http.statusCode)
+        guard (200...299).contains(http.statusCode) else {
+            throw AppStoreServiceError.httpStatus(http.statusCode)
         }
         return try decode(data)
     }
@@ -91,7 +114,8 @@ final class AppStoreService {
                 iconURL: image.flatMap(URL.init(string:)),
                 version: item["version"] as? String ?? "Unknown",
                 fileSizeBytes: size,
-                minimumOSVersion: item["minimumOsVersion"] as? String
+                minimumOSVersion: item["minimumOsVersion"] as? String,
+                price: (item["price"] as? NSNumber)?.doubleValue
             )
         }
     }

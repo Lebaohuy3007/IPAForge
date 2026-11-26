@@ -8,16 +8,20 @@ final class DownloadService: ObservableObject {
     private let provider: AppStoreDownloadProviding
     private let exportService: ExportService
     private let ipaInspector: IPAInspector
+    private let logger: LoggingService?
     private var workerTasks: [UUID: Task<Void, Never>] = [:]
+    private var lastProgressMilestone: [UUID: Int] = [:]
 
     init(
         provider: AppStoreDownloadProviding = AppStoreDownloadService(),
         exportService: ExportService = ExportService(),
-        ipaInspector: IPAInspector = IPAInspector()
+        ipaInspector: IPAInspector = IPAInspector(),
+        logger: LoggingService? = nil
     ) {
         self.provider = provider
         self.exportService = exportService
         self.ipaInspector = ipaInspector
+        self.logger = logger
     }
 
     /// Returns true when the app cannot fit in the currently available storage.
@@ -39,6 +43,7 @@ final class DownloadService: ObservableObject {
             fileURL: nil,
             errorMessage: nil
         ))
+        logger?.log(.info, "Download Started | App ID \(app.id) | Queue task \(taskID.uuidString).")
         workerTasks[taskID] = Task { [weak self] in
             guard let self else { return }
             await self.performDownload(taskID: taskID, app: app)
@@ -47,7 +52,10 @@ final class DownloadService: ObservableObject {
     }
 
     private func performDownload(taskID: UUID, app: AppRecord) async {
-        defer { workerTasks[taskID] = nil }
+        defer {
+            workerTasks[taskID] = nil
+            lastProgressMilestone[taskID] = nil
+        }
         let documents = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
         let fileManager = FileManager.default
         let taskDirectory = fileManager.temporaryDirectory
@@ -74,6 +82,7 @@ final class DownloadService: ObservableObject {
             update(taskID: taskID, status: .verifying, errorMessage: nil)
             _ = try await inspectOffMainActor(url)
             try exportService.validate(url)
+            logger?.log(.success, "IPA Verification | PASS | App ID \(app.id) passed IPAInspector and export validation.")
             try Task.checkCancellation()
             try fileManager.createDirectory(at: documents, withIntermediateDirectories: true)
             try fileManager.moveItem(at: url, to: savedFile)
@@ -88,15 +97,22 @@ final class DownloadService: ObservableObject {
                 tasks[index].totalBytes = Int64(actualSize)
             }
             tasks[index].fileURL = savedFile
+            logger?.log(.success, "Download Completed | App ID \(app.id) | IPA saved after validation.")
         } catch is CancellationError {
             update(taskID: taskID, status: .cancelled, errorMessage: nil)
+            logger?.log(.warning, "Download Cancelled | App ID \(app.id).")
             try? fileManager.removeItem(at: taskDirectory)
             try? fileManager.removeItem(at: savedFile)
         } catch {
             if Task.isCancelled {
                 update(taskID: taskID, status: .cancelled, errorMessage: nil)
+                logger?.log(.warning, "Download Cancelled | App ID \(app.id).")
             } else {
                 update(taskID: taskID, status: .failed, errorMessage: error.localizedDescription)
+                logger?.log(
+                    .error,
+                    "Download Failed | \(failureSummary(for: error)) | App ID \(app.id)."
+                )
             }
             try? fileManager.removeItem(at: taskDirectory)
             try? fileManager.removeItem(at: savedFile)
@@ -127,6 +143,22 @@ final class DownloadService: ObservableObject {
         return result.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? "app" : result
     }
 
+    private func failureSummary(for error: Error) -> String {
+        if error is IPAInspectionError { return "IPA verification failed" }
+        if let urlError = error as? URLError { return "connection error code \(urlError.code.rawValue)" }
+        if let storeError = error as? AppStoreServiceError {
+            switch storeError {
+            case .invalidResponse: return "invalid public Store response"
+            case .httpStatus(let status): return "HTTP \(status)"
+            }
+        }
+        switch error as? AppStoreDownloadError {
+        case .directEngineUnavailable?: return "internal engine unavailable"
+        case .unexpectedDownloadLocation?: return "download provider returned an unexpected file"
+        case nil: return "download provider error"
+        }
+    }
+
     var availableStorageBytes: Int64? {
         let values = try? URL(fileURLWithPath: "/")
             .resourceValues(forKeys: [.volumeAvailableCapacityForImportantUsageKey])
@@ -142,9 +174,24 @@ final class DownloadService: ObservableObject {
         if total > 0 {
             tasks[index].totalBytes = total
             tasks[index].progress = min(Double(received) / Double(total), 1)
+            let milestone = min(Int(Double(received) / Double(total) * 10), 10) * 10
+            if milestone >= 10, milestone > lastProgressMilestone[taskID, default: 0] {
+                lastProgressMilestone[taskID] = milestone
+                logger?.log(
+                    .info,
+                    "Download Progress | App ID \(tasks[index].app.id) | \(received) / \(total) bytes | \(milestone)%."
+                )
+            }
         } else {
             tasks[index].totalBytes = 0
             tasks[index].progress = 0
+            if received > 0, lastProgressMilestone[taskID] == nil {
+                lastProgressMilestone[taskID] = -1
+                logger?.log(
+                    .info,
+                    "Download Progress | App ID \(tasks[index].app.id) | \(received) bytes received | total unknown."
+                )
+            }
         }
     }
 

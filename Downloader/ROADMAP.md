@@ -1,8 +1,11 @@
 # App Store Login and IPA Downloader roadmap
 
+For the 2026-11-26 source register, 16-path ranking, elimination rounds, live anonymous API result, and Experiment B checklist, see [AUTHENTICATION_RESEARCH.md](./AUTHENTICATION_RESEARCH.md).
+
 ## Current implementation status
 
 - `AppStoreService` searches and looks up public App Store metadata through the iTunes Search API.
+- The App Store screen can run an anonymous Search/Lookup experiment and records Experiment A and Experiment B's blocked result in the existing Activity Log.
 - The existing `AuthenticationService` and StosSign provider authenticate to Apple's **Developer Portal** and fetch Developer Teams. That session is not an App Store session.
 - The IPA download queue uses an in-process provider boundary, saves a returned IPA to app Documents, checks the ZIP signature, and exposes the file to the export screen. A real App Store provider is not integrated.
 - App Store Login has not been implemented. There is no separate App Store session vault, no App Store login UI, and no live App Store authentication test.
@@ -19,13 +22,13 @@ The package's iOS deployment declaration is evidence that some package code may 
 
 ### ipaverse
 
-[bahattinkoc/ipaverse](https://github.com/bahattinkoc/ipaverse) is a macOS app, not an iOS implementation. Its App Store service uses GrandSlam/SRP-6a, 2FA, a bridge to Store credentials, license checks, downloads, progress, and SINF patching. The reviewed source also imports macOS IOKit and uses `/sbin/ifconfig`/`Process`; its local Anisette path uses macOS facilities. It cannot be copied into the iOS target unchanged.
+[bahattinkoc/ipaverse](https://github.com/bahattinkoc/ipaverse) is a macOS app, not an iOS implementation. Its App Store service uses GrandSlam/SRP-6a, 2FA, a PET bridge to Store credentials, license acquisition, downloads, progress, and SINF patching. The reviewed source imports IOKit and uses `/sbin/ifconfig`/`Process` to read a MAC; it tries the Mac serial next and falls back to a random UUID. Its local Anisette path uses macOS facilities. It cannot be copied into the iOS target unchanged, and the random fallback violates the no-fabricated-identity constraint.
 
 References: [ipaverse AppStoreService.swift](https://github.com/bahattinkoc/ipaverse/blob/main/ipaverse/ipaverse/Services/AppStoreService.swift), [ipaverse README](https://github.com/bahattinkoc/ipaverse/blob/main/README.md).
 
 ### ipatool
 
-[majd/ipatool](https://github.com/majd/ipatool) is MIT-licensed Go and provides App Store login, 2FA, account/session, lookup, purchase, and download APIs. Its current authentication uses SAP signing and Store AMD-related state; its machine implementation requests a MAC-derived identity. It is not a Swift SDK, and the advertised iOS platform support does not by itself establish a usable machine identity or successful login in IPAForge's iOS app.
+[majd/ipatool](https://github.com/majd/ipatool) is MIT-licensed Go and provides App Store login, 2FA, account/session, lookup, purchase, and download APIs. Release v2.8.1 is current at this review date. Release v2.6.0 added a jailbroken-iOS binary, but open issues [#680](https://github.com/majd/ipatool/issues/680) and [#682](https://github.com/majd/ipatool/issues/682) report its authentication emulator failing to initialize on jailbroken iPhones. It is not a Swift SDK, and desktop success does not establish a usable ordinary-iOS identity or successful login in IPAForge.
 
 References: [ipatool App Store login source](https://github.com/majd/ipatool/blob/main/pkg/appstore/appstore_login.go), [ipatool package API](https://github.com/majd/ipatool/blob/main/pkg/appstore/appstore.go), [ipatool module](https://github.com/majd/ipatool/blob/main/go.mod).
 
@@ -50,7 +53,7 @@ The queue and package handling are wired, but the direct App Store download engi
 ## Verification record
 
 - Repository/code review: completed for the references linked above.
-- App Store Login mock tests: not added; no provider implementation exists to test yet. The later v3 mock tests exercise only queue/IPA behavior and never contact Apple.
+- App Store Login mock tests: not added; no provider implementation exists to test yet. The v3/experiment mocks cover public API response handling, experiment reporting, and queue/IPA behavior only; they do not authenticate or contact Apple.
 - Build compatibility of ApplePackage inside IPAForge: not verified; no dependency was added.
 - Live Apple Account authentication: not tested.
 - App Store IPA downloads: not part of this login milestone.
@@ -64,6 +67,7 @@ The current project is an Xcode iOS app with deployment target **iOS 16.0** and 
 | Component | Finding | Status |
 | --- | --- | --- |
 | `AppStoreService.swift` | Calls the public iTunes Search/Lookup API for app metadata. It has no Apple Account authentication, version history, licensing, or IPA URL flow. | IMPLEMENTED (public metadata only) |
+| `AppStoreExperimentService.swift` | Runs anonymous Search/Lookup checks, records status in the existing logger, and marks binary access unsupported and Experiment B blocked before credentials. | IMPLEMENTED (no live authentication) |
 | `AuthenticationService.swift`, `StosSignAuthenticationProvider.swift` | Sign in to Apple Developer Portal and load Developer Teams. Its session is separate from App Store session cookies, DSID, storefront, password token, and pod data. | IMPLEMENTED (Developer Portal only) |
 | `AppStoreDownloadService.swift` | Provider boundary currently throws `directEngineUnavailable`. It does not authenticate, acquire a license, or fetch an IPA. | BLOCKED |
 | `DownloadService.swift` | Queue state, provider cancellation, byte-based progress, retry-as-new-task, temporary file cleanup, IPA inspection, and save-after-validation are implemented. No production provider can currently start a real transfer. | PARTIALLY IMPLEMENTED |
@@ -109,13 +113,13 @@ The following **20 new repository projects** were checked in addition to the thr
 
 ### Current protocol evidence and Device Identity decision
 
-The most relevant current community protocol report is [ipatool issue #642](https://github.com/majd/ipatool/issues/642). A contributor reports that, on a Mac, Configurator's `AMSAnisette` type-2 `X-Apple-AMD` and `X-Apple-AMD-M` headers are distinct from AuthKit's `X-Apple-I-MD*`; adding the local Store AMD pair plus a SAP signature allowed their patched client to log in and list purchases. The report is environment-specific and is not a guarantee for every Apple account or endpoint. It does show why the app's existing remote Anisette v3 headers cannot simply be relabeled as Store AMD. The ipatool 2.8.0 release separately says it restored authentication with local Anisette provisioning and modern Store operations; this is desktop evidence, not an iOS SDK or iOS sandbox proof.
+The most relevant current community protocol report is [ipatool issue #642](https://github.com/majd/ipatool/issues/642). A contributor reports that, on a Mac, Configurator's `AMSAnisette` type-2 `X-Apple-AMD` and `X-Apple-AMD-M` headers are distinct from AuthKit's `X-Apple-I-MD*`; adding local Store AMD proof plus a SAP signature allowed their patched client to log in and list purchases. A later comment reports downloading an already-owned IPA, but says new-license acquisition was not verified and the IPA remained FairPlay-encrypted. The report is environment-specific and is not a guarantee for every account or endpoint. It shows why IPAForge's remote Anisette v3 headers cannot simply be relabeled as Store AMD. ipatool 2.8.0/2.8.1 restore desktop authentication, but latest iOS issue reports still fail at Unicorn emulator setup; this is not an ordinary-iOS proof.
 
 The blockers are concrete:
 
 1. Apple documents `UIDevice.identifierForVendor` as vendor-scoped, with a documented reset condition; none of the reviewed primary sources says it is the Store protocol's accepted GUID or hardware ID. It cannot be silently substituted.
 2. The current Swift candidate IPAToolKit explicitly generates and persists random hardware bytes on iOS. iPadN generates a random GUID and derives/randomizes Store identifiers. Both are ruled out by this task.
-3. `apple-auth` says its iPhone path uses Mac ADI and is experimental/not recommended. Desktop emulators such as ipatool-rs/ipakeep run desktop Apple code in a separate runtime and do not establish a real iOS device identity.
+3. `apple-auth` says its iPhone path uses Mac ADI and is experimental/not recommended. ipatool's current iOS binary targets jailbroken devices; open issues #680 and #682 report an ARM64 emulator failure before authentication. Desktop emulators such as ipatool-rs/ipakeep do not establish a real iOS device identity.
 4. The public Anisette endpoint in IPAForge only returns Anisette v3/AuthKit data. The reviewed current protocol report distinguishes those headers from Store AMD. No reviewed source provides an Apple-supported public iOS API for Store AMD/SAP device proof in this app's sandbox.
 
 **Decision: App Store Authentication remains BLOCKED.** Keep the Developer Portal/StosSign flow separate. Do not add App Store login/session classes, a success-shaped UI, or a fake provider until an iOS-compatible identity path is demonstrated on a physical device with the user's own account.
@@ -155,14 +159,15 @@ The blockers are concrete:
 
 ### Tests and verification
 
-Added 15 v3 unit-test cases. Their current platform requirements are:
+Added 23 v3/experiment unit-test cases. Their current platform requirements are:
 
 | Tests | Count | Linux status |
 | --- | ---: | --- |
 | Default profile, version/profile validation, and all `CompatibilityCheckerTests` | 8 | Pure Swift/Foundation; covered by `Scripts/test-linux-core.sh` |
 | Profile persistence and multiple-profile selection/deletion | 2 | `DeviceProfileStore` uses Combine/`ObservableObject`; kept in the app XCTest target |
-| IPA ZIP/metadata validation | 2 | Foundation/CoreFoundation + ZIPFoundation; portable in principle, but the current Linux harness does not resolve/link the package or run this XCTest target |
-| Download progress/cancellation, validation/save, and retry | 3 | `DownloadService` uses Combine and the app's Documents container; requires Apple XCTest environment |
+| IPA ZIP/metadata validation, missing files, invalid plist/executable, Mach-O and CRC | 5 | Foundation/CoreFoundation + ZIPFoundation; current Linux harness does not resolve/link the package or run this XCTest target |
+| Download progress/cancellation, validation/save, retry, timeout and partial-file cleanup | 4 | `DownloadService` uses Combine and the app's Documents container; requires Apple XCTest environment |
+| Public Search status/metadata, HTTP failure, malformed response, network failure, and mock experiment summary | 4 | `MockURLProtocol` XCTest only; does not call Apple or authenticate |
 
 The Linux harness exercises the same pure `DeviceProfile`, `SemanticOSVersion`, and `CompatibilityChecker` sources without changing the app's module boundaries. `DeviceProfileStore` was moved to its own Combine-dependent source file; the type/API and Xcode project architecture stay the same. Its fixture provider is test-only and does not participate in the production download service.
 
@@ -170,12 +175,13 @@ The Linux harness exercises the same pure `DeviceProfile`, `SemanticOSVersion`, 
 | --- | --- |
 | `git diff --check` | Passed (no whitespace errors) |
 | Swift version / target | Swift 6.4.3; `x86_64-unknown-linux-gnu` |
-| `swiftc -frontend -parse` over all project `.swift` files | Passed; this checks syntax, not Apple framework type compatibility |
-| `bash Scripts/test-linux-core.sh` | Passed: pure Swift source compiled in Swift 6 mode and 17 assertions passed |
+| `swiftc -frontend -parse` over all project `.swift` files | Passed after the final source changes; syntax only, not Apple framework type compatibility |
+| `bash Scripts/test-linux-core.sh` | Passed after the final model changes: pure Swift source compiled in Swift 6 mode and 17 assertions passed |
+| Live anonymous Search/Lookup API request | Search HTTP 200; lookup returned one free app metadata record. No binary URL was returned. |
 | `which swift` / `swift --version` | Swiftly executable found at `/home/codespace/.local/share/swiftly/bin/swift`; Swift 6.4.3. The restricted default shell PATH omits that directory. |
 | `xcodebuild` / complete iOS target typecheck | NOT TESTED: `xcodebuild` and iOS SDK are absent |
 | Python `zipfile` inspection of the embedded test fixture | Passed (two entries, readable app Info.plist, 32-byte Mach-O test header); this is fixture inspection, not a Swift test run |
-| Full `IPAForgeTests` XCTest suite | NOT TESTED: the iOS test bundle requires Xcode/Apple frameworks; the eight pure cases were rerun in the Linux harness |
+| Full `IPAForgeTests` XCTest suite | NOT TESTED: the iOS test bundle requires Xcode/Apple frameworks; the eight pure cases were rerun in the Linux harness. The 23 new XCTest cases were added but not executed here. |
 | iOS 27 Simulator | NOT TESTED: this is a Linux Codespace with no macOS/Xcode runtime |
 | Real App Store login / direct IPA download | NOT TESTED and BLOCKED pending a compliant iOS Device Identity/SAP/Store AMD path |
 | GitHub Actions on this exact worktree | NOT RUN: the worktree is uncommitted and this task forbids commit/push; dispatching the remote branch would test different source |

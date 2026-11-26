@@ -151,6 +151,8 @@ struct IPAInspector: Sendable {
             )
         } catch let error as IPAInspectionError {
             throw error
+        } catch Archive.ArchiveError.invalidCRC32 {
+            throw IPAInspectionError.invalidArchive("CRC mismatch in \(infoPath)")
         } catch {
             if Task.isCancelled { throw IPAInspectionError.cancelled }
             throw IPAInspectionError.invalidArchive(error.localizedDescription)
@@ -186,6 +188,8 @@ struct IPAInspector: Sendable {
                 )
             } catch let error as IPAInspectionError {
                 throw error
+            } catch Archive.ArchiveError.invalidCRC32 {
+                throw IPAInspectionError.invalidArchive("CRC mismatch in \(entry.path)")
             } catch {
                 if Task.isCancelled { throw IPAInspectionError.cancelled }
                 throw IPAInspectionError.invalidArchive(error.localizedDescription)

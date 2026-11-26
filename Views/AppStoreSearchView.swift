@@ -20,9 +20,13 @@ struct AppStoreSearchView: View {
                 if let errorMessage {
                     Text(errorMessage).foregroundStyle(.red).padding(.horizontal)
                 }
-                List(results) { app in
-                    NavigationLink(value: app) {
-                        AppRow(app: app)
+                List {
+                    AppStoreExperimentPanel(experiments: environment.appStoreExperiments)
+
+                    ForEach(results) { app in
+                        NavigationLink(value: app) {
+                            AppRow(app: app)
+                        }
                     }
                 }
                 .navigationDestination(for: AppRecord.self) { app in
@@ -55,6 +59,67 @@ struct AppStoreSearchView: View {
                 environment.logger.log(.error, "App Store search failed.")
             }
             isLoading = false
+        }
+    }
+}
+
+private struct AppStoreExperimentPanel: View {
+    @ObservedObject var experiments: AppStoreExperimentService
+
+    var body: some View {
+        Section {
+            Button {
+                Task { await experiments.run() }
+            } label: {
+                if experiments.isRunning {
+                    Label("Đang kiểm tra API công khai…", systemImage: "hourglass")
+                } else {
+                    Label("Chạy thử nghiệm App Store công khai", systemImage: "network")
+                }
+            }
+            .disabled(experiments.isRunning)
+
+            if let report = experiments.report {
+                Text(LocalizedStringKey(report.summary))
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+
+                ForEach(report.checks) { check in
+                    VStack(alignment: .leading, spacing: 3) {
+                        HStack {
+                            Text(LocalizedStringKey(check.name)).font(.subheadline.weight(.medium))
+                            Spacer()
+                            Text(check.status.rawValue)
+                                .font(.system(.caption, design: .monospaced).weight(.semibold))
+                                .foregroundStyle(color(for: check.status))
+                        }
+                        Text(check.detail)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .textSelection(.enabled)
+                    }
+                    .padding(.vertical, 2)
+                }
+                HStack(spacing: 4) {
+                    Text("Cập nhật")
+                    Text(report.completedAt, style: .relative)
+                }
+                .font(.caption2)
+                .foregroundStyle(.tertiary)
+            }
+        } header: {
+            Text("Kiểm tra App Store (không đăng nhập)")
+        } footer: {
+            Text("Kết quả của Experiment A và trạng thái blocker Experiment B cũng được ghi trong Activity Log.")
+        }
+    }
+
+    private func color(for status: AppStoreExperimentStatus) -> Color {
+        switch status {
+        case .passed: return .green
+        case .failed: return .red
+        case .blocked: return .orange
+        case .unsupported, .notTested: return .secondary
         }
     }
 }
