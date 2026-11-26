@@ -2,11 +2,8 @@ import SwiftUI
 
 struct AppDetailView: View {
     @State private var isShowingOldVersions = false
-    @State private var isShowingStorageAlert = false
-    @State private var isShowingDecryptionNotice = false
-    @EnvironmentObject private var environment: AppEnvironment
+    @EnvironmentObject private var deviceProfiles: DeviceProfileStore
     let app: AppRecord
-    let onDownloadStarted: () -> Void
 
     var body: some View {
         ScrollView {
@@ -35,6 +32,15 @@ struct AppDetailView: View {
                 }
                 .padding(.vertical, 4)
 
+                VStack(alignment: .leading, spacing: 10) {
+                    Text("Compatibility")
+                        .font(.title3.bold())
+                    CompatibilityReportView(report: CompatibilityChecker().evaluate(
+                        requirements: .fromCatalog(app),
+                        profile: deviceProfiles.selectedProfile
+                    ))
+                }
+
                 Text("Download")
                     .font(.title3.bold())
 
@@ -47,44 +53,23 @@ struct AppDetailView: View {
                 .buttonStyle(.bordered)
                 .frame(maxWidth: .infinity)
 
-                Button {
-                    if environment.downloads.start(app: app) {
-                        isShowingStorageAlert = true
-                    } else {
-                        onDownloadStarted()
+                VStack(alignment: .leading, spacing: 8) {
+                    Button {} label: {
+                        Label("Tải IPA (chưa khả dụng)", systemImage: "arrow.down.to.line")
+                            .frame(maxWidth: .infinity)
                     }
-                } label: {
-                    Label("Tải xuống IPA", systemImage: "arrow.down.to.line")
-                        .frame(maxWidth: .infinity)
-                }
-                .buttonStyle(.borderedProminent)
-                .frame(maxWidth: .infinity)
+                    .buttonStyle(.borderedProminent)
+                    .disabled(true)
 
-                Button {
-                    isShowingDecryptionNotice = true
-                } label: {
-                    Label("Tải xuống với giải mã hoá", systemImage: "lock")
-                        .frame(maxWidth: .infinity)
-                }
-                .buttonStyle(.bordered)
-                .frame(maxWidth: .infinity)
-                .alert("Thông báo", isPresented: $isShowingDecryptionNotice) {
-                    Button("Huỷ", role: .cancel) { }
-                    Button("OK", role: .cancel) { }
-                } message: {
-                    Text("Cái này chưa được tích hợp, hãy chờ đợi bản cập nhật mới")
+                    Text("Đăng nhập App Store và quyền tải ứng dụng chưa được triển khai, nên IPAForge chưa thể tải IPA. Không có dữ liệu tải giả.")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
                 }
             }
             .padding()
         }
         .navigationTitle("Details")
         .navigationBarTitleDisplayMode(.inline)
-        .alert("Cảnh báo", isPresented: $isShowingStorageAlert) {
-            Button("Hủy", role: .cancel) { }
-            Button("OK", role: .cancel) { }
-        } message: {
-            Text("Thiết bị này không đủ dung lượng để cài đặt ứng dụng này!")
-        }
         .sheet(isPresented: $isShowingOldVersions) {
             NavigationStack {
                 List {

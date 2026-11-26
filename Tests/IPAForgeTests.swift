@@ -819,3 +819,382 @@ private final class MockURLProtocol: URLProtocol {
 
     override func stopLoading() {}
 }
+
+@MainActor
+final class DeviceProfileTests: XCTestCase {
+    func testDefaultProfileIsAnIOS27SimulatedProfile() {
+        let profile = DeviceProfile.defaultProfile
+        XCTAssertEqual(profile.family, .iPhone)
+        XCTAssertEqual(profile.osVersion, "27.0")
+        XCTAssertTrue(profile.isSimulated)
+        XCTAssertNil(profile.availableCapabilities)
+        XCTAssertNil(profile.supportedArchitectures)
+    }
+
+    func testVersionComparisonAndProfileValidation() {
+        XCTAssertGreaterThan(SemanticOSVersion("27.2.1")!, SemanticOSVersion("27.2")!)
+        XCTAssertLessThan(SemanticOSVersion("27.10")!, SemanticOSVersion("28.0")!)
+
+        var profile = DeviceProfile.defaultProfile
+        profile.model = "iPhone Air"
+        profile.osVersion = "27.2"
+        profile.supportedArchitectures = ["arm64e.x1"]
+        XCTAssertNil(profile.validationError())
+
+        profile.osVersion = "26.9"
+        XCTAssertEqual(profile.validationError(), .requiresIOS27)
+        profile.osVersion = "27.invalid"
+        XCTAssertEqual(profile.validationError(), .invalidOSVersion)
+    }
+
+    func testProfilesPersistAndRestoreSelectedModelAndVersion() throws {
+        let suite = "IPAForge.DeviceProfileTests.\(UUID().uuidString)"
+        let defaults = try XCTUnwrap(UserDefaults(suiteName: suite))
+        defer { defaults.removePersistentDomain(forName: suite) }
+
+        let store = DeviceProfileStore(defaults: defaults)
+        var profile = store.selectedProfile
+        profile.name = "iPhone Air test"
+        profile.model = "iPhone Air"
+        profile.osVersion = "27.2"
+        try store.save(profile)
+
+        let restored = DeviceProfileStore(defaults: defaults)
+        XCTAssertEqual(restored.selectedProfile, profile)
+        XCTAssertTrue(restored.selectedProfile.isSimulated)
+    }
+
+    func testMultipleProfilesCanBeSelectedAndLastProfileCannotBeDeleted() throws {
+        let suite = "IPAForge.DeviceProfileTests.Multiple.\(UUID().uuidString)"
+        let defaults = try XCTUnwrap(UserDefaults(suiteName: suite))
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let store = DeviceProfileStore(defaults: defaults)
+        let firstID = store.selectedProfileID
+
+        let second = store.createProfile()
+        XCTAssertEqual(store.profiles.count, 2)
+        XCTAssertEqual(store.selectedProfileID, second.id)
+
+        store.select(profileID: firstID)
+        XCTAssertEqual(store.selectedProfileID, firstID)
+        store.delete(profileID: second.id)
+        XCTAssertEqual(store.profiles.map(\.id), [firstID])
+        store.delete(profileID: firstID)
+        XCTAssertEqual(store.profiles.map(\.id), [firstID])
+    }
+}
+
+final class CompatibilityCheckerTests: XCTestCase {
+    func testCompatibleRequiresKnownValuesAcrossAllCriteria() {
+        let profile = makeProfile(capabilities: ["wifi", "arm64"], architectures: ["arm64"])
+        let requirements = CompatibilityRequirements(
+            minimumOSVersion: "16.0",
+            supportedDeviceFamilies: [1],
+            requiredCapabilities: ["wifi"],
+            prohibitedCapabilities: ["nfc"],
+            supportedPlatforms: ["iPhoneOS"],
+            architectures: ["arm64"]
+        )
+
+        let report = CompatibilityChecker().evaluate(requirements: requirements, profile: profile)
+
+        XCTAssertEqual(report.status, .compatible)
+        XCTAssertFalse(report.hasUnknownChecks)
+    }
+
+    func testMinimumOSAndDeviceFamilyCanBeIncompatible() {
+        let profile = makeProfile(osVersion: "27.0", family: .iPhone)
+        let requirements = CompatibilityRequirements(
+            minimumOSVersion: "28.0",
+            supportedDeviceFamilies: [2],
+            requiredCapabilities: [],
+            prohibitedCapabilities: [],
+            supportedPlatforms: ["iPhoneOS"],
+            architectures: ["arm64"]
+        )
+
+        let report = CompatibilityChecker().evaluate(requirements: requirements, profile: profile)
+
+        XCTAssertEqual(report.status, .incompatible)
+        XCTAssertEqual(report.findings.first(where: { $0.criterion == .minimumOS })?.status, .incompatible)
+        XCTAssertEqual(report.findings.first(where: { $0.criterion == .deviceFamily })?.status, .incompatible)
+    }
+
+    func testUnknownIsReturnedForMissingOrInvalidRequirements() {
+        let profile = makeProfile()
+        let missing = CompatibilityRequirements(
+            minimumOSVersion: nil,
+            supportedDeviceFamilies: nil,
+            requiredCapabilities: nil,
+            prohibitedCapabilities: nil,
+            supportedPlatforms: nil,
+            architectures: nil
+        )
+        let malformedVersion = CompatibilityRequirements(
+            minimumOSVersion: "twenty-seven",
+            supportedDeviceFamilies: [1],
+            requiredCapabilities: [],
+            prohibitedCapabilities: [],
+            supportedPlatforms: ["iPhoneOS"],
+            architectures: ["arm64"]
+        )
+
+        XCTAssertEqual(CompatibilityChecker().evaluate(requirements: missing, profile: profile).status, .unknown)
+        XCTAssertEqual(CompatibilityChecker().evaluate(requirements: malformedVersion, profile: profile).status, .unknown)
+    }
+
+    func testCapabilitiesAndArchitectureUseOnlyDeclaredProfileData() {
+        let requirements = CompatibilityRequirements(
+            minimumOSVersion: "16.0",
+            supportedDeviceFamilies: [1],
+            requiredCapabilities: ["nfc"],
+            prohibitedCapabilities: ["wifi"],
+            supportedPlatforms: ["iPhoneOS"],
+            architectures: ["arm64"]
+        )
+        let unknownProfile = makeProfile()
+        let knownProfile = makeProfile(capabilities: ["wifi"], architectures: ["x86_64"])
+
+        let unknownReport = CompatibilityChecker().evaluate(requirements: requirements, profile: unknownProfile)
+        let incompatibleReport = CompatibilityChecker().evaluate(requirements: requirements, profile: knownProfile)
+
+        XCTAssertEqual(unknownReport.findings.first(where: { $0.criterion == .deviceCapabilities })?.status, .unknown)
+        XCTAssertEqual(incompatibleReport.findings.first(where: { $0.criterion == .deviceCapabilities })?.status, .incompatible)
+        XCTAssertEqual(incompatibleReport.findings.first(where: { $0.criterion == .architecture })?.status, .incompatible)
+    }
+
+    func testArm64eAndArm64eX1AreNotTreatedAsPlainArm64() {
+        let requirements = CompatibilityRequirements(
+            minimumOSVersion: "27.0",
+            supportedDeviceFamilies: [1],
+            requiredCapabilities: [],
+            prohibitedCapabilities: [],
+            supportedPlatforms: ["iPhoneOS"],
+            architectures: ["arm64e.x1"]
+        )
+        let profile = makeProfile(architectures: ["arm64e"])
+
+        let report = CompatibilityChecker().evaluate(requirements: requirements, profile: profile)
+
+        XCTAssertEqual(report.findings.first(where: { $0.criterion == .architecture })?.status, .incompatible)
+    }
+
+    func testCatalogMetadataDoesNotGuessMissingDeviceRequirements() {
+        let app = makeApp(minimumOSVersion: "16.0")
+        let report = CompatibilityChecker().evaluate(
+            requirements: .fromCatalog(app),
+            profile: makeProfile()
+        )
+
+        XCTAssertEqual(report.status, .unknown)
+        XCTAssertEqual(report.findings.first(where: { $0.criterion == .minimumOS })?.status, .compatible)
+        XCTAssertEqual(report.findings.first(where: { $0.criterion == .deviceFamily })?.status, .unknown)
+    }
+
+    private func makeProfile(
+        osVersion: String = "27.0",
+        family: DeviceProfileFamily = .iPhone,
+        capabilities: Set<String>? = nil,
+        architectures: Set<String>? = nil
+    ) -> DeviceProfile {
+        DeviceProfile(
+            id: UUID(),
+            name: "Test profile",
+            model: family == .iPhone ? "Generic iPhone" : "Generic iPad",
+            family: family,
+            osVersion: osVersion,
+            availableCapabilities: capabilities,
+            supportedArchitectures: architectures
+        )
+    }
+
+    private func makeApp(minimumOSVersion: String?) -> AppRecord {
+        AppRecord(
+            id: 1,
+            bundleID: "com.example.app",
+            name: "Example",
+            developer: "Example",
+            iconURL: nil,
+            version: "1.0",
+            fileSizeBytes: nil,
+            minimumOSVersion: minimumOSVersion
+        )
+    }
+}
+
+final class IPAInspectorTests: XCTestCase {
+    func testValidIPAReadsMetadataAndMachOArchitecture() throws {
+        let url = try writeFixtureIPA()
+        defer { try? FileManager.default.removeItem(at: url) }
+
+        let inspection = try IPAInspector().inspect(url)
+
+        XCTAssertEqual(inspection.bundleIdentifier, "com.example.profiled")
+        XCTAssertEqual(inspection.version, "2.1.0")
+        XCTAssertEqual(inspection.buildNumber, "42")
+        XCTAssertEqual(inspection.minimumOSVersion, "16.0")
+        XCTAssertEqual(inspection.deviceFamilies, [1])
+        XCTAssertEqual(inspection.requiredCapabilities, ["arm64", "wifi"])
+        XCTAssertEqual(inspection.supportedPlatforms, ["iPhoneOS"])
+        XCTAssertEqual(inspection.architectures, ["arm64"])
+        XCTAssertEqual(inspection.archiveEntryCount, 2)
+    }
+
+    func testInspectorRejectsWrongExtensionAndCorruptedZIP() throws {
+        let fixture = try Self.fixtureDataForDownload()
+        let wrongExtension = FileManager.default.temporaryDirectory
+            .appendingPathComponent(UUID().uuidString + ".zip")
+        try fixture.write(to: wrongExtension)
+        defer { try? FileManager.default.removeItem(at: wrongExtension) }
+        XCTAssertThrowsError(try IPAInspector().inspect(wrongExtension)) {
+            XCTAssertEqual($0 as? IPAInspectionError, .notIPA)
+        }
+
+        var corrupted = fixture
+        corrupted[100] ^= 0x01
+        let damagedIPA = FileManager.default.temporaryDirectory
+            .appendingPathComponent(UUID().uuidString + ".ipa")
+        try corrupted.write(to: damagedIPA)
+        defer { try? FileManager.default.removeItem(at: damagedIPA) }
+        XCTAssertThrowsError(try IPAInspector().inspect(damagedIPA))
+    }
+
+    private func writeFixtureIPA() throws -> URL {
+        let url = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString + ".ipa")
+        try Self.fixtureDataForDownload().write(to: url)
+        return url
+    }
+
+    static func fixtureDataForDownload() throws -> Data {
+        let encoded = "UEsDBBQAAAAIALIoel27S+DZXAEAAOcCAAAeAAAAUGF5bG9hZC9FeGFtcGxlLmFwcC9JbmZvLnBsaXN0fZLRboIwFIav51Mw7qXTGLMsiJmACYmbZMCSXVZ61JMV6EqZ+vYrokZRd9eec/6vX9ra423GjV+QJRb5yOxZT6YBeVowzFcjM4mn3Wdz7HTsR2/uxl+hbwiOpTLCZDILXMPsEvIqBAdCvNgzwlkQxYZmEOK/m4a5Vkq8ELLZbCxaT1lpkdWDJQllIUCq3UzDujpgMcVMfUxDv9DRVYapcjoP9jfsHHc6qXLGwd9CWim64GCTuq7bpZLa2vG3NBN1+bBvBQMGucIlgmwHtZ0FTdgSslgiB3aPEq0LqT4bz2g/0ab1LW1/N14JoQHAQk7VspBZeYpTKWm9OIEwXBc5zKNzFjlOXVAPPm2TQb+t8YY5ZlU2j+4kesNr9STw4BdTmNIM+e6GLuYKViCdnk2OyyvTJPiAnwolsAbmUkEXyFEh/HMDVGbDwZnPqbHR73jrWmzSfBmb7D+U0/kDUEsDBBQAAAAIALIoel31qLUoDQAAACAAAAAbAAAAUGF5bG9hZC9FeGFtcGxlLmFwcC9FeGFtcGxlO//r7T8eBgZGBhwAAFBLAQIUAxQAAAAIALIoel27S+DZXAEAAOcCAAAeAAAAAAAAAAAAAACAAQAAAABQYXlsb2FkL0V4YW1wbGUuYXBwL0luZm8ucGxpc3RQSwECFAMUAAAACACyKHpd9ai1KA0AAAAgAAAAGwAAAAAAAAAAAAAAgAGYAQAAUGF5bG9hZC9FeGFtcGxlLmFwcC9FeGFtcGxlUEsFBgAAAAACAAIAlQAAAN4BAAAAAA=="
+        return try XCTUnwrap(Data(base64Encoded: encoded))
+    }
+}
+
+@MainActor
+final class DownloadServiceTests: XCTestCase {
+    func testProgressUsesActualBytesAndCancellationReachesProvider() async throws {
+        let started = expectation(description: "provider started")
+        let cancelled = expectation(description: "provider observed cancellation")
+        let provider = CancellationAwareDownloadProvider(started: started, cancelled: cancelled)
+        let service = DownloadService(provider: provider)
+
+        XCTAssertFalse(service.start(app: makeApp()))
+        let taskID = try XCTUnwrap(service.tasks.first?.id)
+        await fulfillment(of: [started], timeout: 3)
+
+        for _ in 0..<100 where service.tasks.first?.downloadedBytes != 37 {
+            await Task.yield()
+        }
+        let progress = try XCTUnwrap(service.tasks.first?.progress)
+        XCTAssertEqual(progress, 0.37, accuracy: 0.0001)
+
+        service.cancel(taskID: taskID)
+        await fulfillment(of: [cancelled], timeout: 3)
+        XCTAssertEqual(service.tasks.first?.status, .cancelled)
+
+        service.reportDownloadProgress(taskID: taskID, downloaded: 100, total: 100)
+        XCTAssertEqual(service.tasks.first?.status, .cancelled)
+        XCTAssertEqual(service.tasks.first?.downloadedBytes, 37)
+    }
+
+    func testDownloadCompletesOnlyAfterIPAInspectionAndSavesValidatedFile() async throws {
+        let provider = FixtureDownloadProvider(data: try IPAInspectorTests.fixtureDataForDownload())
+        let service = DownloadService(provider: provider)
+
+        XCTAssertFalse(service.start(app: makeApp()))
+        let taskID = try XCTUnwrap(service.tasks.first?.id)
+        for _ in 0..<1_000 where service.tasks.first?.status.isInProgress == true {
+            try await Task.sleep(nanoseconds: 10_000_000)
+        }
+
+        let task = try XCTUnwrap(service.tasks.first)
+        XCTAssertEqual(task.status, .completed, task.errorMessage ?? "Expected a validated IPA download.")
+        let fileURL = try XCTUnwrap(task.fileURL)
+        XCTAssertTrue(FileManager.default.fileExists(atPath: fileURL.path))
+        XCTAssertNoThrow(try IPAInspector().inspect(fileURL))
+
+        try service.remove(taskID: taskID)
+        XCTAssertFalse(FileManager.default.fileExists(atPath: fileURL.path))
+    }
+
+    func testFailureCanBeRetriedAsANewQueueTask() async throws {
+        let service = DownloadService(provider: FailingDownloadProvider())
+        XCTAssertFalse(service.start(app: makeApp()))
+        let firstID = try XCTUnwrap(service.tasks.first?.id)
+        for _ in 0..<100 where service.tasks.first?.status.isInProgress == true {
+            try await Task.sleep(nanoseconds: 10_000_000)
+        }
+        XCTAssertEqual(service.tasks.first?.status, .failed)
+
+        XCTAssertTrue(service.retry(taskID: firstID))
+        XCTAssertEqual(service.tasks.count, 2)
+        XCTAssertNotEqual(service.tasks[0].id, service.tasks[1].id)
+    }
+
+    private func makeApp() -> AppRecord {
+        AppRecord(
+            id: 7,
+            bundleID: "com.example.test",
+            name: "Test App",
+            developer: "Test",
+            iconURL: nil,
+            version: "1.0",
+            fileSizeBytes: nil,
+            minimumOSVersion: "16.0"
+        )
+    }
+}
+
+private final class CancellationAwareDownloadProvider: AppStoreDownloadProviding, @unchecked Sendable {
+    private let started: XCTestExpectation
+    private let cancelled: XCTestExpectation
+
+    init(started: XCTestExpectation, cancelled: XCTestExpectation) {
+        self.started = started
+        self.cancelled = cancelled
+    }
+
+    func download(
+        app: AppRecord,
+        destination: URL,
+        progress: @escaping @Sendable (Int64, Int64) -> Void
+    ) async throws -> URL {
+        _ = app
+        _ = destination
+        progress(37, 100)
+        started.fulfill()
+        try await withTaskCancellationHandler {
+            try await Task.sleep(nanoseconds: 30_000_000_000)
+            throw AppStoreDownloadError.directEngineUnavailable
+        } onCancel: {
+            cancelled.fulfill()
+        }
+    }
+}
+
+private struct FixtureDownloadProvider: AppStoreDownloadProviding {
+    let data: Data
+
+    func download(
+        app: AppRecord,
+        destination: URL,
+        progress: @escaping @Sendable (Int64, Int64) -> Void
+    ) async throws -> URL {
+        _ = app
+        try data.write(to: destination, options: .atomic)
+        progress(Int64(data.count), Int64(data.count))
+        return destination
+    }
+}
+
+private struct FailingDownloadProvider: AppStoreDownloadProviding {
+    func download(
+        app: AppRecord,
+        destination: URL,
+        progress: @escaping @Sendable (Int64, Int64) -> Void
+    ) async throws -> URL {
+        _ = (app, destination, progress)
+        throw URLError(.notConnectedToInternet)
+    }
+}

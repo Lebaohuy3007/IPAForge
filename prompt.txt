@@ -1,0 +1,20 @@
+Cần đính chính báo cáo môi trường và thực hiện kiểm tra bổ sung.
+
+Codespaces của tôi CÓ Swift 6.4.3, target x86_64-unknown-linux-gnu. Chỉ có xcodebuild và Xcode/iOS SDK là không có.
+
+Hãy thực hiện:
+
+1. Xác minh lại swift --version và which swift.
+2. Kiểm tra khả năng biên dịch các Swift source độc lập với framework Apple bằng Swift 6.4.3.
+3. Phân loại 15 unit test trong IPAForgeTests.swift:
+    * Test có thể chạy trên Linux.
+    * Test cần XCTest hoặc framework Apple.
+    * Test bắt buộc chạy trên macOS/Xcode.
+4. Nếu có thể, tách phần logic thuần Swift thành test có thể chạy trên Linux mà không làm thay đổi kiến trúc dự án.
+5. Kiểm tra lại các lỗi Swift có thể phát hiện bằng toolchain hiện có.
+6. Giữ nguyên GitHub Actions xcode-27 và Xcode 27.2 để build/test iOS.
+7. Cập nhật README_vi.md và báo cáo cuối cùng cho chính xác.
+
+Không giả lập kết quả build iOS. Không tạo xcodebuild giả. Không commit hoặc push.
+
+Mục tiêu: tận dụng Swift 6.4.3 trên Codespaces, sau đó dùng GitHub Actions để xác nhận build và test thực tế.

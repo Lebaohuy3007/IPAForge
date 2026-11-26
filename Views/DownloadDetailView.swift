@@ -9,6 +9,7 @@ struct DownloadDetailView: View {
     @State private var shareItems: [URL] = []
     @State private var showingShareSheet = false
     @State private var errorMessage: String?
+    @State private var retryError: String?
     @State private var isShowingDeleteConfirmation = false
 
     var body: some View {
@@ -27,12 +28,19 @@ struct DownloadDetailView: View {
                     }
                     if task.status.isInProgress {
                         Section(task.statusMessage) {
-                            ProgressView(value: task.progress)
-                            Text("\(Int(task.progress * 100))%")
-                                .foregroundStyle(.secondary)
-                            Text("\(ByteCountFormatter.string(fromByteCount: task.downloadedBytes, countStyle: .file)) / \(ByteCountFormatter.string(fromByteCount: task.totalBytes, countStyle: .file))")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
+                            if task.totalBytes > 0 {
+                                ProgressView(value: task.progress)
+                                Text("\(Int(task.progress * 100))%")
+                                    .foregroundStyle(.secondary)
+                                Text("\(ByteCountFormatter.string(fromByteCount: task.downloadedBytes, countStyle: .file)) / \(ByteCountFormatter.string(fromByteCount: task.totalBytes, countStyle: .file))")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            } else {
+                                ProgressView()
+                                Text("\(ByteCountFormatter.string(fromByteCount: task.downloadedBytes, countStyle: .file)) downloaded · total unknown")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
                         }
                     } else if let error = task.errorMessage {
                         Section("Trạng thái") {
@@ -49,7 +57,32 @@ struct DownloadDetailView: View {
                     if let errorMessage {
                         Section("Lỗi chia sẻ") { Text(errorMessage).foregroundStyle(.red) }
                     }
+                    if let retryError {
+                        Section("Retry") { Text(retryError).foregroundStyle(.red) }
+                    }
                     Section("Tùy chọn") {
+                        if task.status.isInProgress {
+                            Button(role: .destructive) {
+                                downloads.cancel(taskID: task.id)
+                            } label: {
+                                Label("Cancel Download", systemImage: "xmark.circle")
+                                    .frame(maxWidth: .infinity)
+                            }
+                            .buttonStyle(.bordered)
+                        }
+                        if task.status == .failed || task.status == .cancelled {
+                            Button {
+                                if downloads.retry(taskID: task.id) {
+                                    dismiss()
+                                } else {
+                                    retryError = "Could not start a retry. Check available storage."
+                                }
+                            } label: {
+                                Label("Retry", systemImage: "arrow.clockwise")
+                                    .frame(maxWidth: .infinity)
+                            }
+                            .buttonStyle(.bordered)
+                        }
                         if task.status == .completed, let fileURL = task.fileURL {
                             Button {
                                 share(fileURL)

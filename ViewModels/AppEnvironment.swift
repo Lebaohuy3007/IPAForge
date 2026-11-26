@@ -28,6 +28,7 @@ final class AppEnvironment: ObservableObject {
     let appStore = AppStoreService()
     let downloads = DownloadService()
     let export = ExportService()
+    let deviceProfiles = DeviceProfileStore()
     @Published var authPhase: AuthPhase = .signedOut
     @Published var authMessage = ""
     @Published private(set) var selectedStoredAccountID: UUID?

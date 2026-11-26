@@ -2,7 +2,6 @@ import SwiftUI
 
 struct AppStoreSearchView: View {
     @EnvironmentObject private var environment: AppEnvironment
-    let onDownloadStarted: () -> Void
     @State private var query = ""
     @State private var results: [AppRecord] = []
     @State private var isLoading = false
@@ -27,7 +26,7 @@ struct AppStoreSearchView: View {
                     }
                 }
                 .navigationDestination(for: AppRecord.self) { app in
-                    AppDetailView(app: app, onDownloadStarted: onDownloadStarted)
+                    AppDetailView(app: app)
                 }
             }
             .navigationTitle("App Store")

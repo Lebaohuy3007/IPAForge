@@ -3,20 +3,17 @@ import UIKit
 
 struct MainTabView: View {
     @EnvironmentObject private var environment: AppEnvironment
-    @State private var selectedTab = 0
 
     var body: some View {
-        TabView(selection: $selectedTab) {
-            AppStoreSearchView(onDownloadStarted: { selectedTab = 2 })
+        TabView {
+            AppStoreSearchView()
                 .tabItem { Label("App Store", systemImage: "bag") }
-                .tag(0)
             ProfileView()
                 .tabItem { Label("Profile", systemImage: "person.crop.circle") }
-                .tag(1)
             DownloadManagerView(downloads: environment.downloads)
                 .tabItem { Label("iPA Downloader", systemImage: "arrow.down.circle") }
-                .tag(2)
         }
+        .environmentObject(environment.deviceProfiles)
     }
 }
 
@@ -33,6 +30,10 @@ private struct ProfileView: View {
 
                 Section("Your Library") {
                     profileRow("Downloads", symbol: "arrow.down.circle", destination: .downloads)
+                }
+
+                Section("Compatibility") {
+                    profileRow("Device Profile (iOS 27+)", symbol: "iphone.gen3", destination: .deviceProfile)
                 }
 
                 Section("Account") {
@@ -78,6 +79,8 @@ private struct ProfileView: View {
                     AnisetteServersView(store: environment.anisetteServers)
                 case .logs:
                     LogViewerView()
+                case .deviceProfile:
+                    DeviceProfileView()
                 }
             }
         }
@@ -192,6 +195,7 @@ private enum ProfileDestination: String, Identifiable {
     case downloads
     case anisette
     case logs
+    case deviceProfile
 
     var id: String { rawValue }
 }

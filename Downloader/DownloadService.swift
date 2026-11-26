@@ -7,13 +7,17 @@ final class DownloadService: ObservableObject {
 
     private let provider: AppStoreDownloadProviding
     private let exportService: ExportService
+    private let ipaInspector: IPAInspector
+    private var workerTasks: [UUID: Task<Void, Never>] = [:]
 
     init(
         provider: AppStoreDownloadProviding = AppStoreDownloadService(),
-        exportService: ExportService = ExportService()
+        exportService: ExportService = ExportService(),
+        ipaInspector: IPAInspector = IPAInspector()
     ) {
         self.provider = provider
         self.exportService = exportService
+        self.ipaInspector = ipaInspector
     }
 
     /// Returns true when the app cannot fit in the currently available storage.
@@ -31,40 +35,83 @@ final class DownloadService: ObservableObject {
             status: .waiting,
             progress: 0,
             downloadedBytes: 0,
-            totalBytes: app.fileSizeBytes ?? 0,
+            totalBytes: 0,
             fileURL: nil,
             errorMessage: nil
         ))
-        Task { [weak self] in
-            await self?.performDownload(taskID: taskID, app: app)
+        workerTasks[taskID] = Task { [weak self] in
+            guard let self else { return }
+            await self.performDownload(taskID: taskID, app: app)
         }
         return false
     }
 
     private func performDownload(taskID: UUID, app: AppRecord) async {
-        update(taskID: taskID, status: .authenticating, errorMessage: nil)
+        defer { workerTasks[taskID] = nil }
         let documents = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-        let destination = documents.appendingPathComponent("\(safeFilename(app.name))-\(app.id).ipa")
+        let fileManager = FileManager.default
+        let taskDirectory = fileManager.temporaryDirectory
+            .appendingPathComponent("IPAForgeDownloads", isDirectory: true)
+            .appendingPathComponent(taskID.uuidString, isDirectory: true)
+        let destination = taskDirectory.appendingPathComponent("\(safeFilename(app.name))-\(app.id).ipa")
+        let savedFile = documents.appendingPathComponent(
+            "\(safeFilename(app.name))-\(app.id)-\(taskID.uuidString).ipa"
+        )
         do {
+            try Task.checkCancellation()
+            try fileManager.createDirectory(at: taskDirectory, withIntermediateDirectories: true)
+            update(taskID: taskID, status: .authenticating, errorMessage: nil)
             update(taskID: taskID, status: .fetchingMetadata, errorMessage: nil)
             let url = try await provider.download(app: app, destination: destination) { [weak self] downloaded, total in
                 Task { @MainActor in
                     self?.reportDownloadProgress(taskID: taskID, downloaded: downloaded, total: total)
                 }
             }
+            try Task.checkCancellation()
+            guard url.standardizedFileURL == destination.standardizedFileURL else {
+                throw AppStoreDownloadError.unexpectedDownloadLocation
+            }
             update(taskID: taskID, status: .verifying, errorMessage: nil)
+            _ = try await inspectOffMainActor(url)
             try exportService.validate(url)
+            try Task.checkCancellation()
+            try fileManager.createDirectory(at: documents, withIntermediateDirectories: true)
+            try fileManager.moveItem(at: url, to: savedFile)
+            try exportService.validate(savedFile)
+            try? fileManager.removeItem(at: taskDirectory)
+            let actualSize = try? savedFile.resourceValues(forKeys: [.fileSizeKey]).fileSize
             guard let index = tasks.firstIndex(where: { $0.id == taskID }) else { return }
             tasks[index].status = .completed
             tasks[index].progress = 1
-            tasks[index].downloadedBytes = tasks[index].totalBytes
-            tasks[index].fileURL = url
+            if let actualSize {
+                tasks[index].downloadedBytes = Int64(actualSize)
+                tasks[index].totalBytes = Int64(actualSize)
+            }
+            tasks[index].fileURL = savedFile
         } catch is CancellationError {
             update(taskID: taskID, status: .cancelled, errorMessage: nil)
-            try? FileManager.default.removeItem(at: destination)
+            try? fileManager.removeItem(at: taskDirectory)
+            try? fileManager.removeItem(at: savedFile)
         } catch {
-            update(taskID: taskID, status: .failed, errorMessage: error.localizedDescription)
-            try? FileManager.default.removeItem(at: destination)
+            if Task.isCancelled {
+                update(taskID: taskID, status: .cancelled, errorMessage: nil)
+            } else {
+                update(taskID: taskID, status: .failed, errorMessage: error.localizedDescription)
+            }
+            try? fileManager.removeItem(at: taskDirectory)
+            try? fileManager.removeItem(at: savedFile)
+        }
+    }
+
+    private func inspectOffMainActor(_ url: URL) async throws -> IPAInspection {
+        let inspector = ipaInspector
+        let inspectionTask = Task.detached(priority: .utility) {
+            try inspector.inspect(url)
+        }
+        return try await withTaskCancellationHandler {
+            try await inspectionTask.value
+        } onCancel: {
+            inspectionTask.cancel()
         }
     }
 
@@ -87,27 +134,40 @@ final class DownloadService: ObservableObject {
     }
 
     func reportDownloadProgress(taskID: UUID, downloaded: Int64, total: Int64) {
-        guard let index = tasks.firstIndex(where: { $0.id == taskID }), total > 0 else { return }
-        let fraction = min(max(Double(downloaded) / Double(total), 0), 1)
+        guard let index = tasks.firstIndex(where: { $0.id == taskID }),
+              tasks[index].status.isInProgress else { return }
+        let received = max(downloaded, 0)
         tasks[index].status = .downloading
-        tasks[index].downloadedBytes = downloaded
-        tasks[index].totalBytes = total
-        tasks[index].progress = 0.01 + fraction * 0.98
-    }
-
-    func reportSavingProgress(taskID: UUID, fraction: Double) {
-        guard let index = tasks.firstIndex(where: { $0.id == taskID }) else { return }
-        tasks[index].status = .verifying
-        tasks[index].progress = 0.99 + min(max(fraction, 0), 1) * 0.01
+        tasks[index].downloadedBytes = received
+        if total > 0 {
+            tasks[index].totalBytes = total
+            tasks[index].progress = min(Double(received) / Double(total), 1)
+        } else {
+            tasks[index].totalBytes = 0
+            tasks[index].progress = 0
+        }
     }
 
     func cancel(taskID: UUID) {
-        guard let index = tasks.firstIndex(where: { $0.id == taskID }) else { return }
+        guard let index = tasks.firstIndex(where: { $0.id == taskID }),
+              tasks[index].status.isInProgress else { return }
+        workerTasks[taskID]?.cancel()
         tasks[index].status = .cancelled
+    }
+
+    /// Starts a fresh task for a failed or cancelled download. The new task gets its own
+    /// temporary path so a stale provider attempt cannot overwrite the retry's output.
+    @discardableResult
+    func retry(taskID: UUID) -> Bool {
+        guard let task = tasks.first(where: { $0.id == taskID }),
+              (task.status == .failed || task.status == .cancelled) else { return false }
+        return !start(app: task.app)
     }
 
     func remove(taskID: UUID) throws {
         guard let index = tasks.firstIndex(where: { $0.id == taskID }) else { return }
+        workerTasks[taskID]?.cancel()
+        workerTasks[taskID] = nil
         if let fileURL = tasks[index].fileURL {
             let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
                 .standardizedFileURL

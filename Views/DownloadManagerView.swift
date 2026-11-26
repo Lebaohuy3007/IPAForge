@@ -72,11 +72,20 @@ private struct DownloadRow: View {
                 Text(task.app.name).font(.headline).lineLimit(1)
                 Text(task.app.developer).font(.subheadline).foregroundStyle(.secondary).lineLimit(1)
                 if task.status.isInProgress {
-                    ProgressView(value: task.progress)
+                    if task.totalBytes > 0 {
+                        ProgressView(value: task.progress)
+                    } else {
+                        ProgressView()
+                    }
                     Text(task.statusMessage)
                         .font(.caption).foregroundStyle(.secondary)
-                    Text("\(Int(task.progress * 100))%")
-                        .font(.caption).foregroundStyle(.secondary)
+                    if task.totalBytes > 0 {
+                        Text("\(ByteCountFormatter.string(fromByteCount: task.downloadedBytes, countStyle: .file)) / \(ByteCountFormatter.string(fromByteCount: task.totalBytes, countStyle: .file)) · \(Int(task.progress * 100))%")
+                            .font(.caption).foregroundStyle(.secondary)
+                    } else {
+                        Text("\(ByteCountFormatter.string(fromByteCount: task.downloadedBytes, countStyle: .file)) downloaded · total unknown")
+                            .font(.caption).foregroundStyle(.secondary)
+                    }
                 } else {
                     Text(task.errorMessage ?? task.statusMessage)
                         .font(.caption).foregroundStyle(task.status == .failed ? .red : .secondary)
