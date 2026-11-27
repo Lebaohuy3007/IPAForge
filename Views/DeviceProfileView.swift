@@ -16,10 +16,12 @@ struct DeviceProfileView: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section("This device") {
+                Section {
                     LabeledContent("Runtime", value: runtimeTitle)
                     LabeledContent("Model reported by iOS", value: UIDevice.current.model)
                     LabeledContent("OS version", value: UIDevice.current.systemVersion)
+                } header: {
+                    Text("This device")
                 } footer: {
                     Text("These are values from the device running IPAForge. They are separate from the compatibility profile below.")
                 }
@@ -122,7 +124,7 @@ struct DeviceProfileView: View {
                     Text("Profiles are local settings. Capability and architecture checks stay Unknown until those values are verified and entered.")
                 }
 
-                Section("Check an IPA") {
+                Section {
                     Button {
                         isShowingIPAImporter = true
                     } label: {
@@ -157,6 +159,8 @@ struct DeviceProfileView: View {
                         }
                         .padding(.vertical, 4)
                     }
+                } header: {
+                    Text("Check an IPA")
                 } footer: {
                     Text("The checker reads the IPA Info.plist, executable architecture, and ZIP CRCs. It does not install or decrypt the app.")
                 }
