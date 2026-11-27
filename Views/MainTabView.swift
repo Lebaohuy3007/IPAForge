@@ -56,12 +56,14 @@ private struct ProfileView: View {
                     profileRow("Activity Log", symbol: "text.alignleft", destination: .logs)
                 }
 
-                Section("Project") {
+                Section {
                     Link(destination: URL(string: "https://github.com/Lebaohuy3007")!) {
                         Label("GitHub Repository", systemImage: "heart.fill")
                             .frame(maxWidth: .infinity, alignment: .leading)
                     }
                     .foregroundStyle(.primary)
+                } header: {
+                    Text("Project")
                 } footer: {
                     Text("Version \(IPAForgeVersion.displayValue()) • iOS \(UIDevice.current.systemVersion)")
                         .frame(maxWidth: .infinity, alignment: .center)
