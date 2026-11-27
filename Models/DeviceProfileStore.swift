@@ -13,20 +13,23 @@ final class DeviceProfileStore: ObservableObject {
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
 
+        let loadedProfiles: [DeviceProfile]
         if let data = defaults.data(forKey: profilesKey),
            let decoded = try? JSONDecoder().decode([DeviceProfile].self, from: data),
            !decoded.isEmpty,
            decoded.allSatisfy({ $0.validationError() == nil }),
            Set(decoded.map(\.id)).count == decoded.count {
-            profiles = decoded
+            loadedProfiles = decoded
         } else {
-            profiles = [.defaultProfile]
+            loadedProfiles = [.defaultProfile]
         }
+        profiles = loadedProfiles
 
         let savedID = defaults.string(forKey: selectedProfileKey).flatMap(UUID.init(uuidString:))
-        selectedProfileID = savedID.flatMap { id in
-            profiles.contains(where: { $0.id == id }) ? id : nil
-        } ?? profiles[0].id
+        let resolvedID = loadedProfiles.first { profile in
+            savedID.map { $0 == profile.id } ?? false
+        }?.id ?? loadedProfiles[0].id
+        selectedProfileID = resolvedID
         persist()
     }
 
