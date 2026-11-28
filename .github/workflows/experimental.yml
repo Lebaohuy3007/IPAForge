@@ -1,5 +1,5 @@
 name: Experimental Build
-run-name: App Store IPA Downloader
+run-name: IPAForge Experimental Build 
 on:
   workflow_dispatch:
     inputs:
