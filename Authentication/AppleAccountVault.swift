@@ -176,7 +176,22 @@ final class AppleAccountVault {
     }
 
     func clearAnisetteIdentity(forServer serverURL: String) throws {
-        try keychain.deleteData(for: anisetteIdentityKey(for: serverURL))
+        let normalizedURL = try normalizedAnisetteServerURL(serverURL)
+        try keychain.deleteData(for: anisetteConsentKey(for: normalizedURL))
+        try keychain.deleteData(for: anisetteIdentityKey(for: normalizedURL))
+    }
+
+    func isAnisetteServerApproved(forServer serverURL: String) throws -> Bool {
+        let normalizedURL = try normalizedAnisetteServerURL(serverURL)
+        let key = anisetteConsentKey(for: normalizedURL)
+        guard let encryptedApproval = try keychain.data(for: key) else { return false }
+        return try open(encryptedApproval, for: key) == Data([1])
+    }
+
+    func approveAnisetteServer(forServer serverURL: String) throws {
+        let normalizedURL = try normalizedAnisetteServerURL(serverURL)
+        let key = anisetteConsentKey(for: normalizedURL)
+        try keychain.setData(seal(Data([1]), for: key), for: key)
     }
 
     private func accountKey(for id: UUID) -> String {
@@ -186,6 +201,18 @@ final class AppleAccountVault {
     private func anisetteIdentityKey(for serverURL: String) -> String {
         let digest = SHA256.hash(data: Data(serverURL.utf8))
         return "anisette." + digest.map { String(format: "%02x", $0) }.joined()
+    }
+
+    private func anisetteConsentKey(for serverURL: String) -> String {
+        let digest = SHA256.hash(data: Data(serverURL.utf8))
+        return "anisette-consent." + digest.map { String(format: "%02x", $0) }.joined()
+    }
+
+    private func normalizedAnisetteServerURL(_ serverURL: String) throws -> String {
+        guard let normalized = AnisetteURLValidator.normalized(serverURL) else {
+            throw AnisetteServerError.invalidURL
+        }
+        return normalized
     }
 
     private func seal(_ plaintext: Data, for recordName: String) throws -> Data {

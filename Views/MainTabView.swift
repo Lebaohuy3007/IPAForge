@@ -13,7 +13,6 @@ struct MainTabView: View {
             DownloadManagerView(downloads: environment.downloads)
                 .tabItem { Label("iPA Downloader", systemImage: "arrow.down.circle") }
         }
-        .environmentObject(environment.deviceProfiles)
     }
 }
 
@@ -30,10 +29,6 @@ private struct ProfileView: View {
 
                 Section("Your Library") {
                     profileRow("Downloads", symbol: "arrow.down.circle", destination: .downloads)
-                }
-
-                Section("Compatibility") {
-                    profileRow("Device Profile (iOS 27+)", symbol: "iphone.gen3", destination: .deviceProfile)
                 }
 
                 Section("Account") {
@@ -61,7 +56,7 @@ private struct ProfileView: View {
                         Label("GitHub Repository", systemImage: "heart.fill")
                             .frame(maxWidth: .infinity, alignment: .leading)
                     }
-                    .foregroundStyle(.primary)
+                    .foregroundStyle(Color.blue)
                 } header: {
                     Text("Project")
                 } footer: {
@@ -81,8 +76,6 @@ private struct ProfileView: View {
                     AnisetteServersView(store: environment.anisetteServers)
                 case .logs:
                     LogViewerView()
-                case .deviceProfile:
-                    DeviceProfileView()
                 }
             }
         }
@@ -138,7 +131,7 @@ private struct ProfileView: View {
             }
 
             if !environment.authMessage.isEmpty {
-                Text(environment.authMessage)
+                Text(LocalizedStringKey(environment.authMessage))
                     .font(.footnote)
                     .foregroundStyle(.red)
             }
@@ -165,7 +158,7 @@ private struct ProfileView: View {
             }
             .buttonStyle(.plain)
             if !environment.authMessage.isEmpty {
-                Text(environment.authMessage)
+                Text(LocalizedStringKey(environment.authMessage))
                     .font(.footnote)
                     .foregroundStyle(.red)
             }
@@ -197,7 +190,5 @@ private enum ProfileDestination: String, Identifiable {
     case downloads
     case anisette
     case logs
-    case deviceProfile
-
     var id: String { rawValue }
 }

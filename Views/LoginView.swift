@@ -137,7 +137,7 @@ struct LoginView: View {
                         Button("Continue") { login() }
                     }
                     if !statusMessage.isEmpty {
-                        Text(statusMessage)
+                        Text(LocalizedStringKey(statusMessage))
                             .font(.footnote)
                             .foregroundStyle(.red)
                     }

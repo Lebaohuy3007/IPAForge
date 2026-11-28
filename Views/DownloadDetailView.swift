@@ -27,7 +27,7 @@ struct DownloadDetailView: View {
                         .padding(.vertical, 4)
                     }
                     if task.status.isInProgress {
-                        Section(task.statusMessage) {
+                        Section(LocalizedStringKey(task.status.localizationKey)) {
                             if task.totalBytes > 0 {
                                 ProgressView(value: task.progress)
                                 Text("\(Int(task.progress * 100))%")
@@ -52,7 +52,8 @@ struct DownloadDetailView: View {
                         metadataRow("Size", appSize(task))
                         metadataRow("Minimum iOS", task.app.minimumOSVersion ?? "—")
                         metadataRow("Bundle ID", task.app.bundleID)
-                        metadataRow("Đã giải mã", "Encrypted")
+                        metadataRow("FairPlay encryption", "Not inspected")
+                        metadataRow("Apple code signature", "Not verified")
                     }
                     if let errorMessage {
                         Section("Lỗi chia sẻ") { Text(errorMessage).foregroundStyle(.red) }
@@ -117,7 +118,7 @@ struct DownloadDetailView: View {
             Button("Hủy", role: .cancel) { }
             Button("OK", role: .destructive) { deleteTask() }
         } message: {
-            Text("Bạn có chắc muốn xoá ứng dụng này ra khỏi máy bạn không?")
+            Text("Bạn có chắc muốn xoá ứng dụng này khỏi thiết bị không?")
         }
     }
 
@@ -126,7 +127,7 @@ struct DownloadDetailView: View {
     }
 
     private func metadataRow(_ title: String, _ value: String) -> some View {
-        LabeledContent(title, value: value)
+        LabeledContent(LocalizedStringKey(title), value: value)
             .textSelection(.enabled)
     }
 

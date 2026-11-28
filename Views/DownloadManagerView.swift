@@ -15,7 +15,7 @@ struct DownloadManagerView: View {
                     Button(role: .destructive) {
                         pendingDeleteID = task.id
                     } label: {
-                        Label("Xoá", systemImage: "trash")
+                        Label("Delete", systemImage: "trash")
                     }
                 }
             }
@@ -45,7 +45,7 @@ struct DownloadManagerView: View {
                     Button("OK", role: .destructive) { deletePendingTask() }
                 }
             } message: {
-                Text(deleteError ?? "Bạn có chắc muốn xoá ứng dụng này ra khỏi máy bạn không?")
+                Text(deleteError ?? "Bạn có chắc muốn xoá ứng dụng này khỏi thiết bị không?")
             }
         }
     }
@@ -77,7 +77,7 @@ private struct DownloadRow: View {
                     } else {
                         ProgressView()
                     }
-                    Text(task.statusMessage)
+                    Text(LocalizedStringKey(task.status.localizationKey))
                         .font(.caption).foregroundStyle(.secondary)
                     if task.totalBytes > 0 {
                         Text("\(ByteCountFormatter.string(fromByteCount: task.downloadedBytes, countStyle: .file)) / \(ByteCountFormatter.string(fromByteCount: task.totalBytes, countStyle: .file)) · \(Int(task.progress * 100))%")
@@ -87,8 +87,13 @@ private struct DownloadRow: View {
                             .font(.caption).foregroundStyle(.secondary)
                     }
                 } else {
-                    Text(task.errorMessage ?? task.statusMessage)
-                        .font(.caption).foregroundStyle(task.status == .failed ? .red : .secondary)
+                    if let errorMessage = task.errorMessage {
+                        Text(errorMessage)
+                            .font(.caption).foregroundStyle(.red)
+                    } else {
+                        Text(LocalizedStringKey(task.status.localizationKey))
+                            .font(.caption).foregroundStyle(.secondary)
+                    }
                 }
             }
         }

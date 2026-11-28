@@ -2,7 +2,6 @@ import SwiftUI
 
 struct AppDetailView: View {
     @State private var isShowingOldVersions = false
-    @EnvironmentObject private var deviceProfiles: DeviceProfileStore
     let app: AppRecord
 
     var body: some View {
@@ -35,10 +34,13 @@ struct AppDetailView: View {
                 VStack(alignment: .leading, spacing: 10) {
                     Text("Compatibility")
                         .font(.title3.bold())
-                    CompatibilityReportView(report: CompatibilityChecker().evaluate(
-                        requirements: .fromCatalog(app),
-                        profile: deviceProfiles.selectedProfile
-                    ))
+                    CompatibilityReportView(
+                        report: CompatibilityChecker().evaluate(
+                            requirements: .fromCatalog(app),
+                            profile: .defaultProfile
+                        ),
+                        minimumOSVersion: app.minimumOSVersion
+                    )
                 }
 
                 Text("Download")

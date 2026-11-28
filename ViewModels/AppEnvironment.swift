@@ -29,7 +29,6 @@ final class AppEnvironment: ObservableObject {
     let appStoreExperiments: AppStoreExperimentService
     let downloads: DownloadService
     let export = ExportService()
-    let deviceProfiles = DeviceProfileStore()
     @Published var authPhase: AuthPhase = .signedOut
     @Published var authMessage = ""
     @Published private(set) var selectedStoredAccountID: UUID?
@@ -67,7 +66,7 @@ final class AppEnvironment: ObservableObject {
             vault: accountVault,
             provider: StosSignAuthenticationProvider()
         )
-        let anisette = AnisetteService(identityStore: accountVault)
+        let anisette = AnisetteService(identityStore: accountVault, logger: logger)
         self.anisette = anisette
         self.anisetteServers = AnisetteServerStore(service: anisette)
         authentication.onVerificationStateChanged = { [weak self] isAwaiting in
@@ -138,9 +137,15 @@ final class AppEnvironment: ObservableObject {
             }
         }
         do {
-            logger.logLogin(.info, "Fetching Anisette v3 data.")
-            let anisetteHeaders = try await anisette.fetchAnisetteV3(serverURL: server.url)
+            logger.logLogin(.info, "Fetching Anisette v3 data.", correlationID: attemptID)
+            logger.log(.info, "Developer Portal sign-in started. This does not create an App Store session.", correlationID: attemptID)
+            logger.log(.info, "Anisette v3 | Stage: Header generation | Result: STARTED.", correlationID: attemptID)
+            let anisetteHeaders = try await anisette.fetchAnisetteV3(
+                serverURL: server.url,
+                correlationID: attemptID
+            )
             guard loginAttemptID == attemptID else { throw CancellationError() }
+            logger.log(.success, "Anisette v3 | Stage: Header generation | Result: PASS.", correlationID: attemptID)
             let account = try await authentication.startLogin(
                 appleID: appleID,
                 password: password,
@@ -150,11 +155,14 @@ final class AppEnvironment: ObservableObject {
             selectedStoredAccountID = account.id
             activeAccount = account
             authPhase = .signedIn
-            logger.logLogin(.success, "Signed in and fetched Developer Teams.")
+            logger.logLogin(.success, "Signed in and fetched Developer Teams.", correlationID: attemptID)
+            logger.log(.success, "Developer Portal sign-in completed; Developer Teams were fetched. App Store sign-in was not performed.", correlationID: attemptID)
         } catch {
             guard loginAttemptID == attemptID else { throw CancellationError() }
             authPhase = .signedOut
             activeAccount = nil
+            let nsError = error as NSError
+            logger.log(.error, "Developer Portal sign-in failed | Error domain: \(nsError.domain) | Code: \(nsError.code) | \(LogSanitizer.sanitize(error.localizedDescription)).", correlationID: attemptID)
             throw error
         }
     }
@@ -162,7 +170,10 @@ final class AppEnvironment: ObservableObject {
     func submitVerificationCode(_ code: String) throws {
         try authentication.submitVerificationCode(code)
         authPhase = .authenticating
-        logger.logLogin(.info, "Submitting Apple two-factor verification code.")
+        logger.logLogin(.info, "Submitting Apple two-factor verification code.", correlationID: loginAttemptID)
+        if let loginAttemptID {
+            logger.log(.info, "Developer Portal 2FA submission started; verification code was not logged.", correlationID: loginAttemptID)
+        }
     }
 
     func selectDeveloperTeam(id: String) throws {
@@ -205,31 +216,51 @@ final class AppEnvironment: ObservableObject {
         logger.logLogin(.info, "Signed out.")
     }
 
+    func restoreSavedSessionAfterAnisetteApproval() async {
+        guard selectedStoredAccountID != nil, authPhase == .signedOut else { return }
+        await restoreSelectedAccount()
+    }
+
     private func restoreSelectedAccount() async {
         guard let selectedID = selectedStoredAccountID else {
             return
         }
+        let correlationID = UUID()
         do {
+            if let server = anisetteServers.selectedServer,
+               try !anisetteServers.hasAnisetteApproval(serverID: server.id) {
+                authPhase = .signedOut
+                authMessage = "Approve the selected Anisette Server in its settings before restoring this Developer Portal session."
+                logger.log(.warning, "Developer Portal session restore | BLOCKED | Anisette Server use has not been approved; no identity data was sent.", correlationID: correlationID)
+                return
+            }
             guard let account = try accountVault.accounts().first(where: { $0.id == selectedID }) else {
                 throw AppleAccountVaultError.accountNotFound
             }
-            try await restore(account)
+            try await restore(account, correlationID: correlationID)
         } catch {
             authPhase = .signedOut
             authMessage = "Could not restore the saved Apple session: \(LogSanitizer.sanitize(error.localizedDescription))"
-            logger.logLogin(.error, "Session restore failed: \(error.localizedDescription)")
+            logger.logLogin(.error, "Session restore failed: \(error.localizedDescription)", correlationID: correlationID)
+            let nsError = error as NSError
+            logger.log(.error, "Developer Portal session restore failed | Error domain: \(nsError.domain) | Code: \(nsError.code) | \(LogSanitizer.sanitize(error.localizedDescription)).", correlationID: correlationID)
         }
     }
 
-    private func restore(_ account: StoredAppleAccount) async throws {
+    private func restore(_ account: StoredAppleAccount, correlationID: UUID) async throws {
         guard let server = anisetteServers.selectedServer else {
             throw AnisetteServerError.notFound
         }
         authPhase = .authenticating
         authMessage = ""
         activeAccount = nil
-        logger.logLogin(.info, "Refreshing Anisette v3 data for the saved Apple session.")
-        let anisetteHeaders = try await anisette.fetchAnisetteV3(serverURL: server.url)
+        logger.logLogin(.info, "Refreshing Anisette v3 data for the saved Apple session.", correlationID: correlationID)
+        logger.log(.info, "Developer Portal session restore started; this is not an App Store session.", correlationID: correlationID)
+        let anisetteHeaders = try await anisette.fetchAnisetteV3(
+            serverURL: server.url,
+            correlationID: correlationID
+        )
+        logger.log(.success, "Anisette v3 | Stage: Header refresh | Result: PASS.", correlationID: correlationID)
         let restoredAccount = try await authentication.restore(
             account: account,
             anisetteHeaders: anisetteHeaders
@@ -237,6 +268,7 @@ final class AppEnvironment: ObservableObject {
         activeAccount = restoredAccount
         selectedStoredAccountID = restoredAccount.id
         authPhase = .signedIn
-        logger.logLogin(.success, "Restored Apple session and fetched Developer Teams.")
+        logger.logLogin(.success, "Restored Apple session and fetched Developer Teams.", correlationID: correlationID)
+        logger.log(.success, "Developer Portal session restored and Developer Teams fetched. App Store session was not restored.", correlationID: correlationID)
     }
 }

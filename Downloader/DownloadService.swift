@@ -7,7 +7,7 @@ final class DownloadService: ObservableObject {
 
     private let provider: AppStoreDownloadProviding
     private let exportService: ExportService
-    private let ipaInspector: IPAInspector
+    private let ipaInspector: IPAInspecting
     private let logger: LoggingService?
     private var workerTasks: [UUID: Task<Void, Never>] = [:]
     private var lastProgressMilestone: [UUID: Int] = [:]
@@ -15,7 +15,7 @@ final class DownloadService: ObservableObject {
     init(
         provider: AppStoreDownloadProviding = AppStoreDownloadService(),
         exportService: ExportService = ExportService(),
-        ipaInspector: IPAInspector = IPAInspector(),
+        ipaInspector: IPAInspecting = IPAInspector(),
         logger: LoggingService? = nil
     ) {
         self.provider = provider
@@ -43,7 +43,7 @@ final class DownloadService: ObservableObject {
             fileURL: nil,
             errorMessage: nil
         ))
-        logger?.log(.info, "Download Started | App ID \(app.id) | Queue task \(taskID.uuidString).")
+        logger?.log(.info, "Download Started | App ID \(app.id).", correlationID: taskID)
         workerTasks[taskID] = Task { [weak self] in
             guard let self else { return }
             await self.performDownload(taskID: taskID, app: app)
@@ -68,8 +68,6 @@ final class DownloadService: ObservableObject {
         do {
             try Task.checkCancellation()
             try fileManager.createDirectory(at: taskDirectory, withIntermediateDirectories: true)
-            update(taskID: taskID, status: .authenticating, errorMessage: nil)
-            update(taskID: taskID, status: .fetchingMetadata, errorMessage: nil)
             let url = try await provider.download(app: app, destination: destination) { [weak self] downloaded, total in
                 Task { @MainActor in
                     self?.reportDownloadProgress(taskID: taskID, downloaded: downloaded, total: total)
@@ -81,9 +79,14 @@ final class DownloadService: ObservableObject {
             }
             update(taskID: taskID, status: .verifying, errorMessage: nil)
             _ = try await inspectOffMainActor(url)
-            try exportService.validate(url)
-            logger?.log(.success, "IPA Verification | PASS | App ID \(app.id) passed IPAInspector and export validation.")
             try Task.checkCancellation()
+            try exportService.validate(url)
+            try Task.checkCancellation()
+            logger?.log(
+                .success,
+                "IPA structure, app metadata, and ZIP CRC checks | PASS | Apple code signature | NOT VERIFIED | App ID \(app.id).",
+                correlationID: taskID
+            )
             try fileManager.createDirectory(at: documents, withIntermediateDirectories: true)
             try fileManager.moveItem(at: url, to: savedFile)
             try exportService.validate(savedFile)
@@ -97,21 +100,22 @@ final class DownloadService: ObservableObject {
                 tasks[index].totalBytes = Int64(actualSize)
             }
             tasks[index].fileURL = savedFile
-            logger?.log(.success, "Download Completed | App ID \(app.id) | IPA saved after validation.")
+            logger?.log(.success, "Download Completed | App ID \(app.id) | IPA saved after validation.", correlationID: taskID)
         } catch is CancellationError {
             update(taskID: taskID, status: .cancelled, errorMessage: nil)
-            logger?.log(.warning, "Download Cancelled | App ID \(app.id).")
+            logger?.log(.warning, "Download Cancelled | App ID \(app.id).", correlationID: taskID)
             try? fileManager.removeItem(at: taskDirectory)
             try? fileManager.removeItem(at: savedFile)
         } catch {
             if Task.isCancelled {
                 update(taskID: taskID, status: .cancelled, errorMessage: nil)
-                logger?.log(.warning, "Download Cancelled | App ID \(app.id).")
+                logger?.log(.warning, "Download Cancelled | App ID \(app.id).", correlationID: taskID)
             } else {
                 update(taskID: taskID, status: .failed, errorMessage: error.localizedDescription)
                 logger?.log(
                     .error,
-                    "Download Failed | \(failureSummary(for: error)) | App ID \(app.id)."
+                    "Download Failed | \(failureSummary(for: error)) | App ID \(app.id).",
+                    correlationID: taskID
                 )
             }
             try? fileManager.removeItem(at: taskDirectory)
@@ -167,7 +171,8 @@ final class DownloadService: ObservableObject {
 
     func reportDownloadProgress(taskID: UUID, downloaded: Int64, total: Int64) {
         guard let index = tasks.firstIndex(where: { $0.id == taskID }),
-              tasks[index].status.isInProgress else { return }
+              tasks[index].status.isInProgress,
+              tasks[index].status != .verifying else { return }
         let received = max(downloaded, 0)
         tasks[index].status = .downloading
         tasks[index].downloadedBytes = received
@@ -179,7 +184,8 @@ final class DownloadService: ObservableObject {
                 lastProgressMilestone[taskID] = milestone
                 logger?.log(
                     .info,
-                    "Download Progress | App ID \(tasks[index].app.id) | \(received) / \(total) bytes | \(milestone)%."
+                    "Download Progress | App ID \(tasks[index].app.id) | \(received) / \(total) bytes | \(milestone)%.",
+                    correlationID: taskID
                 )
             }
         } else {
@@ -189,7 +195,8 @@ final class DownloadService: ObservableObject {
                 lastProgressMilestone[taskID] = -1
                 logger?.log(
                     .info,
-                    "Download Progress | App ID \(tasks[index].app.id) | \(received) bytes received | total unknown."
+                    "Download Progress | App ID \(tasks[index].app.id) | \(received) bytes received | total unknown.",
+                    correlationID: taskID
                 )
             }
         }

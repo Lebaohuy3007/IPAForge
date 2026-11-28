@@ -1,18 +1,45 @@
 # App Store authentication and IPA download research
 
 **Repository:** `Lebaohuy3007/IPAForge`  
-**Research checked:** 2026-11-26 (UTC)  
+**Research checked:** 2026-11-28 (UTC; follow-up to the 2026-11-26 source review)
 **Scope:** an iOS 16+ app that searches Apple's catalog and, if a compliant route exists, downloads an actual IPA with the fewest Apple Account prompts. This review does not bypass account authentication, app ownership, licensing, or FairPlay.
 
 ## Finding
 
-No reviewed route satisfies all of these conditions at once: obtain the App Store's actual IPA, run from an ordinary iOS app, use a verifiable device identity, honor the user's license, and avoid an unsupported authentication or DRM bypass. The winner is **no viable direct iOS downloader identified**. The nearest working open-source implementations are desktop tools or iOS/jailbreak experiments that generate an identifier or depend on Apple-private protocol components. No App Store authentication code was added to IPAForge.
+Recent repositories now claim complete jailed-iOS download flows, so it would be inaccurate to say no technical demonstration exists. However, no reviewed route can currently be integrated into this MIT-licensed IPAForge project while also satisfying its identity, licensing, account, and FairPlay boundaries. Crumb's primary third-party notices state that its WaffleStore base has no license granting redistribution, its iPadN components are GPL-2.0-or-later, and redistribution rights for some bundled Apple-derived runtime libraries are unresolved. iPadN is GPL-2.0-or-later and its Store identity code creates a persistent random GUID. IPAToolKit uses a custom license. The MIT `ipatool` iOS build targets jailbroken devices and has recent authentication setup failures. No App Store authentication code was added to IPAForge.
 
 The public anonymous API is viable for search and catalog metadata only. The live read-only check below found a free app and its metadata; it did not return a binary URL. The app's download provider therefore remains an explicit unavailable stub.
 
+## Follow-up source review — 2026-11-28
+
+This follow-up changes the candidate assessment, not IPAForge's implementation result. [Crumb's current README](https://github.com/boierito/Crumb/blob/main/README.md) claims a normally sideloaded iOS/iPadOS 16.4+ app with Apple ID/2FA, free-app license acquisition when Apple allows it, package download, and export. [Its third-party notices](https://github.com/boierito/Crumb/blob/main/THIRD_PARTY_NOTICES.md) are the deciding integration evidence: the whole project is not MIT, its WaffleStore base has no license grant, it ports GPL-2.0-or-later iPadN code, and it records unresolved redistribution rights for Apple-derived runtime binaries. Those claims make Crumb a relevant technical reference, but not a source we can copy or redistribute under IPAForge's current license without resolving the licensing boundary.
+
+[iPadN's latest indexed release](https://github.com/mengangs/ipadn/releases) is v2.3.5 and its [repository](https://github.com/mengangs/ipadn) declares GPL-2.0. Its release notes claim ordinary iOS 16+ App Store login, free-app license retry, history, and download features. That is a live iOS implementation claim; IPAForge did not independently reproduce it. Its reviewed `AppleService.swift` persists a randomly generated GUID, its SAP signer has another generated identifier path, and the repository includes FairPlay decryption code. These are incompatible with this task's no-fabricated-identity/no-DRM boundary and require a project license decision before any code could be reused.
+
+[IPAToolKit's README](https://github.com/maclub-net/IPAToolKit/blob/main/README.md) claims an iOS 15+ Swift package with sign-in, 2FA, purchase, and download calls, but publishes a custom license that permits personal/educational non-commercial use and requires a separate license for commercial use. Its non-IOKit identity code also generates a random hardware identifier. It is not a safe default dependency for IPAForge.
+
+The best integration choice remains **no direct App Store provider** until the identity, code license, and runtime redistribution questions are cleared. The public Search/Lookup engine and local IPA inspection remain available; `AppStoreDownloadService` still throws `directEngineUnavailable`. The sources establish that community iOS implementations are being attempted; they do not establish a clean, redistributable implementation for this MIT project.
+
+The current workspace also adds a local Anisette approval gate. Before provisioning through a selected server, it discloses that the server receives a persistent `identifier`, `adi_pb`, and some Apple provisioning exchange values. The operator can read and retain values sent through it. Approval is stored in Keychain and can be revoked, which deletes both approval and the server-scoped identity. This is not App Store authentication or Store AMD proof.
+
+Anisette HTTP requests now write sanitized diagnostics to the existing in-memory Activity Log with the sign-in/server-selection correlation ID: actual status or N/A, endpoint, method, duration, response type/size, redirect state, Retry-After, safe request ID, and error domain/code. Parsing and cancellation outcomes are also recorded. Response bodies and Anisette values are excluded. WebSocket handshake status is recorded when `URLSession` exposes it; otherwise it remains N/A. This follow-up adds a mock test for HTTP 503 and response-body omission, but that test has not run in the current environment.
+
+The command-execution environment for this follow-up is Linux. `command -v swiftc`, a filesystem search, and the Linux core harness did not find a compiler; the script exited 127. `xcodebuild` is also absent. No new XCTest, Simulator, physical-device, live App Store request from IPAForge, or GitHub Actions result is claimed for this follow-up. See the current [roadmap verification status](./ROADMAP.md).
+
+### Anonymous API observation — 2026-11-28
+
+Because the Swift app could not run in this host, a separate read-only `curl` request was made directly to Apple's public endpoints. This is not an IPAForge in-app Activity Log entry. No Apple Account, cookies, Anisette data, or private Store endpoint was used.
+
+| Request | HTTP | Duration | Response bytes | Observation |
+| --- | ---: | ---: | ---: | --- |
+| `GET https://itunes.apple.com/search` with `Apple Store`, US storefront | 200 | 1,370 ms | 491,101 | 47 catalog records; expected app ID `375380948` present and priced at 0. |
+| `GET https://itunes.apple.com/lookup` for app ID `375380948`, US storefront | 200 | 62 ms | 10,460 | One record: `com.apple.store.Jolly`, version `6.10`, minimum OS `26.0`, price 0. The record contained no `downloadUrl` field. |
+
+These responses verify only public search/metadata. No binary request or IPA integrity/signature check was made. The calls could not be inserted into the running app's in-memory Activity Log because the iOS app cannot run in this Linux host; the app code now records the same kind of sanitized diagnostics when its experiment is run.
+
 ## Repository audit
 
-At the start of this pass the repository was on `main`, commit `fdbda80` (`Update AppStore UI`). `prompt.txt` was already modified in the working tree; that user change was kept. The project uses an explicit Xcode project file, Swift language mode 5, and iOS deployment target 16.0. Its package references are StosSign at a pinned revision and ZIPFoundation; no App Store authentication/download package is integrated.
+At the start of the original 2026-11-26 pass the repository was on `main`, commit `fdbda80` (`Update AppStore UI`). For the 2026-11-28 follow-up, the actual baseline was `main` at `93d9e7afd885cae8cbd4ecc004b3b8847bcfacdd`; `prompt.txt` and the existing user changes were preserved. The project uses an explicit Xcode project file, Swift language mode 5, and iOS deployment target 16.0. Its package references are StosSign at a pinned revision and ZIPFoundation; no App Store authentication/download package is integrated.
 
 | Area | Current state |
 | --- | --- |
@@ -63,7 +90,7 @@ At least eight are technically distinct rather than forks of one implementation 
 | 8 | `majd/ipatool` Go client | Current releases provide Store auth, 2FA, account/session, purchase, and IPA download on desktop; release history also includes a jailbroken-iOS build. | Real desktop download evidence, but not a verified ordinary iOS app route. Latest iOS auth reports show an emulator architecture failure even on jailbroken devices. |
 | 9 | `bahattinkoc/ipaverse` GSA/PET client | Swift/macOS source implements GSA SRP-6a, 2FA, PET-to-MZFinance exchange, free-app license acquisition, download, and package preparation. | macOS-only; source reads MAC/serial and falls back to a random UUID. Cannot be copied into the ordinary iOS app under the no-fabricated-identity rule. |
 | 10 | `Lakr233/ApplePackage` Swift package | Swift SAP-signed authentication, package APIs, and iOS 15+ declared platform. | iOS platform declaration is not proof the identity path works. The reviewed iOS fallback generates an identifier; Swift 6 language mode also differs from this Swift 5 app. |
-| 11 | `iPadN` / `Crumb` / `WaffleStore` jailed-iOS family | iOS-facing UI and private SAP/StoreProof flows are present in source or claimed by the projects. | The inspected iPadN code generates and persists a random GUID and derives/randomizes another Store identifier. Crumb credits this family; it is not an independent proof and the no-fake-identity rule disqualifies the route. |
+| 11 | `iPadN` / `Crumb` / `WaffleStore` jailed-iOS family | iPadN release notes and Crumb's current README claim ordinary iOS App Store login, license and download flows. | iPadN generates/persists a random GUID and uses GPL-2.0 code; Crumb's own third-party notices identify an unlicensed WaffleStore base and unresolved Apple-derived runtime redistribution rights. These claims were not independently reproduced by IPAForge. |
 | 12 | `maclub-net/IPAToolKit` Swift/C | Public Swift client APIs cover Store auth, purchase, and downloads. | On non-IOKit platforms its own source creates and stores a random 6-byte hardware identifier. Its published custom license is also non-commercial. |
 | 13 | `apple-auth` / Mac ADI | C++/Swift/Python code offers Apple auth components; its docs describe an iPhone path. | The project labels the iPhone Mac-ADI path experimental/not recommended. No stock-iOS identity or success proof. |
 | 14 | `ipakeep` desktop Apple-framework emulation | Rust client implements Apple authentication, store APIs, license acquisition, and encrypted IPA downloads. | Desktop emulator/ADI path; no iOS app identity. |
@@ -144,7 +171,9 @@ Scores are weighted points, not raw percentages. Each criterion uses a 0–5 ass
 | `ipatool` Go Store client | 25 | 3 | 6 | 8 | 8 | 4 | 6 | 4 | **64** |
 | `ipaverse` GSA/PET on macOS | 25 | 0 | 9 | 8 | 8 | 6 | 6 | 4 | **66** |
 | `ApplePackage` Swift package | 25 | 6 | 6 | 6 | 8 | 6 | 4 | 4 | **65** |
-| iPadN / Crumb / WaffleStore iOS family | 20 | 12 | 6 | 8 | 6 | 4 | 2 | 3 | **61** |
+| WaffleStore / MuffinStore / PancakeStore predecessors | 20 | 12 | 6 | 8 | 6 | 4 | 2 | 3 | **61** |
+| Crumb current iOS source claims (not independently reproduced) | 20 | 15 | 12 | 8 | 0 | 4 | 2 | 2 | **63** |
+| iPadN v2.3.5 source/release claims (not independently reproduced) | 20 | 15 | 12 | 8 | 4 | 6 | 2 | 2 | **69** |
 | IPAToolKit Swift/C | 25 | 6 | 6 | 6 | 8 | 4 | 2 | 2 | **59** |
 | `apple-auth` Mac-ADI iPhone path | 25 | 3 | 6 | 8 | 8 | 2 | 3 | 2 | **57** |
 | `ipakeep` desktop framework emulation | 25 | 0 | 9 | 8 | 8 | 6 | 6 | 3 | **65** |
@@ -210,11 +239,11 @@ The existing `LoggingService` is reused. The App Store screen now has an anonymo
 | CRC mismatch errors could be indistinguishable from generic ZIP corruption. | `IPAInspector` maps ZIPFoundation's CRC error to an explicit CRC mismatch; the fixture test corrupts the central-directory checksum and asserts that classification. |
 | The Activity Log stores entries in memory and caps them at 500, so a result disappears after app relaunch or manual clear. | This matches the existing `LoggingService` behavior; no second persistence/logging store was introduced. Copy the log before clearing or closing if the experiment record must be retained. |
 
-These code paths were syntax-checked and the Linux core harness was run. Full XCTest type-check/runtime, Simulator, and device behavior remain unverified without Xcode.
+Those checks were performed during the 2026-11-26 pass. The separate 2026-11-28 follow-up has no Swift compiler or Xcode in its current environment; its test status is recorded below and supersedes the older environment summary for that follow-up.
 
-## Tests and environment
+## Tests and environment — 2026-11-26 historical verification
 
-The Xcode XCTest suite now has 23 v3/experiment-focused cases: public API search/lookup status and error behavior, a mock-only experiment report, IPA fixtures for valid/missing/malformed/CRC/Mach-O cases, and queue progress/cancellation/retry/timeout cleanup. Those mocks verify app behavior; they are not the live Apple result above. Existing Developer Portal authentication tests do not test App Store authentication. No Store auth or license mocks were added because there is no provider implementation to exercise.
+The Xcode XCTest suite had 23 v3/experiment-focused cases at that historical checkpoint: public API search/lookup status and error behavior, a mock-only experiment report, IPA fixtures for valid/missing/malformed/CRC/Mach-O cases, and queue progress/cancellation/retry/timeout cleanup. Those mocks verify app behavior; they are not the live Apple result above. Existing Developer Portal authentication tests do not test App Store authentication. No Store auth or license mocks were added because there is no provider implementation to exercise.
 
 | Verification | Result |
 | --- | --- |
@@ -275,5 +304,15 @@ All links below were accessed on 2026-11-26 UTC. Apple does not display a last-u
 32. [`ipatool` #498](https://github.com/majd/ipatool/issues/498) — login-success/download-token-expired case, opened 2026-06-15.
 33. [`ipatool` #550](https://github.com/majd/ipatool/issues/550) — HTTP 500/204/404 login response variability, opened 2026-09-09.
 34. [`ipatool` #465](https://github.com/majd/ipatool/issues/465) — 2FA continuation behavior after a password change, opened 2026-04-13.
+
+### Follow-up sources checked 2026-11-28
+
+35. [Crumb README](https://github.com/boierito/Crumb/blob/main/README.md) — claims an ordinary iOS 16.4+ sign-in, 2FA, free-license, IPA-download, and export flow.
+36. [Crumb third-party notices](https://github.com/boierito/Crumb/blob/main/THIRD_PARTY_NOTICES.md) — documents the WaffleStore no-license state, GPL iPadN components, and unresolved redistribution rights for Apple-derived runtime libraries.
+37. [iPadN latest releases](https://github.com/mengangs/ipadn/releases) — v2.3.5 release notes claim iOS 16+ login/download and free-license retry behavior; these claims were not independently reproduced by IPAForge.
+38. [iPadN repository](https://github.com/mengangs/ipadn) — GPL-2.0 project page and iOS-facing feature claims.
+39. [IPAToolKit README](https://github.com/maclub-net/IPAToolKit/blob/main/README.md) — iOS 15+ package claim and custom license terms.
+40. [Apple required-reason API reasons](https://developer.apple.com/documentation/bundleresources/app-privacy-configuration/nsprivacyaccessedapitypes/nsprivacyaccessedapitypereasons) and [TN3183](https://developer.apple.com/documentation/technotes/tn3183-adding-required-reason-api-entries-to-your-privacy-manifest) — the app uses UserDefaults for local settings and declares reason `CA92.1` in `PrivacyInfo.xcprivacy`.
+41. [GitHub-hosted runners reference](https://docs.github.com/en/actions/reference/runners/github-hosted-runners) and [runner-images inventory](https://github.com/actions/runner-images/blob/main/README.md) — `xcode-27` is a current macOS arm64 GitHub-hosted runner label.
 
 This list exceeds the prompt's minima: more than 15 useful references, more than 5 official/primary technical sources, more than 5 source repositories, and more than 5 technical issues/discussions. Issue claims are kept separate from IPAForge's direct public-API experiment.

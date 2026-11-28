@@ -44,16 +44,16 @@ enum DownloadStatus: String, Equatable {
     case failed = "Failed"
     case cancelled = "Cancelled"
 
-    var message: String {
+    var localizationKey: String {
         switch self {
-        case .waiting: return "Đang chờ tải..."
-        case .authenticating: return "Đang xác thực tài khoản App Store..."
-        case .fetchingMetadata: return "Đang lấy thông tin ứng dụng..."
-        case .downloading: return "Đang tải ứng dụng trên App Store..."
-        case .verifying: return "Đang lưu tệp IPA..."
-        case .completed: return "Đã tải xong"
-        case .failed: return "Tải thất bại"
-        case .cancelled: return "Đã hủy"
+        case .waiting: return "Waiting to download…"
+        case .authenticating: return "Authenticating with the App Store…"
+        case .fetchingMetadata: return "Fetching app metadata…"
+        case .downloading: return "Downloading from the App Store…"
+        case .verifying: return "Verifying IPA structure and integrity…"
+        case .completed: return "Download completed"
+        case .failed: return "Download failed"
+        case .cancelled: return "Download cancelled"
         }
     }
 
@@ -77,9 +77,6 @@ struct DownloadTask: Identifiable {
     var fileURL: URL?
     var errorMessage: String?
 
-    var statusMessage: String {
-        status == .verifying ? "Đang lưu \(app.name).ipa..." : status.message
-    }
 }
 
 enum AuthPhase: Equatable {

@@ -166,6 +166,13 @@ struct CompatibilityChecker {
         prohibited: Set<String>?,
         profile: DeviceProfile
     ) -> CompatibilityFinding {
+        guard !profile.isSimulated else {
+            return CompatibilityFinding(
+                criterion: .deviceCapabilities,
+                status: .unknown,
+                detail: "Hardware capability values on a simulated profile are not verified device data."
+            )
+        }
         guard let required, let prohibited else {
             return CompatibilityFinding(
                 criterion: .deviceCapabilities,
@@ -230,6 +237,13 @@ struct CompatibilityChecker {
     }
 
     private func checkArchitecture(_ architectures: Set<String>?, profile: DeviceProfile) -> CompatibilityFinding {
+        guard !profile.isSimulated else {
+            return CompatibilityFinding(
+                criterion: .architecture,
+                status: .unknown,
+                detail: "Architecture values on a simulated profile are not verified device data."
+            )
+        }
         guard let architectures, !architectures.isEmpty,
               let supported = profile.supportedArchitectures,
               !supported.isEmpty else {

@@ -71,11 +71,11 @@ The current project is an Xcode iOS app with deployment target **iOS 16.0** and 
 | `AuthenticationService.swift`, `StosSignAuthenticationProvider.swift` | Sign in to Apple Developer Portal and load Developer Teams. Its session is separate from App Store session cookies, DSID, storefront, password token, and pod data. | IMPLEMENTED (Developer Portal only) |
 | `AppStoreDownloadService.swift` | Provider boundary currently throws `directEngineUnavailable`. It does not authenticate, acquire a license, or fetch an IPA. | BLOCKED |
 | `DownloadService.swift` | Queue state, provider cancellation, byte-based progress, retry-as-new-task, temporary file cleanup, IPA inspection, and save-after-validation are implemented. No production provider can currently start a real transfer. | PARTIALLY IMPLEMENTED |
-| Device Profile and compatibility | Local simulated profiles can be saved and selected. IPA metadata is inspected; public catalog metadata is reported Unknown where it lacks required fields. | IMPLEMENTED (simulated/local checks) |
-| IPA validation | ZIP entry paths and size are bounded; ZIP entries are streamed and CRC checked; `Payload/*.app/Info.plist`, bundle metadata, and Mach-O architecture are inspected. No package is extracted to an untrusted path. | IMPLEMENTED (syntax parsed; full typecheck/runtime not verified here) |
+| Device Profile and compatibility | App Details now uses a fixed simulated iPhone 17 Pro / iOS 27.0 profile and displays only the Minimum OS result. The Profile screen no longer exposes the custom Device Profile editor. | IMPLEMENTED (fixed simulated minimum-OS check) |
+| IPA validation | ZIP entry paths and size are bounded; ZIP entries are streamed and CRC checked; `Payload/*.app/Info.plist`, bundle metadata, and Mach-O architecture are inspected. No package is extracted to an untrusted path. | IMPLEMENTED; no current follow-up syntax/typecheck/runtime result |
 | GitHub Actions | Workflows were read and left unchanged. | NOT TESTED |
 
-This Codespace has **Swift 6.4.3** for `x86_64-unknown-linux-gnu`, installed by Swiftly at `/home/codespace/.local/share/swiftly/bin/swift`. The restricted command PATH used by this agent omits that directory (`which swift` there returns no result); querying the toolchain with permission finds it. `xcodebuild` and the Apple iOS SDK are absent. Therefore iOS build success, full XCTest success, Simulator success, iOS 27 runtime availability, real Apple Account login, and a real IPA download remain **NOT TESTED**. Do not interpret the local profile as an Xcode Simulator or as device hardware.
+At the 2026-11-28 follow-up, `command -v swiftc`, a filesystem search, and the Linux test script did not find a Swift compiler in the command-execution environment. `xcodebuild` and the Apple iOS SDK are also absent. Older toolchain/test results elsewhere in this report are historical and do not apply to this follow-up. Do not interpret the local profile as an Xcode Simulator or as device hardware.
 
 ### Extended repository research
 
@@ -144,10 +144,10 @@ The blockers are concrete:
 
 #### DeviceProfile and compatibility
 
-- Added a local, persistent `DeviceProfile` defaulting to iPhone / iOS 27.0. Multiple profiles can be created and selected; profiles have no connection to Apple authentication.
-- The UI displays real runtime/model/system version separately from the selected simulated profile, labels it `SIMULATED DEVICE PROFILE`, allows iPhone/iPad model and OS selection, and keeps unverified capability/architecture inventories unknown.
+- A local `DeviceProfile` preset defaults to iPhone 17 Pro / iOS 27.0; it has no connection to Apple authentication.
+- App Details compares the catalog Minimum OS against that fixed preset. The overall Unknown banner and checks whose metadata is unavailable are hidden; the Profile screen no longer links to the custom profile editor.
 - The compatibility checker compares minimum OS, `UIDeviceFamily`, required/prohibited capabilities, `CFBundleSupportedPlatforms`, and Mach-O architecture. Any failed requirement yields Incompatible; incomplete or malformed metadata yields Unknown; Compatible is only returned when all criteria are known and pass.
-- The public iTunes catalog currently provides minimum OS among these checks, so an app-detail result may correctly remain Unknown. The inspector reads local IPA fields rather than guessing missing metadata.
+- The public iTunes catalog currently provides Minimum OS but not the other device requirements. App Details therefore evaluates that one criterion and hides the overall Unknown result instead of implying a complete device-compatibility check. The local IPA inspector still reads additional fields rather than guessing missing metadata.
 - IPAForge's deployment target remains iOS 16.0. This profile is not an iOS 27 Simulator, test device, or Store identity.
 
 #### IPA inspection and download queue
@@ -157,34 +157,32 @@ The blockers are concrete:
 - Cancel cancels the worker task; each attempt has a unique temporary folder and a provider contract requiring the underlying transfer to stop before the provider returns. Retry creates a new task and path. A provider that ignores cancellation cannot be claimed safe; the only production provider is still blocked/stubbed.
 - A successful provider result is inspected and validated before the IPA is moved into Documents. The default provider still throws `directEngineUnavailable`, so App Detail disables the download action and explains the blocker. FairPlay decryption is not implemented.
 
-### Tests and verification
+### Verification status — 2026-11-28 follow-up
 
-Added 23 v3/experiment unit-test cases. Their current platform requirements are:
-
-| Tests | Count | Linux status |
-| --- | ---: | --- |
-| Default profile, version/profile validation, and all `CompatibilityCheckerTests` | 8 | Pure Swift/Foundation; covered by `Scripts/test-linux-core.sh` |
-| Profile persistence and multiple-profile selection/deletion | 2 | `DeviceProfileStore` uses Combine/`ObservableObject`; kept in the app XCTest target |
-| IPA ZIP/metadata validation, missing files, invalid plist/executable, Mach-O and CRC | 5 | Foundation/CoreFoundation + ZIPFoundation; current Linux harness does not resolve/link the package or run this XCTest target |
-| Download progress/cancellation, validation/save, retry, timeout and partial-file cleanup | 4 | `DownloadService` uses Combine and the app's Documents container; requires Apple XCTest environment |
-| Public Search status/metadata, HTTP failure, malformed response, network failure, and mock experiment summary | 4 | `MockURLProtocol` XCTest only; does not call Apple or authenticate |
-
-The Linux harness exercises the same pure `DeviceProfile`, `SemanticOSVersion`, and `CompatibilityChecker` sources without changing the app's module boundaries. `DeviceProfileStore` was moved to its own Combine-dependent source file; the type/API and Xcode project architecture stay the same. Its fixture provider is test-only and does not participate in the production download service.
+The actual baseline for this follow-up was branch `main`, commit `93d9e7afd885cae8cbd4ecc004b3b8847bcfacdd`. The tree already contained user edits to the README, roadmap, localization catalogs, UI, `prompt.txt`, and an untracked `phanhoi.txt`; those were preserved. The current worktree remains uncommitted.
 
 | Check | Result |
 | --- | --- |
-| `git diff --check` | Passed (no whitespace errors) |
-| Swift version / target | Swift 6.4.3; `x86_64-unknown-linux-gnu` |
-| `swiftc -frontend -parse` over all project `.swift` files | Passed after the final source changes; syntax only, not Apple framework type compatibility |
-| `bash Scripts/test-linux-core.sh` | Passed after the final model changes: pure Swift source compiled in Swift 6 mode and 17 assertions passed |
-| Live anonymous Search/Lookup API request | Search HTTP 200; lookup returned one free app metadata record. No binary URL was returned. |
-| `which swift` / `swift --version` | Swiftly executable found at `/home/codespace/.local/share/swiftly/bin/swift`; Swift 6.4.3. The restricted default shell PATH omits that directory. |
-| `xcodebuild` / complete iOS target typecheck | NOT TESTED: `xcodebuild` and iOS SDK are absent |
-| Python `zipfile` inspection of the embedded test fixture | Passed (two entries, readable app Info.plist, 32-byte Mach-O test header); this is fixture inspection, not a Swift test run |
-| Full `IPAForgeTests` XCTest suite | NOT TESTED: the iOS test bundle requires Xcode/Apple frameworks; the eight pure cases were rerun in the Linux harness. The 23 new XCTest cases were added but not executed here. |
-| iOS 27 Simulator | NOT TESTED: this is a Linux Codespace with no macOS/Xcode runtime |
-| Real App Store login / direct IPA download | NOT TESTED and BLOCKED pending a compliant iOS Device Identity/SAP/Store AMD path |
-| GitHub Actions on this exact worktree | NOT RUN: the worktree is uncommitted and this task forbids commit/push; dispatching the remote branch would test different source |
-| Workflow edits | None; `xcode-27` and Xcode 27.2 remain configured |
+| `git diff --check` | PASS |
+| Linux core harness | NOT RUN: `bash Scripts/test-linux-core.sh` was attempted and exited 127 because this execution shell could not find `swiftc` on PATH or at the script's Swiftly fallback path. A filesystem search also found no compiler binary. |
+| Swift syntax parse / typecheck | NOT RUN: `swift` and `swiftc` are unavailable. |
+| Xcode build / XCTest / Simulator | NOT RUN: `xcodebuild` and the iOS SDK are unavailable on this Linux host. |
+| Live anonymous App Store API request | NOT RUN from IPAForge in this follow-up. The in-app experiment remains available and uses the existing Activity Log. |
+| App Store login, license, binary download, real IPA and Apple signature verification | NOT TESTED. The production provider remains unavailable; no account credentials were used. |
+| Workflow YAML | PASS: all three workflow files parsed with Ruby's YAML parser. |
+| Localization / Privacy manifest / target membership | PASS: all three String Catalogs are valid, complete for English/Vietnamese, and identical; `PrivacyInfo.xcprivacy` parsed and is in app resources; project sources are in their app/test targets. `Tests/LinuxCoreChecks.swift` is intentionally script-only. |
 
-The next meaningful verification requires a Mac with Xcode 27 and an installed iOS 27 Simulator runtime for the complete iOS build/XCTest target, followed by a physical iPhone test for any candidate identity/auth flow. The existing Actions workflow remains configured for runner `xcode-27` and Xcode 27.2. The local changes are uncommitted, and the task forbids commit/push, so an Actions run on the exact current worktree cannot be triggered without violating that constraint. A Simulator test alone cannot establish Store identity or real-device hardware proof.
+The source currently has 61 XCTest methods. This is a static count, not a test result. Added regression coverage includes approval before Anisette identity transmission, event/correlation IDs, the unavailable-provider status, late progress after verification starts, Anisette HTTP diagnostics without response-body logging, and same-origin WSS validation. The updated Linux compatibility checks were not run.
+
+An exact-tree GitHub Actions run is also NOT RUN. The workflows build a checkout from GitHub; without committing/pushing this tree, dispatching one would test a different revision. The workflow files were not changed. See the follow-up in [AUTHENTICATION_RESEARCH.md](./AUTHENTICATION_RESEARCH.md) for the current source review and App Store integration blocker.
+
+### 2026-11-28 implementation follow-up
+
+- Anisette v3 access now requires per-server approval before identity data is sent. The prompt names the selected HTTPS server and discloses the persistent `identifier`, `adi_pb`, and Apple provisioning exchange values that pass through it; approval is encrypted in Keychain and can be revoked, clearing that server's saved identity. A saved Developer Portal session does not auto-send Anisette data before approval.
+- Removed the client metadata rewrite from macOS `10.12.6` to `27.0`; selected-server metadata now passes through unchanged.
+- The unavailable download provider no longer displays authentication or metadata-loading states. Late progress callbacks cannot replace `Verifying`; cancellation is checked before reporting validation success. Validation logs state that Apple code-signature verification was not performed.
+- `LoggingService` remains the single Activity Log and adds event IDs, optional correlation IDs, and sanitized diagnostics for public Search/Lookup and Anisette HTTP requests: method, query-free endpoint, actual HTTP status or N/A, response type/size, duration, redirect flag, retry count/Retry-After, server request ID, parsing/validation, error domain/code, reason, and next action. Anisette WebSocket handshake status is recorded when `URLSession` exposes it; otherwise the log reports N/A. Response bodies and Anisette values are not stored. Logs remain in-memory, capped at 500 entries.
+- Anisette network requests now share the sign-in/server-selection correlation ID. HTTP parsing outcomes and cancellation are logged without recording headers, provisioning messages, `identifier`, `adi_pb`, or response bodies. The client requires WSS for provisioning, limits Apple-returned provisioning URLs to HTTPS on the default Apple origin without credentials/query/fragment, and rejects redirects outside the configured secure origin.
+- Manually entered capabilities and architectures on simulated profiles remain Unknown; only Minimum OS is evaluated for the fixed Details profile.
+- `PrivacyInfo.xcprivacy` now declares `UserDefaults` reason `CA92.1` alongside the existing disk-space reason and is included in app resources.
+- The experimental download provider remains unavailable. Crumb and iPadN are current iOS-facing references, but their GPL/unlicensed upstream/proprietary-runtime conditions prevent straightforward reuse under the current project setup without a separate licensing decision. No Store login, license acquisition, binary download, IPA, or Apple signature result is claimed.

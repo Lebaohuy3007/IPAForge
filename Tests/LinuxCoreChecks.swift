@@ -77,8 +77,8 @@ private struct Checks {
             prohibited: [],
             architecture: ["arm64"]
         )
-        expect(CompatibilityChecker().evaluate(requirements: compatible, profile: profile).status == .compatible,
-               "all known requirements yield Compatible")
+        expect(CompatibilityChecker().evaluate(requirements: compatible, profile: profile).status == .unknown,
+               "manually entered simulated hardware values do not become verified")
     }
 
     private mutating func checkCapabilityAndFamilyFailures() {
@@ -90,8 +90,9 @@ private struct Checks {
             prohibited: [],
             architecture: ["arm64"]
         )
-        expect(CompatibilityChecker().evaluate(requirements: needsNFC, profile: profile).status == .incompatible,
-               "missing required capability yields Incompatible")
+        let needsNFCReport = CompatibilityChecker().evaluate(requirements: needsNFC, profile: profile)
+        expect(needsNFCReport.findings.first(where: { $0.criterion == .deviceCapabilities })?.status == .unknown,
+               "manual simulated capability values stay Unknown")
 
         let tooNew = requirements(
             minimumOS: "28.0",
@@ -142,8 +143,8 @@ private struct Checks {
             architecture: ["arm64e.x1"]
         )
         let report = CompatibilityChecker().evaluate(requirements: requirements, profile: profile)
-        expect(report.findings.first(where: { $0.criterion == .architecture })?.status == .incompatible,
-               "arm64e and arm64e.x1 are not merged")
+        expect(report.findings.first(where: { $0.criterion == .architecture })?.status == .unknown,
+               "simulated architecture values are not treated as verified")
     }
 
     private func makeProfile(

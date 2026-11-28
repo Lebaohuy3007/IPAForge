@@ -54,6 +54,22 @@ final class AnisetteURLValidatorTests: XCTestCase {
             URL(string: "https://example.com"),
             URL(string: "http://example.com")
         ))
+        XCTAssertTrue(AnisetteURLValidator.hasSameWSSOrigin(
+            URL(string: "wss://example.com"),
+            URL(string: "wss://EXAMPLE.com:443/session")
+        ))
+        XCTAssertTrue(AnisetteURLValidator.hasSameWSSOrigin(
+            URL(string: "https://example.com"),
+            URL(string: "wss://example.com/session")
+        ))
+        XCTAssertFalse(AnisetteURLValidator.hasSameWSSOrigin(
+            URL(string: "wss://example.com"),
+            URL(string: "wss://other.example/session")
+        ))
+        XCTAssertFalse(AnisetteURLValidator.hasSameWSSOrigin(
+            URL(string: "wss://example.com"),
+            URL(string: "ws://example.com/session")
+        ))
     }
 
     func testConnectionRecognizesV3ClientInfoOrAnisetteHeaderResponse() async {
@@ -104,6 +120,35 @@ final class AnisetteURLValidatorTests: XCTestCase {
         XCTAssertFalse(httpError.state.isUsable)
     }
 
+    func testAnisetteProbeLogsActualHTTPDiagnosticsWithoutResponseBody() async {
+        let logger = await MainActor.run { LoggingService() }
+        let configuration = URLSessionConfiguration.ephemeral
+        configuration.protocolClasses = [MockURLProtocol.self]
+        MockURLProtocol.statusCode = 503
+        MockURLProtocol.stubbedError = nil
+        MockURLProtocol.responseData = Data("private-response-body".utf8)
+        MockURLProtocol.retryAfter = "7"
+        MockURLProtocol.responseHandler = nil
+        defer {
+            MockURLProtocol.retryAfter = nil
+            MockURLProtocol.responseData = Data()
+        }
+        let service = AnisetteService(
+            session: URLSession(configuration: configuration),
+            logger: logger
+        )
+
+        _ = await service.testConnection(serverURL: "https://anisette.example")
+        let logText = await MainActor.run { logger.text }
+
+        XCTAssertTrue(logText.contains("HTTP Status: 503"))
+        XCTAssertTrue(logText.contains("Response Type: application/json"))
+        XCTAssertTrue(logText.contains("Response Size: 21 bytes"))
+        XCTAssertTrue(logText.contains("Retry-After: 7"))
+        XCTAssertTrue(logText.contains("HTTP 503"))
+        XCTAssertFalse(logText.contains("private-response-body"))
+    }
+
     func testFetchV3HeadersReusesEncryptedIdentityAndCallsV3Endpoints() async throws {
         let identity = StoredAnisetteIdentity(
             identifier: "stable-local-id",
@@ -111,6 +156,7 @@ final class AnisetteURLValidatorTests: XCTestCase {
             adiPB: Data([1, 2, 3]).base64EncodedString()
         )
         let identityStore = MockAnisetteIdentityStore(identity: identity)
+        try identityStore.approveServer(forServer: "https://anisette.example")
         let configuration = URLSessionConfiguration.ephemeral
         configuration.protocolClasses = [MockURLProtocol.self]
         MockURLProtocol.statusCode = 200
@@ -119,7 +165,7 @@ final class AnisetteURLValidatorTests: XCTestCase {
         MockURLProtocol.responseHandler = { request in
             switch request.url?.path {
             case "/v3/client_info":
-                return Data(#"{"client_info":"client","user_agent":"agent","serial":"0"}"#.utf8)
+                return Data(#"{"client_info":"client OS 10.12.6","user_agent":"agent OS 10.12.6","serial":"0"}"#.utf8)
             case "/v3/get_headers":
                 return Data(#"{"X-Apple-I-MD":"otp","X-Apple-I-MD-M":"machine","X-Apple-I-MD-RINFO":"1"}"#.utf8)
             default:
@@ -137,6 +183,8 @@ final class AnisetteURLValidatorTests: XCTestCase {
         XCTAssertEqual(headers["X-Apple-I-MD"], "otp")
         XCTAssertEqual(headers["X-Apple-I-MD-M"], "machine")
         XCTAssertEqual(headers["X-Apple-I-MD-LU"], identity.identifier)
+        XCTAssertEqual(headers["X-MMe-Client-Info"], "client OS 10.12.6")
+        XCTAssertEqual(headers["User-Agent"], "agent OS 10.12.6")
         XCTAssertEqual(
             MockURLProtocol.requests.compactMap { $0.url?.path },
             ["/v3/client_info", "/v3/get_headers"]
@@ -158,6 +206,7 @@ final class AnisetteURLValidatorTests: XCTestCase {
         ])
         let socketFactory = MockAnisetteWebSocketFactory(connection: socket)
         let identityStore = MockAnisetteIdentityStore(identity: nil)
+        try identityStore.approveServer(forServer: "https://anisette.example")
         let configuration = URLSessionConfiguration.ephemeral
         configuration.protocolClasses = [MockURLProtocol.self]
         MockURLProtocol.statusCode = 200
@@ -216,6 +265,30 @@ final class AnisetteURLValidatorTests: XCTestCase {
         XCTAssertEqual(sentMessages[2]["ptm"], "provisioning-token")
         XCTAssertEqual(sentMessages[2]["tk"], "trust-key")
         XCTAssertEqual(socketFactory.connectedURL?.absoluteString, "wss://anisette.example/v3/provisioning_session")
+    }
+
+    func testV3IdentityIsNotSentUntilServerIsApproved() async throws {
+        let identity = StoredAnisetteIdentity(
+            identifier: "stable-local-id",
+            deviceID: UUID().uuidString,
+            adiPB: Data([1, 2, 3]).base64EncodedString()
+        )
+        let identityStore = MockAnisetteIdentityStore(identity: identity)
+        let configuration = URLSessionConfiguration.ephemeral
+        configuration.protocolClasses = [MockURLProtocol.self]
+        MockURLProtocol.requests = []
+        let service = AnisetteService(
+            session: URLSession(configuration: configuration),
+            identityStore: identityStore
+        )
+
+        do {
+            _ = try await service.fetchAnisetteV3(serverURL: "https://anisette.example")
+            XCTFail("Anisette identity must not be sent before explicit approval.")
+        } catch let error as AnisetteV3Error {
+            XCTAssertTrue(error.localizedDescription.contains("approve"))
+        }
+        XCTAssertTrue(MockURLProtocol.requests.isEmpty)
     }
 }
 
@@ -339,7 +412,7 @@ final class AnisetteServerStoreTests: XCTestCase {
 final class LogSanitizerTests: XCTestCase {
     func testRedactsCredentialFieldsAndBearerTokens() {
         let sanitized = LogSanitizer.sanitize(
-            #"{"password":"hunter2","token":"abc123","X-Apple-I-MD":"anisette-secret","X-Apple-I-Client-Time":"time-secret","identifier":"private-id","adi.pb":"blob"} Bearer eyJhbGciOiJIUzI1NiJ9"#
+            #"{"password":"hunter2","token":"abc123","X-Apple-I-MD":"anisette-secret","X-Apple-I-Client-Time":"time-secret","X-Apple-AMD":"amd-secret","X-Apple-ActionSignature":"sap-secret","DSID":"directory-secret","passwordToken":"password-token-secret","identifier":"private-id","adi.pb":"blob"} Bearer eyJhbGciOiJIUzI1NiJ9"#
         )
         XCTAssertFalse(sanitized.contains("hunter2"))
         XCTAssertFalse(sanitized.contains("abc123"))
@@ -348,11 +421,26 @@ final class LogSanitizerTests: XCTestCase {
         XCTAssertFalse(sanitized.contains("time-secret"))
         XCTAssertFalse(sanitized.contains("private-id"))
         XCTAssertFalse(sanitized.contains("blob"))
+        XCTAssertFalse(sanitized.contains("amd-secret"))
+        XCTAssertFalse(sanitized.contains("sap-secret"))
+        XCTAssertFalse(sanitized.contains("directory-secret"))
+        XCTAssertFalse(sanitized.contains("password-token-secret"))
     }
 }
 
 @MainActor
 final class LoggingServiceTests: XCTestCase {
+    func testActivityEntriesCarryEventAndCorrelationIDs() {
+        let logger = LoggingService()
+        let correlationID = UUID()
+
+        logger.log(.info, "Public metadata request.", correlationID: correlationID)
+
+        let entry = logger.entries[0]
+        XCTAssertTrue(entry.formatted.contains("Event ID: \(entry.id.uuidString)"))
+        XCTAssertTrue(entry.formatted.contains("Correlation ID: \(correlationID.uuidString)"))
+    }
+
     func testLoginLogsUpdateClearIndependentlyAndRedactSecrets() {
         let logger = LoggingService()
         logger.log(.info, "Application launched.")
@@ -542,6 +630,9 @@ final class AppleAccountVaultTests: XCTestCase {
         try vault.saveAnisetteIdentity(identity, forServer: serverURL)
 
         XCTAssertEqual(try vault.anisetteIdentity(forServer: serverURL), identity)
+        XCTAssertFalse(try vault.isAnisetteServerApproved(forServer: serverURL))
+        try vault.approveAnisetteServer(forServer: serverURL)
+        XCTAssertTrue(try vault.isAnisetteServerApproved(forServer: serverURL))
         XCTAssertNil(try vault.anisetteIdentity(forServer: "https://another.example"))
         XCTAssertFalse(keychain.values.values.contains {
             String(decoding: $0, as: UTF8.self).contains(identity.adiPB)
@@ -549,6 +640,7 @@ final class AppleAccountVaultTests: XCTestCase {
 
         try vault.clearAnisetteIdentity(forServer: serverURL)
         XCTAssertNil(try vault.anisetteIdentity(forServer: serverURL))
+        XCTAssertFalse(try vault.isAnisetteServerApproved(forServer: serverURL))
     }
 
     func testRejectsTamperedRecordsAndInvalidAccountData() throws {
@@ -669,22 +761,35 @@ final class AppStoreServiceTests: XCTestCase {
     }
 
     func testNonSuccessHTTPStatusIsReported() async {
+        defer { MockURLProtocol.retryAfter = nil }
         MockURLProtocol.responseData = Data(#"{"results":[]}"#.utf8)
         MockURLProtocol.statusCode = 503
+        MockURLProtocol.retryAfter = "17"
         MockURLProtocol.stubbedError = nil
         MockURLProtocol.responseHandler = nil
         let configuration = URLSessionConfiguration.ephemeral
         configuration.protocolClasses = [MockURLProtocol.self]
         let service = AppStoreService(session: URLSession(configuration: configuration))
         var statusCode: Int?
+        var diagnostics: AppStoreRequestDiagnostics?
 
         do {
-            _ = try await service.search("example", onHTTPStatus: { statusCode = $0 })
+            _ = try await service.search(
+                "example",
+                onDiagnostics: { diagnostics = $0 },
+                onHTTPStatus: { statusCode = $0 }
+            )
             XCTFail("Expected an HTTP status error.")
         } catch {
             XCTAssertEqual(error as? AppStoreServiceError, AppStoreServiceError.httpStatus(503))
         }
         XCTAssertEqual(statusCode, 503)
+        XCTAssertEqual(diagnostics?.httpStatus, 503)
+        XCTAssertEqual(diagnostics?.method, "GET")
+        XCTAssertEqual(diagnostics?.endpoint, "https://itunes.apple.com/search")
+        XCTAssertEqual(diagnostics?.retryAfter, "17")
+        XCTAssertEqual(diagnostics?.retryCount, 0)
+        XCTAssertEqual(diagnostics?.wasRedirected, false)
     }
 
     func testMalformedPublicResponseIsRejected() async {
@@ -710,15 +815,19 @@ final class AppStoreServiceTests: XCTestCase {
         let configuration = URLSessionConfiguration.ephemeral
         configuration.protocolClasses = [MockURLProtocol.self]
         let service = AppStoreService(session: URLSession(configuration: configuration))
+        var diagnostics: AppStoreRequestDiagnostics?
 
         do {
-            _ = try await service.search("example")
+            _ = try await service.search("example", onDiagnostics: { diagnostics = $0 })
             XCTFail("Expected the network error to propagate.")
         } catch let error as URLError {
             XCTAssertEqual(error.code, .notConnectedToInternet)
         } catch {
             XCTFail("Unexpected error: \(error)")
         }
+        XCTAssertNil(diagnostics?.httpStatus)
+        XCTAssertEqual(diagnostics?.errorDomain, NSURLErrorDomain)
+        XCTAssertEqual(diagnostics?.errorCode, URLError.notConnectedToInternet.rawValue)
         MockURLProtocol.stubbedError = nil
     }
 }
@@ -831,6 +940,7 @@ private final class MockAppleAuthenticationProvider: AppleAuthenticationProvidin
 
 private final class MockAnisetteIdentityStore: AnisetteIdentityStoring {
     var identity: StoredAnisetteIdentity?
+    private var approvedServers = Set<String>()
 
     init(identity: StoredAnisetteIdentity?) {
         self.identity = identity
@@ -844,8 +954,17 @@ private final class MockAnisetteIdentityStore: AnisetteIdentityStoring {
         self.identity = identity
     }
 
+    func isServerApproved(forServer serverURL: String) throws -> Bool {
+        approvedServers.contains(serverURL)
+    }
+
+    func approveServer(forServer serverURL: String) throws {
+        approvedServers.insert(serverURL)
+    }
+
     func clearIdentity(forServer serverURL: String) throws {
         identity = nil
+        approvedServers.remove(serverURL)
     }
 }
 
@@ -891,6 +1010,7 @@ private final class MockURLProtocol: URLProtocol {
     static var stubbedError: Error?
     static var responseHandler: ((URLRequest) -> Data)?
     static var requests: [URLRequest] = []
+    static var retryAfter: String?
 
     override class func canInit(with request: URLRequest) -> Bool { true }
     override class func canonicalRequest(for request: URLRequest) -> URLRequest { request }
@@ -905,7 +1025,10 @@ private final class MockURLProtocol: URLProtocol {
             url: request.url!,
             statusCode: Self.statusCode,
             httpVersion: "HTTP/1.1",
-            headerFields: ["Content-Type": "application/json"]
+            headerFields: [
+                "Content-Type": "application/json",
+                "Retry-After": Self.retryAfter
+            ].compactMapValues { $0 }
         )!
         client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
         client?.urlProtocol(self, didLoad: Self.responseHandler?(request) ?? Self.responseData)
@@ -980,7 +1103,7 @@ final class DeviceProfileTests: XCTestCase {
 }
 
 final class CompatibilityCheckerTests: XCTestCase {
-    func testCompatibleRequiresKnownValuesAcrossAllCriteria() {
+    func testUserEnteredHardwareValuesDoNotVerifyASimulatedProfile() {
         let profile = makeProfile(capabilities: ["wifi", "arm64"], architectures: ["arm64"])
         let requirements = CompatibilityRequirements(
             minimumOSVersion: "16.0",
@@ -993,8 +1116,10 @@ final class CompatibilityCheckerTests: XCTestCase {
 
         let report = CompatibilityChecker().evaluate(requirements: requirements, profile: profile)
 
-        XCTAssertEqual(report.status, .compatible)
-        XCTAssertFalse(report.hasUnknownChecks)
+        XCTAssertEqual(report.status, .unknown)
+        XCTAssertTrue(report.hasUnknownChecks)
+        XCTAssertEqual(report.findings.first(where: { $0.criterion == .deviceCapabilities })?.status, .unknown)
+        XCTAssertEqual(report.findings.first(where: { $0.criterion == .architecture })?.status, .unknown)
     }
 
     func testMinimumOSAndDeviceFamilyCanBeIncompatible() {
@@ -1051,11 +1176,11 @@ final class CompatibilityCheckerTests: XCTestCase {
         let knownProfile = makeProfile(capabilities: ["wifi"], architectures: ["x86_64"])
 
         let unknownReport = CompatibilityChecker().evaluate(requirements: requirements, profile: unknownProfile)
-        let incompatibleReport = CompatibilityChecker().evaluate(requirements: requirements, profile: knownProfile)
+        let manualDataReport = CompatibilityChecker().evaluate(requirements: requirements, profile: knownProfile)
 
         XCTAssertEqual(unknownReport.findings.first(where: { $0.criterion == .deviceCapabilities })?.status, .unknown)
-        XCTAssertEqual(incompatibleReport.findings.first(where: { $0.criterion == .deviceCapabilities })?.status, .incompatible)
-        XCTAssertEqual(incompatibleReport.findings.first(where: { $0.criterion == .architecture })?.status, .incompatible)
+        XCTAssertEqual(manualDataReport.findings.first(where: { $0.criterion == .deviceCapabilities })?.status, .unknown)
+        XCTAssertEqual(manualDataReport.findings.first(where: { $0.criterion == .architecture })?.status, .unknown)
     }
 
     func testArm64eAndArm64eX1AreNotTreatedAsPlainArm64() {
@@ -1071,7 +1196,7 @@ final class CompatibilityCheckerTests: XCTestCase {
 
         let report = CompatibilityChecker().evaluate(requirements: requirements, profile: profile)
 
-        XCTAssertEqual(report.findings.first(where: { $0.criterion == .architecture })?.status, .incompatible)
+        XCTAssertEqual(report.findings.first(where: { $0.criterion == .architecture })?.status, .unknown)
     }
 
     func testCatalogMetadataDoesNotGuessMissingDeviceRequirements() {
@@ -1256,6 +1381,47 @@ final class IPAInspectorTests: XCTestCase {
 
 @MainActor
 final class DownloadServiceTests: XCTestCase {
+    func testUnavailableProviderDoesNotClaimAuthenticationOrMetadataProgress() async throws {
+        let logger = LoggingService()
+        let service = DownloadService(logger: logger)
+
+        XCTAssertFalse(service.start(app: makeApp()))
+        for _ in 0..<100 where service.tasks.first?.status.isInProgress == true {
+            try await Task.sleep(nanoseconds: 10_000_000)
+        }
+
+        XCTAssertEqual(service.tasks.first?.status, .failed)
+        XCTAssertTrue(logger.text.contains("internal engine unavailable"))
+        XCTAssertFalse(logger.text.localizedCaseInsensitiveContains("authenticating"))
+        XCTAssertFalse(logger.text.localizedCaseInsensitiveContains("fetching metadata"))
+    }
+
+    func testLateProgressCannotReplaceVerifyingState() async throws {
+        let inspectionStarted = expectation(description: "IPA inspection started")
+        let inspector = SuspendedIPAInspector(started: inspectionStarted)
+        defer { inspector.resume() }
+        let service = DownloadService(
+            provider: FixtureDownloadProvider(data: try IPAInspectorTests.fixtureDataForDownload()),
+            ipaInspector: inspector
+        )
+
+        XCTAssertFalse(service.start(app: makeApp()))
+        let taskID = try XCTUnwrap(service.tasks.first?.id)
+        await fulfillment(of: [inspectionStarted], timeout: 3)
+        XCTAssertEqual(service.tasks.first?.status, .verifying)
+
+        service.reportDownloadProgress(taskID: taskID, downloaded: 90, total: 100)
+
+        XCTAssertEqual(service.tasks.first?.status, .verifying)
+        XCTAssertEqual(service.tasks.first?.downloadedBytes, 0)
+
+        inspector.resume()
+        for _ in 0..<100 where service.tasks.first?.status.isInProgress == true {
+            try await Task.sleep(nanoseconds: 10_000_000)
+        }
+        XCTAssertEqual(service.tasks.first?.status, .completed)
+    }
+
     func testProgressUsesActualBytesAndCancellationReachesProvider() async throws {
         let started = expectation(description: "provider started")
         let cancelled = expectation(description: "provider observed cancellation")
@@ -1343,6 +1509,25 @@ final class DownloadServiceTests: XCTestCase {
             fileSizeBytes: nil,
             minimumOSVersion: "16.0"
         )
+    }
+}
+
+private final class SuspendedIPAInspector: IPAInspecting, @unchecked Sendable {
+    private let started: XCTestExpectation
+    private let releaseInspection = DispatchSemaphore(value: 0)
+
+    init(started: XCTestExpectation) {
+        self.started = started
+    }
+
+    func inspect(_ url: URL) throws -> IPAInspection {
+        started.fulfill()
+        _ = releaseInspection.wait(timeout: .now() + 5)
+        return try IPAInspector().inspect(url)
+    }
+
+    func resume() {
+        releaseInspection.signal()
     }
 }
 

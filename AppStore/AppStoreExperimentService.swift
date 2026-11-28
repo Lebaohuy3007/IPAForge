@@ -48,18 +48,23 @@ final class AppStoreExperimentService: ObservableObject {
         guard !isRunning else { return }
         isRunning = true
         defer { isRunning = false }
+        let correlationID = UUID()
 
-        logger.log(.info, "Experiment A | Experiment Started | Public App Store API.")
-        logger.log(.info, "Experiment A | Authentication Mode: anonymous.")
-        logger.log(.warning, "Experiment A | App Store session unavailable; no account was used.")
+        log(.info, "Experiment A | Engine: Public App Store API | Stage: Initialization | Result: PASS.", correlationID: correlationID)
+        log(.info, "Experiment A | Authentication Mode: anonymous.", correlationID: correlationID)
+        log(.warning, "Experiment A | App Store session unavailable; no account was used.", correlationID: correlationID)
 
         let knownFreeAppID = 375_380_948
         var checks: [AppStoreExperimentCheck] = []
         var searchHTTPStatus: Int?
+        var searchDiagnostics: AppStoreRequestDiagnostics?
         do {
-            let results = try await appStore.search("Apple Store", country: "us") {
-                searchHTTPStatus = $0
-            }
+            let results = try await appStore.search(
+                "Apple Store",
+                country: "us",
+                onDiagnostics: { searchDiagnostics = $0 },
+                onHTTPStatus: { searchHTTPStatus = $0 }
+            )
             let app = results.first(where: { $0.id == knownFreeAppID })
             if let app, app.price == 0 {
                 checks.append(AppStoreExperimentCheck(
@@ -67,26 +72,55 @@ final class AppStoreExperimentService: ObservableObject {
                     status: .passed,
                     detail: "HTTP \(searchHTTPStatus.map(String.init) ?? "2xx"); found free app ID \(knownFreeAppID)."
                 ))
-                logger.log(.success, "Experiment A | Public Search | HTTP \(searchHTTPStatus.map(String.init) ?? "2xx") | PASS.")
+                logNetworkDiagnostics(
+                    searchDiagnostics,
+                    stage: "Public Search",
+                    parsing: "PASS",
+                    validation: "PASS",
+                    result: "PASS",
+                    reason: "Expected free app ID \(knownFreeAppID) was found.",
+                    nextAction: "None.",
+                    correlationID: correlationID
+                )
             } else {
                 checks.append(AppStoreExperimentCheck(
                     name: "A · Search",
                     status: .failed,
                     detail: "HTTP \(searchHTTPStatus.map(String.init) ?? "2xx"); expected free app ID \(knownFreeAppID) was not returned."
                 ))
-                logger.log(.error, "Experiment A | Public Search | Expected free app was not returned.")
+                logNetworkDiagnostics(
+                    searchDiagnostics,
+                    stage: "Public Search",
+                    parsing: "PASS",
+                    validation: "FAIL",
+                    result: "FAIL",
+                    reason: "Expected free app ID \(knownFreeAppID) was not returned as a free app.",
+                    nextAction: "Check the selected storefront and current catalog listing.",
+                    correlationID: correlationID
+                )
             }
         } catch {
             let detail = Self.safeFailureDetail(error, statusCode: searchHTTPStatus)
             checks.append(AppStoreExperimentCheck(name: "A · Search", status: .failed, detail: detail))
-            logger.log(.error, "Experiment A | Public Search failed | \(detail).")
+            logNetworkDiagnostics(
+                searchDiagnostics,
+                stage: "Public Search",
+                parsing: error as? AppStoreServiceError == .invalidResponse ? "FAIL" : "NOT RUN",
+                validation: "NOT RUN",
+                result: "FAIL",
+                reason: detail,
+                nextAction: "Check the reported HTTP or network error before retrying.",
+                correlationID: correlationID
+            )
         }
 
         var metadataHTTPStatus: Int?
+        var metadataDiagnostics: AppStoreRequestDiagnostics?
         do {
             let result = try await appStore.lookup(
                 appID: knownFreeAppID,
                 country: "us",
+                onDiagnostics: { metadataDiagnostics = $0 },
                 onHTTPStatus: { metadataHTTPStatus = $0 }
             )
             if let app = result.first,
@@ -99,19 +133,46 @@ final class AppStoreExperimentService: ObservableObject {
                     status: .passed,
                     detail: "HTTP \(metadataHTTPStatus.map(String.init) ?? "2xx"); \(app.name) v\(app.version), free."
                 ))
-                logger.log(.success, "Experiment A | Public Metadata Request | HTTP \(metadataHTTPStatus.map(String.init) ?? "2xx") | PASS.")
+                logNetworkDiagnostics(
+                    metadataDiagnostics,
+                    stage: "Metadata Lookup",
+                    parsing: "PASS",
+                    validation: "PASS",
+                    result: "PASS",
+                    reason: "Bundle ID, version, and free price were present.",
+                    nextAction: "None.",
+                    correlationID: correlationID
+                )
             } else {
                 checks.append(AppStoreExperimentCheck(
                     name: "A · Metadata",
                     status: .failed,
                     detail: "HTTP \(metadataHTTPStatus.map(String.init) ?? "2xx"); response lacked required app metadata."
                 ))
-                logger.log(.error, "Experiment A | Public Metadata Request | Required app metadata was missing.")
+                logNetworkDiagnostics(
+                    metadataDiagnostics,
+                    stage: "Metadata Lookup",
+                    parsing: "PASS",
+                    validation: "FAIL",
+                    result: "FAIL",
+                    reason: "Response did not include all required metadata for the expected free app.",
+                    nextAction: "Inspect the current catalog response and required fields.",
+                    correlationID: correlationID
+                )
             }
         } catch {
             let detail = Self.safeFailureDetail(error, statusCode: metadataHTTPStatus)
             checks.append(AppStoreExperimentCheck(name: "A · Metadata", status: .failed, detail: detail))
-            logger.log(.error, "Experiment A | Public Metadata Request failed | \(detail).")
+            logNetworkDiagnostics(
+                metadataDiagnostics,
+                stage: "Metadata Lookup",
+                parsing: error as? AppStoreServiceError == .invalidResponse ? "FAIL" : "NOT RUN",
+                validation: "NOT RUN",
+                result: "FAIL",
+                reason: detail,
+                nextAction: "Check the reported HTTP or network error before retrying.",
+                correlationID: correlationID
+            )
         }
 
         checks.append(AppStoreExperimentCheck(
@@ -119,7 +180,7 @@ final class AppStoreExperimentService: ObservableObject {
             status: .unsupported,
             detail: "Apple's documented public Search/Lookup API returns catalog metadata, not an IPA download URL."
         ))
-        logger.log(.warning, "Experiment A | Binary access | NOT SUPPORTED by the documented public Search/Lookup API.")
+        log(.warning, "Experiment A | Stage: Binary access | NOT_SUPPORTED by the documented public Search/Lookup API.", correlationID: correlationID)
 
         checks.append(AppStoreExperimentCheck(
             name: "A · IPA download",
@@ -131,19 +192,47 @@ final class AppStoreExperimentService: ObservableObject {
             status: .notTested,
             detail: "No IPA was obtained; IPAInspector was not run for this experiment."
         ))
-        logger.log(.info, "Experiment A | IPA download and integrity | NOT TESTED; no public binary URL.")
+        log(.info, "Experiment A | Stage: IPA download and integrity | NOT_TESTED; no public binary URL.", correlationID: correlationID)
 
         checks.append(AppStoreExperimentCheck(
             name: "B · Authentication",
             status: .blocked,
             detail: "Not attempted: no compliant iOS App Store authentication and device-identity provider is implemented. No credentials were entered."
         ))
-        logger.log(.warning, "Experiment B | Authentication | NOT STARTED; iOS identity/authentication route is blocked. No credentials were requested or sent.")
-        logger.log(.info, "Experiment B | 2FA, session restore, license, download, and IPA validation | NOT TESTED.")
+        log(.warning, "Experiment B | Stage: Authentication | BLOCKED before sign-in. No credentials were requested or sent.", correlationID: correlationID)
+        log(.info, "Experiment B | 2FA, session restore, license acquisition, binary download, and IPA validation | NOT_TESTED.", correlationID: correlationID)
 
         report = AppStoreExperimentReport(completedAt: Date(), checks: checks)
-        logger.log(.info, "Experiment A final result | \(report?.summary ?? "not available")")
-        logger.log(.warning, "Experiment B final result | BLOCKED before sign-in; no live authentication was attempted.")
+        log(.info, "Experiment A final result | \(report?.summary ?? "not available")", correlationID: correlationID)
+        log(.warning, "Experiment B final result | BLOCKED before sign-in; no live authentication was attempted.", correlationID: correlationID)
+    }
+
+    private func log(_ level: LogLevel, _ message: String, correlationID: UUID) {
+        logger.log(level, message, correlationID: correlationID)
+    }
+
+    private func logNetworkDiagnostics(
+        _ diagnostics: AppStoreRequestDiagnostics?,
+        stage: String,
+        parsing: String,
+        validation: String,
+        result: String,
+        reason: String,
+        nextAction: String,
+        correlationID: UUID
+    ) {
+        let level: LogLevel = result == "PASS" ? .success : .error
+        let details = diagnostics?.activityLogMessage(
+            engine: "Public App Store API",
+            stage: stage,
+            parsing: parsing,
+            validation: validation,
+            result: result,
+            reason: reason,
+            nextAction: nextAction
+        ) ?? "Engine: Public App Store API | Stage: \(stage) | Method: GET | Endpoint: N/A | HTTP Status: N/A | Duration: N/A | Response Type: N/A | Response Size: N/A | Redirected: N/A | Retry Count: 0 | Retry-After: N/A | Server Request ID: N/A | Parsing: \(parsing) | Validation: \(validation) | Error Domain/Code: N/A | Result: \(result) | Reason: \(reason) | Next Action: \(nextAction)"
+        let message = "Experiment A | \(details)"
+        log(level, message, correlationID: correlationID)
     }
 
     private static func safeFailureDetail(_ error: Error, statusCode: Int?) -> String {

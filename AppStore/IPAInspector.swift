@@ -67,7 +67,11 @@ struct IPAInspection: Equatable, Sendable {
     }
 }
 
-struct IPAInspector: Sendable {
+protocol IPAInspecting: Sendable {
+    func inspect(_ url: URL) throws -> IPAInspection
+}
+
+struct IPAInspector: IPAInspecting {
     private static let maximumEntries = 100_000
     private static let maximumExpandedBytes: UInt64 = 30 * 1024 * 1024 * 1024
     private static let maximumInfoPlistBytes = 8 * 1024 * 1024

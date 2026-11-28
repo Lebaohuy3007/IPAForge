@@ -1,819 +1,1462 @@
-IPAForge — DỰ ÁN ĐÁNH CƯỢC APP STORE
-
-MAX RESEARCH · MULTI-APPROACH · ELIMINATION · SWIFT IMPLEMENTATION · REAL-WORLD EXPERIMENT
+IPAForge — ULTIMATE SOURCE AUDIT & EXPERIMENTAL APP STORE ENGINE CHALLENGE
 
 Repository: Lebaohuy3007/IPAForge
-
-Mục tiêu tối thượng:
-
-Tìm ra phương án tốt nhất để IPAForge tải được ứng dụng từ Apple App Store với số bước xác thực ít nhất có thể.
-
-Ưu tiên:
-
-1. Không cần đăng nhập nếu Apple cung cấp phương thức tải công khai hợp lệ.
-2. Nếu cần xác thực, giảm tối đa số lần đăng nhập.
-3. Nếu cần 2FA, chỉ yêu cầu khi Apple thực sự yêu cầu.
-4. Có thể lưu và khôi phục session an toàn nếu được hỗ trợ.
-5. Tải được tệp IPA thực tế, kiểm tra được tính toàn vẹn và xuất được tệp.
-
-Đây là một cuộc thử nghiệm kỹ thuật thực sự. Không được mặc định phương án nào sẽ thành công.
-
-Không được vượt qua xác thực, quyền sở hữu, license hoặc cơ chế bảo vệ nội dung của Apple.
+Branch: main (phải xác minh branch thực tế)
+Latest known commit: 93d9e7afd885cae8cbd4ecc004b3b8847bcfacdd (chỉ là mốc tham khảo, không được giả định đây vẫn là commit hiện tại)
+Mode: MAXIMUM REASONING · COMPLETE SOURCE AUDIT · SECURITY REVIEW · MULTI-APPROACH RESEARCH · EXPERIMENTAL IMPLEMENTATION · REAL TESTING
 
 ⸻
 
-PHASE 0 — KIỂM TRA TOÀN BỘ DỰ ÁN
+1. MỤC TIÊU CHÍNH
 
-Trước khi viết code:
+Thực hiện một cuộc kiểm tra và cải thiện toàn diện repository IPAForge.
 
-1. Kiểm tra repository, branch, commit hiện tại và Git status.
-2. Đọc toàn bộ cấu trúc thư mục.
-3. Kiểm tra các file Swift liên quan.
-4. Đọc README tiếng Anh và tiếng Việt.
-5. Đọc Downloader/ROADMAP.md.
-6. Kiểm tra dependency và phiên bản Swift.
-7. Kiểm tra Xcode project và các build configuration.
-8. Kiểm tra các workflow GitHub Actions.
-9. Kiểm tra XCTest hiện có.
-10. Xác định chính xác những gì đã được triển khai và những gì vẫn là placeholder.
+Đây không chỉ là nhiệm vụ nghiên cứu App Store Authentication.
 
-Các file cần ưu tiên:
+Phải kiểm tra toàn bộ mã nguồn, kiến trúc, bảo mật, giao diện, localization, Xcode integration, CI, tests và tài liệu.
+
+Đặc biệt, đây là một thử thách triển khai App Store Engine.
+
+Không được chỉ tìm hiểu các phương án rồi kết luận rằng chưa có phương án nào được xác minh.
+
+Hãy chủ động:
+
+1. Nghiên cứu nhiều phương án kỹ thuật.
+2. Đánh giá bằng chứng và khả năng triển khai.
+3. Chọn phương án có tiềm năng tốt nhất.
+4. Triển khai nó vào IPAForge dưới dạng Experimental.
+5. Tích hợp vào giao diện ứng dụng.
+6. Thực hiện các thử nghiệm thực tế có thể thực hiện.
+7. Sử dụng Activity Log hiện có để ghi nhận toàn bộ kết quả.
+8. Đọc log, xác định lỗi và sửa các vấn đề có bằng chứng.
+9. Tiếp tục kiểm tra cho đến khi đạt kết quả rõ ràng hoặc gặp blocker không thể xử lý trong môi trường hiện tại.
+
+Một phương án chưa được xác minh vẫn có thể được triển khai để thử nghiệm.
+
+Tuy nhiên, không được biến một phương án chưa xác minh thành tính năng được tuyên bố là hoạt động chính thức.
+
+Mục tiêu cuối cùng: xác định liệu IPAForge có thể tải IPA thực tế từ Apple App Store trên iOS hay không, bằng bằng chứng và thử nghiệm có thể kiểm tra lại.
+
+Không ép buộc phải thành công. Nhưng cũng không được bỏ cuộc chỉ vì chưa có phương án nào được xác minh trước khi triển khai.
+
+⸻
+
+2. ABSOLUTE SOURCE PRESERVATION
+
+Trước khi sửa bất kỳ file nào:
+
+1. Chạy git status --short.
+2. Kiểm tra branch và commit hiện tại.
+3. Kiểm tra toàn bộ tracked và untracked files.
+4. Kiểm tra các thay đổi chưa commit.
+5. Đọc prompt.txt hiện có.
+6. Ghi lại baseline của repository.
+7. Xác định môi trường hiện tại và các công cụ thực sự có sẵn.
+
+Các quy tắc bắt buộc:
+
+* Không commit.
+* Không push.
+* Không reset.
+* Không checkout làm mất thay đổi.
+* Không chạy git clean.
+* Không ghi đè file đang có thay đổi của người dùng.
+* Không xóa dữ liệu người dùng.
+* Không giả định Codespaces giống GitHub main.
+* Không tự ý sửa hoặc thay thế prompt.txt.
+
+Nếu phát hiện thay đổi chưa commit, phải bảo toàn chúng và làm việc dựa trên trạng thái hiện tại.
+
+Nếu có xung đột giữa tài liệu cũ và trạng thái source thực tế, phải ghi nhận và ưu tiên bằng chứng từ repository hiện tại.
+
+⸻
+
+3. COMPLETE REPOSITORY AUDIT
+
+Kiểm tra toàn bộ repository, không giới hạn ở danh sách dưới đây.
+
+Bao gồm:
+
+* Toàn bộ Swift source.
+* Models.
+* Services.
+* ViewModels.
+* Views.
+* Authentication.
+* Anisette.
+* App Store.
+* Downloader.
+* Export.
+* Logging.
+* Tests.
+* Resources.
+* Localization.
+* Assets.
+* Xcode project.
+* Schemes.
+* Package dependencies.
+* GitHub Actions.
+* README.
+* ROADMAP.
+* Privacy manifest.
+* License.
+* Scripts.
+* Configuration files.
+* prompt.txt.
+
+Các file đặc biệt cần chú ý
+
+Authentication
 
 * Authentication/AuthenticationService.swift
 * Authentication/StosSignAuthenticationProvider.swift
 * Authentication/AppleAccountVault.swift
+
+Anisette
+
 * Anisette/AnisetteService.swift
+
+App Store
+
 * AppStore/AppStoreService.swift
+* AppStore/AppStoreExperimentService.swift
 * AppStore/AppStoreDownloadService.swift
+* AppStore/CompatibilityChecker.swift
+* AppStore/IPAInspector.swift
+
+Downloader
+
 * Downloader/DownloadService.swift
 * Downloader/ROADMAP.md
-* Logging/LoggingService.swift
+* Downloader/AUTHENTICATION_RESEARCH.md
+
+Models
+
+* Models/Models.swift
+* Models/DeviceProfile.swift
+* Models/DeviceProfileStore.swift
+
+Application
+
 * ViewModels/AppEnvironment.swift
-* Views/LoginView.swift
+* Views/AppStoreSearchView.swift
 * Views/AppDetailView.swift
+* Views/DeviceProfileView.swift
+* Views/LoginView.swift
+* Views/AnisetteServersView.swift
 * Views/DownloadManagerView.swift
 * Views/DownloadDetailView.swift
 * Views/LogViewerView.swift
+* Views/MainTabView.swift
+* Views/RootView.swift
+
+Other
+
+* Export/ExportService.swift
+* Logging/LoggingService.swift
 * Tests/IPAForgeTests.swift
+* Tests/LinuxCoreChecks.swift
+* Scripts/test-linux-core.sh
 * .github/workflows/experimental.yml
+* .github/workflows/release.yml
+* .github/workflows/upload.yml
+* AppStoreIPADownloader.xcodeproj/project.pbxproj
 
-Không được nhầm:
+Đối chiếu các file với Xcode target membership.
 
-* Apple Developer Portal Authentication.
-* App Store Authentication.
-* Anisette.
-* Store AMD.
-* SAP signing.
-* App Store session.
-* App Store license.
+Không được bỏ qua file chỉ vì nó không xuất hiện trong danh sách.
 
-Đây là những thành phần khác nhau.
+Audit report
 
-Không làm lại những tính năng đã hoàn thành.
+Với từng module, xác định:
 
-⸻
-
-PHASE 1 — NGHIÊN CỨU VÀ TẠO NHIỀU HƯỚNG GIẢI QUYẾT
-
-Không được chọn ngay phương án đầu tiên tìm thấy.
-
-Hãy nghiên cứu ít nhất 10 hướng tiếp cận, trong đó phải có tối thiểu 8 hướng thực sự khác biệt.
-
-Các hướng bắt buộc:
-
-1. Public Anonymous App Store Access
-
-Nghiên cứu các API công khai của Apple.
-
-Kiểm tra:
-
-* Tìm kiếm ứng dụng.
-* Lấy metadata.
-* Lấy thông tin phiên bản.
-* Có binary download URL chính thức hay không.
-* Có thể lấy IPA thực tế hay không.
-* Có yêu cầu xác thực ở từng bước hay không.
-
-Phải phân biệt metadata công khai với quyền tải binary.
-
-2. Official App Store Authentication
-
-Nghiên cứu các phương thức xác thực Apple có căn cứ kỹ thuật.
-
-Mục tiêu:
-
-* Giảm số lần nhập tài khoản.
-* Hỗ trợ 2FA.
-* Hỗ trợ session.
-* Xử lý session hết hạn.
-* Hỗ trợ đăng xuất và thu hồi phiên.
-
-3. Session Persistence
-
-Nghiên cứu khả năng tái sử dụng một App Store session hợp lệ.
-
-Kiểm tra:
-
-* Session được tạo ra như thế nào?
-* Có thể khôi phục sau khi đóng ứng dụng không?
-* Có thể lưu an toàn trong iOS Keychain không?
-* Session có thời hạn không?
-* Có cần xác thực lại mỗi lần tải không?
-
-Không trích xuất cookie hoặc token từ ứng dụng hệ thống.
-
-4. StoreKit / Native iOS
-
-Nghiên cứu các framework Apple chính thức.
-
-Đánh giá:
-
-* Authentication.
-* Transaction.
-* Entitlement.
-* Purchase.
-* Download.
-* Khả năng xuất IPA.
-
-Không tự suy luận rằng StoreKit có thể tải hoặc xuất IPA.
-
-5. App Store Connect API
-
-Nghiên cứu khả năng dùng API này.
-
-Kiểm tra:
-
-* JWT.
-* API Key.
-* Quyền truy cập.
-* Binary.
-* Phạm vi ứng dụng.
-* Giới hạn đối với ứng dụng không thuộc tài khoản nhà phát triển.
-
-Nếu không phù hợp với mục tiêu tải ứng dụng công khai, phải loại bỏ.
-
-6. TestFlight / Alternative Distribution
-
-Đánh giá các phương thức phân phối ứng dụng chính thức khác.
-
-Phải phân biệt:
-
-* App Store.
-* TestFlight.
-* Ad Hoc.
-* Enterprise.
-* Development Distribution.
-
-Không coi các phương thức này là cách tải IPA của mọi ứng dụng công khai.
-
-7. Open-Source Implementations
-
-Nghiên cứu ít nhất các dự án:
-
-* majd/ipatool
-* Lakr233/ApplePackage
-* bahattinkoc/ipaverse
-* urobee/ipatool
-* Các dự án liên quan khác tìm được.
-
-Kiểm tra mã nguồn thực tế:
-
-* Authentication.
-* 2FA.
-* Session.
-* SAP signing.
-* Store AMD.
-* Anisette.
-* Device identity.
-* License acquisition.
-* Download.
-* iOS compatibility.
+* Chức năng thực tế.
+* Đã triển khai.
+* Chưa triển khai.
+* Placeholder.
+* Mock.
+* Stub.
+* Bug.
+* Security issue.
 * Dependencies.
-* Issues.
-* Releases.
-* License.
+* Test coverage.
+* Mức độ hoàn thiện.
+* Hành động đề xuất.
 
-Không đánh đồng hỗ trợ macOS, Linux với hỗ trợ iOS.
+Không đánh dấu một tính năng hoàn thành chỉ vì đã có class, protocol hoặc UI.
 
-8. Native Swift Integration
-
-Nghiên cứu các cách tích hợp những thư viện hoặc engine có sẵn vào Swift.
-
-Đánh giá:
-
-* Swift Package Manager.
-* C/C++ interoperability.
-* Go mobile binding.
-* Framework đóng gói cho iOS.
-* Native Swift implementation.
-
-Chỉ chọn cách có thể build và chạy trong ứng dụng iOS thực tế.
-
-9. Officially Supported Account and Purchase Flows
-
-Tìm các luồng Apple được hỗ trợ để xác định quyền tải ứng dụng miễn phí và ứng dụng đã sở hữu.
-
-Phải phân biệt việc:
-
-* Đọc thông tin ứng dụng.
-* Cấp quyền tải.
-* Tải binary.
-* Xuất IPA.
-
-10. Additional Creative Approaches
-
-Tự nghiên cứu thêm các hướng khác.
-
-Có thể đưa ra những ý tưởng mới, nhưng mỗi ý tưởng phải có:
-
-* Cơ sở kỹ thuật.
-* Nguồn tham khảo.
-* Điều kiện hoạt động.
-* Hạn chế.
-* Khả năng chạy trên iOS.
-
-Không tạo ra những giải pháp tưởng tượng không có cơ sở.
+Phải kiểm tra luồng thực thi thực tế.
 
 ⸻
 
-PHASE 2 — NGHIÊN CỨU WEB CHUYÊN SÂU
+4. ARCHITECTURE AND BUG AUDIT
 
-Bắt buộc tìm kiếm nguồn mới nhất.
+Kiểm tra:
 
-Ưu tiên:
+1. Dependency Injection.
+2. Protocol boundaries.
+3. Async/await.
+4. MainActor isolation.
+5. Cancellation.
+6. Race conditions.
+7. Memory management.
+8. Error handling.
+9. File management.
+10. Temporary file cleanup.
+11. Retry behavior.
+12. Progress reporting.
+13. State transitions.
+14. Keychain access.
+15. AES-GCM encryption.
+16. UserDefaults persistence.
+17. App lifecycle.
+18. Navigation.
+19. UI state.
+20. Localization behavior.
+21. Logging behavior.
+22. Provider isolation.
 
-1. Apple Developer Documentation.
-2. Apple Developer Forums.
-3. GitHub source code.
-4. GitHub Issues và Pull Requests.
-5. Release notes.
-6. Tài liệu giao thức.
-7. Các bài phân tích kỹ thuật có thể kiểm chứng.
+DownloadService
 
-Yêu cầu:
+Kiểm tra cụ thể:
 
-* Ít nhất 15 nguồn tham khảo hữu ích.
-* Ít nhất 5 nguồn chính thức hoặc tài liệu kỹ thuật gốc.
-* Ít nhất 5 repository có mã nguồn liên quan.
-* Ít nhất 5 issue hoặc thảo luận kỹ thuật có giá trị.
-* Kiểm tra thời điểm cập nhật của từng nguồn.
-* Ưu tiên thông tin năm 2025–2026 nếu có.
+* Progress callback có thể chạy sau khi chuyển sang verifying không?
+* Callback cũ có ghi đè trạng thái completed không?
+* Cancellation có thực sự hủy network operation không?
+* Provider có tiếp tục ghi file sau cancellation không?
+* Retry có ghi đè file của lần thử trước không?
+* Partial file có được dọn sạch không?
+* File được lưu đúng vị trí không?
+* Queue có khôi phục sau khi đóng ứng dụng không?
+* Download status có phản ánh hoạt động thật không?
+* Có thể xảy ra duplicate download không?
+* Có xử lý network interruption không?
 
-Không được chỉ đọc README rồi kết luận.
+Không để UI hiển thị:
 
-Phải đọc code của các phần thực sự thực hiện authentication và download.
+* Authenticating.
+* Downloading.
+* Verifying.
+* Completed.
 
-Tạo:
+nếu bước tương ứng chưa thực sự xảy ra.
 
-Downloader/AUTHENTICATION_RESEARCH.md
+Kiểm tra AppStoreDownloadService và xác định rõ provider hiện có là:
 
-Nội dung:
-
-* Nguồn.
-* Ngày truy cập.
-* Mô tả kỹ thuật.
-* Bằng chứng.
-* Hạn chế.
-* Kết quả kiểm tra.
-* Những điểm chưa xác minh.
-
-Không được bịa nguồn hoặc bịa kết quả.
-
-⸻
-
-PHASE 3 — CHẤM ĐIỂM VÀ LOẠI BỎ DẦN
-
-Tạo bảng đánh giá tất cả hướng tiếp cận.
-
-Chấm theo thang 100:
-
-Tiêu chí	Trọng số
-Khả năng tải IPA thực tế	25
-Khả năng hoạt động trên iOS	15
-Mức độ ít phải xác thực	15
-Session persistence	10
-License handling	10
-Độ ổn định	10
-Bảo mật	10
-Khả năng bảo trì	5
-
-Thực hiện loại bỏ qua nhiều vòng.
-
-Vòng 1 — Khả năng thực tế
-
-Loại phương án không có cách tải binary IPA thực sự.
-
-Vòng 2 — Tương thích nền tảng
-
-Loại phương án phụ thuộc vào thành phần không thể chạy trên iOS và không có giải pháp thay thế được hỗ trợ.
-
-Vòng 3 — Authentication
-
-Loại phương án yêu cầu cơ chế xác thực không có căn cứ hoặc danh tính thiết bị giả.
-
-Vòng 4 — License
-
-Loại phương án không xử lý được quyền tải hợp lệ.
-
-Vòng 5 — Security
-
-Loại phương án có rủi ro nghiêm trọng đối với Apple ID, mật khẩu, session hoặc dữ liệu người dùng.
-
-Vòng 6 — Finalists
-
-So sánh các phương án còn lại.
-
-Chọn một phương án thắng cuộc.
-
-Nếu không có phương án đạt yêu cầu, hãy kết luận không có phương án khả thi ở thời điểm nghiên cứu.
-
-Không được ép buộc chọn một phương án yếu chỉ để có kết quả.
+* Real implementation.
+* Partial implementation.
+* Experimental implementation.
+* Stub.
+* Unavailable provider.
 
 ⸻
 
-PHASE 4 — THỬ PHẢN BIỆN CHÍNH PHƯƠNG ÁN ĐƯỢC CHỌN
+5. SECURITY AUDIT
 
-Trước khi viết code, tự đặt câu hỏi:
+Đây là phần bắt buộc.
 
-* Có bằng chứng tải IPA thực sự không?
-* Có thực sự hỗ trợ iOS không?
-* Có yêu cầu MAC Address không?
-* Có phụ thuộc Device Identifier không?
-* Có cần Store AMD không?
-* Có cần SAP signing không?
-* Có thể dùng session cũ không?
-* Có phải cấp license không?
-* Có cần 2FA không?
-* Có thể hoạt động với ứng dụng miễn phí chưa sở hữu không?
-* Có thể hoạt động với ứng dụng đã sở hữu không?
-* Có thể duy trì sau khi Apple thay đổi API không?
+Kiểm tra:
 
-Tìm ít nhất 3 lý do khiến phương án thắng cuộc có thể thất bại.
+* Apple ID.
+* Password handling.
+* 2FA.
+* Session token.
+* Cookies.
+* DSID.
+* Anisette headers.
+* ADI provisioning data.
+* Keychain.
+* AES-GCM.
+* Logging.
+* Network requests.
+* TLS.
+* Redirect handling.
+* Third-party servers.
+* Data retention.
+* Privacy manifest.
 
-Nếu phát hiện lỗi nghiêm trọng, quay lại PHASE 3 và chọn phương án khác.
+Anisette security
 
-Không bảo vệ một phương án chỉ vì đã mất thời gian nghiên cứu nó.
+Đọc kỹ AnisetteService.swift.
 
-⸻
+Xác định:
 
-PHASE 5 — CHỌN PHƯƠNG ÁN TỐI ƯU
-
-Phải đưa ra kết luận:
-
-1. Phương án được chọn.
-2. Những phương án bị loại.
-3. Lý do loại.
-4. Số bước xác thực dự kiến.
-5. Khả năng lưu session.
-6. Khả năng tải ứng dụng miễn phí.
-7. Khả năng tải ứng dụng đã sở hữu.
-8. Khả năng tải IPA thực tế.
-9. Khả năng hoạt động trên iOS.
-10. Những rủi ro còn lại.
-
-Ưu tiên phương án:
-
-* Ít thao tác nhất.
-* Không phải đăng nhập lặp lại.
-* Không yêu cầu 2FA lặp lại nếu Apple không yêu cầu.
-* Có thể lưu session hợp lệ.
-* Tương thích iOS.
-* Có bằng chứng tải IPA thật.
-
-⸻
-
-PHASE 6 — TRIỂN KHAI SWIFT THỰC TẾ
-
-Đây là phần bắt buộc nếu nghiên cứu tìm được phương án khả thi.
-
-Không được chỉ viết báo cáo rồi dừng.
-
-Chủ động tạo file Swift mới nếu cần.
-
-Các file gợi ý:
-
-* Authentication/AppStoreAuthenticationProvider.swift
-* Authentication/AppStoreAuthenticationService.swift
-* Authentication/AppStoreSessionVault.swift
-* AppStore/AppStoreDownloadProvider.swift
-* AppStore/AppStoreExperimentService.swift
-* AppStore/AppStoreAuthenticationState.swift
-
-Đây là tên gợi ý. Có thể thay đổi để phù hợp kiến trúc hiện tại.
-
-Không bắt buộc tạo tất cả các file trên.
-
-Yêu cầu:
-
-Swift Architecture
-
-* Tách Authentication khỏi Download.
-* Sử dụng protocol phù hợp.
-* Dependency Injection.
-* Xử lý lỗi bằng enum rõ ràng.
-* Hỗ trợ async/await.
-* Hỗ trợ cancellation.
-* Không tạo singleton tùy tiện.
-* Không tạo code trùng lặp.
-* Không tạo module chỉ có protocol và TODO.
-
-Authentication
-
-* App Store Authentication riêng.
-* Không dùng StosSign thay thế.
-* Hỗ trợ 2FA khi được yêu cầu.
-* Lưu session bằng Keychain nếu có cơ chế hợp lệ.
-* Khôi phục session.
-* Xử lý session hết hạn.
-* Hỗ trợ sign out và revoke khi được hỗ trợ.
-
-Download
-
-* Kết nối với DownloadService hiện tại.
-* Download provider phải thực sự hoạt động.
-* Progress dựa trên byte thực tế.
-* Cancellation hủy tác vụ thực tế.
-* Xử lý timeout và retry.
-* Lưu file trong app Documents hoặc vùng lưu trữ phù hợp.
-* Xác minh IPA trước khi đánh dấu completed.
-* Không tạo IPA giả.
-
-Xcode Integration
-
-* Thêm file Swift mới vào Xcode project nếu project sử dụng explicit file references.
-* Kiểm tra target membership.
-* Kiểm tra dependency.
-* Kiểm tra scheme.
-* Kiểm tra build settings.
-* Kiểm tra các file không bị bỏ sót.
-
-Swift Compatibility
-
-* Swift Language Mode: 5.
-* iOS Deployment Target: 16.0.
-* Không tự nâng deployment target.
-* Không dùng API chỉ có trên iOS mới mà không có availability handling.
-
-Không được làm
-
-* Không tạo Device Identifier giả.
-* Không tạo MAC Address giả.
-* Không tạo Anisette giả.
-* Không giả mạo SAP signature.
-* Không dùng session của Developer Portal làm Store session.
-* Không bypass xác thực.
-* Không bypass license.
-* Không bypass FairPlay hoặc DRM.
-* Không tạo mock provider để giả vờ tải thành công.
-
-Nếu không tìm được phương án khả thi, không tạo các file Swift giả. Hãy giải thích blocker.
-
-⸻
-
-PHASE 7 — EXPERIMENT A: KHÔNG CÓ APP STORE AUTHENTICATION
-
-Mục tiêu:
-
-Kiểm tra giới hạn thực tế của phương thức truy cập công khai.
-
-Điều kiện:
-
-* Không có App Store session.
-* Không đăng nhập tài khoản.
-* Chỉ sử dụng giao diện công khai được Apple hỗ trợ.
-* Không giả lập session.
-* Không né xác thực.
-
-Thực hiện:
-
-1. Tìm kiếm một ứng dụng miễn phí.
-2. Lấy metadata.
-3. Kiểm tra các endpoint và chức năng công khai được tài liệu hóa.
-4. Xác định có phương thức tải binary IPA chính thức hay không.
-5. Nếu có phương thức hợp lệ, thực hiện thử nghiệm.
-6. Nếu không có, ghi rõ giới hạn.
-
-Kết quả phải phân biệt:
-
-* Search: PASS / FAIL.
-* Metadata: PASS / FAIL.
-* Binary access: PASS / FAIL / NOT SUPPORTED.
-* IPA download: PASS / FAIL / NOT TESTED.
-* IPA integrity: PASS / FAIL / NOT TESTED.
-
-Không được coi tìm kiếm thành công là tải IPA thành công.
-
-⸻
-
-PHASE 8 — EXPERIMENT B: XÁC THỰC TỐI THIỂU
-
-Nếu Experiment A không thể tải IPA:
-
-Thử phương án thắng cuộc.
-
-Điều kiện:
-
-* Người dùng tự nhập thông tin tài khoản trên thiết bị.
-* Chỉ sử dụng tài khoản hợp pháp.
-* 2FA chỉ thực hiện khi Apple yêu cầu.
-* Không gửi thông tin tài khoản cho dịch vụ không cần thiết.
-* Không lưu mật khẩu dạng plaintext.
-
-Thử nghiệm riêng:
-
-1. Đăng nhập lần đầu.
-2. Kiểm tra 2FA.
-3. Khôi phục session.
-4. Đóng và mở lại ứng dụng.
-5. Thử sử dụng session cũ.
-6. Thử tải ứng dụng miễn phí.
-7. Phân biệt ứng dụng đã sở hữu và ứng dụng cần license mới.
-8. Kiểm tra tải IPA thực tế.
-9. Kiểm tra IPA bằng IPAInspector.
-10. Xuất file.
-
-Không được kết luận live test thành công nếu chưa có phản hồi thực tế và file IPA hợp lệ.
-
-Nếu môi trường Codex không thể thực hiện đăng nhập hoặc chạy trên iPhone, hãy chuẩn bị checklist để người dùng tự thực hiện.
-
-⸻
-
-PHASE 9 — ACTIVITY LOG
-
-Tận dụng LoggingService hiện tại.
-
-Không tạo hệ thống log mới.
-
-Các giai đoạn cần ghi:
-
-* Experiment Started.
-* Authentication Mode.
-* Session Available / Unavailable.
-* Public Metadata Request.
-* Authentication Started.
-* 2FA Required.
-* Authentication Completed.
-* Session Restored.
-* License Acquisition.
-* Download Started.
-* Download Progress.
-* Download Completed.
-* IPA Verification.
-* Experiment Failed.
-
-Phải ghi:
-
-* Thời điểm.
-* Giai đoạn.
-* Loại lỗi.
-* HTTP status nếu có.
-* Nguyên nhân.
-* Kết quả.
+* Identifier được tạo như thế nào?
+* Device ID được tạo như thế nào?
+* adi_pb là gì và được lưu ở đâu?
+* Dữ liệu nào được gửi đến Anisette Server?
+* Third-party server có thể nhìn thấy dữ liệu gì?
+* Server có tự động thực hiện provisioning không?
+* Có cảnh báo trước khi gửi dữ liệu nhạy cảm không?
+* Có kiểm tra endpoint và TLS không?
+* Có xử lý redirect an toàn không?
+* Có nguy cơ rò rỉ dữ liệu qua logs không?
+* Có cơ chế xóa identity không?
 
 Phải phân biệt:
 
-* Lỗi nội bộ IPAForge.
-* Lỗi kết nối.
-* Lỗi xác thực.
-* Lỗi license.
-* Lỗi tải.
-* Lỗi kiểm tra IPA.
+1. Anisette provisioning identity.
+2. Hardware identity.
+3. Apple Device Identity.
+4. App Store session.
+5. Developer Portal session.
 
-Dữ liệu tuyệt đối không được log:
+Không được đánh đồng chúng.
 
-* Apple ID password.
+Kiểm tra đoạn thay thế thông tin client 10.12.6 thành 27.0.
+
+Phải xác định nguồn gốc, mục đích và bằng chứng kỹ thuật.
+
+Không tự động giả mạo client fingerprint hoặc hệ điều hành khi không có cơ sở phù hợp.
+
+Nếu không có cơ sở hợp lệ, đề xuất loại bỏ hoặc vô hiệu hóa hành vi đó.
+
+Không bao giờ ghi vào log:
+
+* Password.
 * 2FA code.
 * Session token.
 * Cookies.
-* SAP signature.
-* Anisette payload.
+* Raw Anisette payload.
+* ADI secret.
 * Private key.
+* Sensitive authentication headers.
 
-Activity Log phải hiển thị được kết quả cuối cùng của cả hai Experiment.
+Không đưa credentials vào repository hoặc GitHub Actions.
 
-⸻
+Không tự động gửi dữ liệu nhạy cảm đến Anisette Server không đáng tin cậy.
 
-PHASE 10 — XÂY DỰNG TEST SUITE
-
-Tạo XCTest thực tế.
-
-Các nhóm test:
-
-Authentication
-
-* No session.
-* Valid session.
-* Expired session.
-* Invalid session.
-* Session restore.
-* 2FA required.
-* Sign out.
-
-Public API
-
-* Search.
-* Metadata.
-* Invalid response.
-* Network failure.
-
-License
-
-* License required.
-* License granted.
-* License denied.
-
-Download
-
-* Start.
-* Progress.
-* Cancellation.
-* Timeout.
-* Retry.
-* Partial file cleanup.
-
-IPA Inspector
-
-* Valid IPA.
-* Invalid ZIP.
-* Missing Payload.
-* Missing Info.plist.
-* Invalid Mach-O.
-* CRC failure.
-
-Logging
-
-* Correct status.
-* Error classification.
-* Secret sanitization.
-
-Dùng mock cho unit test.
-
-Không dùng mock để báo cáo kết quả Apple live test.
-
-Phân biệt rõ XCTest chạy thật và test logic được chạy bằng Linux harness.
+Không bypass Apple authentication, account security, license hoặc FairPlay/DRM.
 
 ⸻
 
-PHASE 11 — GITHUB ACTIONS
+6. APP STORE AUTHENTICATION RESEARCH
 
-Giữ cấu hình hiện tại:
+Tìm hiểu liệu IPAForge có thể sử dụng một phương thức kỹ thuật phù hợp để truy cập và tải ứng dụng từ Apple App Store hay không.
 
-* Workflow: .github/workflows/experimental.yml.
-* Runner: xcode-27.
-* Xcode: 27.2.
-* iOS Deployment Target: 16.0.
-* Swift Language Mode: 5.
+Nghiên cứu riêng biệt:
 
-Ưu tiên workflow hiện tại với run_tests=true.
+1. Public App Store API.
+2. App Store Authentication.
+3. Apple Account Authentication.
+4. Developer Portal Authentication.
+5. GSA / SRP-6a.
+6. SAP-signed authentication.
+7. Store AMD.
+8. Anisette v3.
+9. Device Identity.
+10. Session persistence.
+11. 2FA.
+12. License acquisition.
+13. Binary download.
+14. IPA packaging.
+15. IPA integrity.
 
-Nếu cần chỉnh workflow:
+Không được nhầm lẫn:
 
-* Giải thích lý do.
-* Giữ nguyên các chức năng đang có.
-* Không tạo workflow trùng lặp.
-* Không hardcode credentials.
-* Không chạy thử nghiệm live bằng tài khoản người dùng trong CI.
+* Sign in with Apple với App Store session.
+* StoreKit transaction với IPA download API.
+* Developer Portal session với App Store session.
+* Anisette headers với authentication hoàn chỉnh.
+* Authentication thành công với license acquisition thành công.
+* License acquisition với binary download.
+* Binary download với IPA validation.
+
+Research requirements
+
+Ưu tiên:
+
+* Apple official documentation.
+* Source code thực tế.
+* README.
+* Releases.
+* Issues.
+* Pull requests.
+* Technical discussions.
+* Dependency compatibility.
+* Platform restrictions.
+* Licenses.
+* Thay đổi mới trong năm 2025–2026.
+
+Tìm tối thiểu:
+
+* 15 nguồn kỹ thuật hữu ích.
+* 5 nguồn Apple chính thức hoặc tài liệu kỹ thuật gốc.
+* 5 repository có mã nguồn liên quan.
+* 5 issue hoặc thảo luận kỹ thuật.
+
+Với mỗi phương án, phải ghi:
+
+* Nguồn.
+* Bằng chứng.
+* Cách hoạt động đã được xác minh.
+* Phần chưa được xác minh.
+* Platform support.
+* iOS compatibility.
+* Authentication.
+* Session.
+* License.
+* Binary download.
+* Legal/security limitations.
+* License của source code.
+
+Không bịa endpoint, API, response, authentication result hoặc khả năng tương thích.
+
+README của một repository không đủ để chứng minh tính năng tải IPA hoạt động.
+
+⸻
+
+7. MULTI-APPROACH RESEARCH AND CHALLENGE
+
+Nghiên cứu những dự án liên quan, tối thiểu gồm:
+
+* Atlas-Launcher/atlas
+* majd/ipatool
+* Lakr233/ApplePackage
+* bahattinkoc/ipaverse
+* boierito/Crumb
+* mengangs/ipadn
+* nxtcoreee3/WaffleStore
+* maclub-net/IPAToolKit
+* apple-auth
+* Các dự án khác được phát hiện trong quá trình nghiên cứu.
+
+Với Atlas
 
 Phải phân biệt:
 
-1. Linux Swift compile.
-2. Swift syntax parse.
-3. XCTest.
-4. Xcode build.
-5. Simulator test.
-6. Real-device test.
-7. Real Apple Authentication.
-8. Real IPA download.
+* Microsoft Authentication.
+* Minecraft Authentication.
+* Apple Account Authentication.
+* App Store Authentication.
 
-Không được tuyên bố các bước chưa chạy là PASS.
+Không kết luận Atlas hỗ trợ Apple ID nếu source không chứng minh.
+
+Không đưa Microsoft authentication flow vào App Store Engine.
+
+Với mỗi dự án
+
+Đánh giá:
+
+Tiêu chí	Nội dung
+Platform	Nền tảng
+Language	Ngôn ngữ
+Authentication	Cơ chế xác thực
+Device identity	Danh tính thiết bị
+2FA	Hỗ trợ 2FA
+Session	Quản lý session
+License	Cấp phép
+Download	Tải binary
+IPA validation	Kiểm tra IPA
+iOS support	Khả năng chạy trên iOS
+License	Điều kiện giấy phép mã nguồn
+
+Không tích hợp dependency khi chưa kiểm tra license và khả năng tương thích.
+
+Không sao chép code trái license.
+
+Scoring
+
+Chấm điểm từng phương án trên thang 100:
+
+Tiêu chí	Trọng số
+Tải IPA thực tế	25
+Hoạt động trên iOS	15
+Authentication phù hợp	15
+Session persistence	10
+License handling	10
+Stability	10
+Security	10
+Maintainability	5
+
+Thực hiện nhiều vòng đánh giá và loại bỏ các phương án không đáp ứng yêu cầu.
+
+Không ép buộc phải có người thắng.
+
+Nếu không có phương án đáp ứng đầy đủ, ghi rõ blocker.
 
 ⸻
 
-PHASE 12 — TỰ KIỂM TRA VÀ PHẢN BIỆN LẦN CUỐI
+8. THE MAIN BET — IMPLEMENT AN UNVERIFIED EXPERIMENTAL ENGINE
 
-Trước khi hoàn tất:
+Đây là yêu cầu quan trọng nhất của toàn bộ nhiệm vụ.
 
-1. Đọc lại toàn bộ code vừa tạo.
-2. Kiểm tra file Swift mới.
-3. Kiểm tra target membership.
-4. Kiểm tra dependency.
-5. Kiểm tra concurrency.
-6. Kiểm tra memory management.
-7. Kiểm tra Keychain.
-8. Kiểm tra logging.
-9. Kiểm tra cancellation.
-10. Kiểm tra session restore.
-11. Kiểm tra các test.
-12. Kiểm tra git diff --check.
-13. Kiểm tra không có file ngoài phạm vi bị sửa.
-14. Kiểm tra không có credentials trong source code.
+Không được chỉ viết báo cáo nghiên cứu và dừng lại.
 
-Tự tìm ít nhất 5 lỗi hoặc rủi ro có thể xảy ra trong implementation.
+Sau khi nghiên cứu, hãy chọn phương án có tiềm năng kỹ thuật tốt nhất và triển khai vào IPAForge để thử nghiệm, kể cả khi phương án đó chưa được xác minh hoàn toàn.
 
-Sửa các lỗi có thể xác minh.
+8.1. Experimental isolation
 
-Không sửa những vấn đề bằng cách che giấu lỗi hoặc tạo kết quả giả.
+Tạo một App Store Engine độc lập với StosSign.
+
+Có thể thiết kế các thành phần cần thiết như:
+
+* Experimental App Store Provider.
+* Authentication Adapter.
+* Session Handler.
+* License Handler.
+* Binary Download Handler.
+* Response Parser.
+* Error Mapping.
+* IPA Validation Integration.
+
+Tuy nhiên, phải tận dụng kiến trúc hiện có nếu đã có thành phần tương đương.
+
+Không tạo class hoặc protocol vô nghĩa chỉ để tăng số file.
+
+Không buộc phải tạo đúng tên các thành phần trên.
+
+8.2. Separation from StosSign
+
+StosSign hiện xử lý Developer Portal / Developer Teams.
+
+Không phá vỡ hoặc thay thế StosSign.
+
+Không sử dụng Developer Portal session làm App Store session.
+
+Không dùng chung authentication state nếu chưa có cơ sở kỹ thuật.
+
+Experimental App Store Engine phải có trạng thái và luồng hoạt động riêng.
+
+8.3. Unverified implementation
+
+Đối với phương án được chọn:
+
+* Có thể triển khai dù chưa xác minh hoàn toàn.
+* Phải ghi rõ phần nào dựa trên source có sẵn.
+* Phải ghi rõ phần nào là suy luận kỹ thuật.
+* Phải ghi rõ endpoint nào đã xác minh và endpoint nào chưa.
+* Không tự chế endpoint.
+* Không giả mạo response.
+* Không tạo dữ liệu download giả.
+* Không tạo authentication giả.
+* Không tạo session giả.
+* Không tạo license giả.
+* Không biến mock thành live provider.
+* Không tuyên bố provider hoạt động khi chưa có thử nghiệm.
+
+Nếu một phần chưa có đủ thông tin để gửi request thật, phải tách riêng phần đó thành UNVERIFIED hoặc BLOCKED; không được tự đoán giao thức.
+
+8.4. Integration into IPAForge
+
+Không chỉ thêm file source rồi bỏ đó.
+
+Phải tích hợp Experimental Engine vào ứng dụng:
+
+* Có thể truy cập từ giao diện App Store hiện tại.
+* Có trạng thái Experimental / Unverified rõ ràng.
+* Có thông tin phương án đang được thử nghiệm.
+* Có trạng thái từng bước.
+* Có lỗi dễ đọc.
+* Có kết quả trong Activity Log hiện có.
+* Không ảnh hưởng các chức năng ổn định.
+* Có thể tắt hoặc vô hiệu hóa Experimental Engine khi gặp lỗi nghiêm trọng.
+
+Không để người dùng nhầm Experimental Engine với chức năng đã phát hành ổn định.
+
+Không hiển thị nút Download thành công giả.
+
+8.5. Safe boundaries
+
+Chỉ thực hiện những request và thao tác có cơ sở kỹ thuật phù hợp.
+
+Không:
+
+* Bypass Apple authentication.
+* Bypass 2FA.
+* Bypass license acquisition.
+* Bypass FairPlay/DRM.
+* Giả mạo Apple Device Identity.
+* Giả mạo hardware identity.
+* Sử dụng credential của người dùng mà không có sự cho phép.
+* Gửi password hoặc 2FA qua chat, log hoặc CI.
+* Tự động đăng nhập bằng tài khoản người dùng.
+* Vượt qua kiểm soát truy cập để lấy binary.
+
+Nếu phương án có blocker liên quan đến quyền truy cập hoặc bảo mật, ghi rõ blocker và dừng ở ranh giới đó.
 
 ⸻
 
-PHASE 13 — FINAL REPORT
+9. EXPERIMENT A — ANONYMOUS TESTING
 
-Báo cáo bằng tiếng Việt.
+Tận dụng:
 
-A. Research
+* AppStoreExperimentService.
+* AppStoreService.
+* LoggingService.
+* Activity Log hiện có.
 
-* Số hướng đã nghiên cứu.
-* Số nguồn đã kiểm tra.
-* Các dự án tham khảo.
-* Các hướng bị loại.
+Không yêu cầu đăng nhập Apple Account.
 
-B. Candidate Ranking
+Thử những chức năng có thể kiểm tra:
 
-Bảng điểm trước và sau khi loại bỏ.
+* Search.
+* Lookup.
+* Metadata.
+* App version.
+* Bundle ID.
+* Public binary access.
+* Download URL discovery nếu có nguồn hợp lệ.
+* Binary download nếu có endpoint phù hợp và được phép truy cập.
 
-C. Winner
+Phân loại từng bước:
 
-* Phương án thắng cuộc.
-* Lý do chọn.
-* Các bằng chứng hỗ trợ.
+* PASS.
+* FAIL.
+* BLOCKED.
+* NOT SUPPORTED.
+* NOT TESTED.
 
-D. Authentication
+Không tự tạo URL download từ metadata.
 
-* Có cần Apple Account không?
-* Có cần 2FA không?
-* Có thể đăng nhập một lần không?
-* Có thể lưu session không?
-* Session có khôi phục được không?
+Không coi HTTP 200 là download success.
 
-E. Real Experiment
+Không coi metadata thành công là binary access thành công.
 
-* Anonymous metadata.
-* Anonymous binary access.
-* Anonymous IPA download.
-* Authenticated login.
+Nếu chỉ nhận được metadata mà không có binary, phải ghi rõ kết quả.
+
+⸻
+
+10. EXPERIMENT B — AUTHENTICATION TESTING
+
+Chỉ triển khai thử nghiệm authentication khi đã có cơ sở kỹ thuật và xác định được ranh giới bảo mật.
+
+Nếu cần thao tác tài khoản thật:
+
+1. Chuẩn bị UI và hướng dẫn.
+2. Để người dùng tự thực hiện thao tác nhạy cảm.
+3. Không yêu cầu người dùng gửi password hoặc 2FA vào chat.
+4. Không lưu password plaintext.
+5. Chỉ xử lý 2FA khi người dùng tự thực hiện quy trình xác thực.
+6. Kiểm tra session persistence nếu có cơ sở.
+7. Kiểm tra session expiration.
+8. Kiểm tra sign out.
+9. Kiểm tra license acquisition.
+10. Kiểm tra binary download nếu được phép.
+
+Không tự động dùng tài khoản của người dùng.
+
+Không chạy live authentication bằng credentials trong CI.
+
+Nếu giao thức chưa được xác minh, ghi rõ UNVERIFIED.
+
+Nếu authentication thất bại, phải lưu nguyên nhân kỹ thuật đã được lọc bí mật vào Activity Log.
+
+Không tiếp tục lặp lại request có nguy cơ khóa tài khoản hoặc vi phạm rate limit.
+
+⸻
+
+11. ACTIVITY LOG — EXISTING SYSTEM ONLY
+
+IPAForge đã có Activity Log. Hãy kiểm tra và sử dụng hệ thống hiện tại.
+
+Các thành phần cần xem:
+
+* Logging/LoggingService.swift
+* Views/LogViewerView.swift
+* Các model log hiện có.
+* Cơ chế lưu trữ log.
+* Cách cập nhật UI.
+* Localization của Activity Log.
+
+Không tạo Activity Log thứ hai.
+
+Không tạo một hệ thống logging song song.
+
+Có thể mở rộng model hoặc LoggingService hiện tại nếu cần, nhưng phải giữ tương thích với những chức năng đang sử dụng.
+
+11.1. Required log events
+
+Activity Log cần ghi nhận các bước thực tế:
+
+* Public Search.
+* Metadata Lookup.
+* Engine Initialization.
+* Authentication.
 * 2FA.
-* License acquisition.
-* Real IPA download.
-* IPA validation.
+* Session Creation.
+* Session Restore.
+* License Acquisition.
+* Download Initialization.
+* Binary Download.
+* Download Progress.
+* Cancellation.
+* IPA Validation.
+* IPA Inspection.
+* Export.
+* Network Errors.
+* Retry.
+* Provider State Changes.
 
-F. Swift Implementation
+11.2. Required log fields
 
-* Các file Swift mới.
-* Các file Swift đã sửa.
-* Dependency mới.
+Mỗi event nên có các trường phù hợp:
+
+Field	Description
+Timestamp	Thời gian xảy ra
+Event ID	ID duy nhất của event
+Correlation ID	Liên kết các bước cùng một thử nghiệm
+Engine	Engine đang chạy
+Provider	Provider cụ thể
+Stage	Bước thực hiện
+Method	HTTP method nếu có
+Endpoint	URL đã lọc thông tin nhạy cảm
+HTTP Status	Mã HTTP thực tế hoặc N/A
+Duration	Thời gian thực hiện
+Response Type	Content-Type nếu có
+Response Summary	Tóm tắt response đã lọc
+Error Domain	Nhóm lỗi
+Error Code	Mã lỗi
+Reason	Nguyên nhân
+Result	Kết quả
+Next Action	Hướng xử lý
+
+Không nhất thiết tất cả event phải có mọi trường.
+
+Ví dụ: event không liên quan network không cần HTTP Status.
+
+11.3. HTTP and network diagnostics
+
+Khi có network request, phải ghi lại chính xác:
+
+* HTTP method.
+* Endpoint đã loại bỏ secret.
+* HTTP status code.
+* Response content type.
+* Request duration.
+* Response size.
+* Redirect behavior.
+* Retry count.
+* Retry-After nếu có.
+* Server request ID nếu được cung cấp và an toàn.
+* Kết quả parsing.
+* Error domain và error code.
+
+Phân biệt rõ:
+
+* HTTP 400.
+* HTTP 401.
+* HTTP 403.
+* HTTP 404.
+* HTTP 408.
+* HTTP 429.
+* HTTP 500.
+* HTTP 502.
+* HTTP 503.
+* HTTP 504.
+* DNS failure.
+* TLS failure.
+* Timeout.
+* Connection lost.
+* Offline.
+* Cancellation.
+* Invalid response.
+* JSON decoding failure.
+* Unsupported content type.
+
+Đây chỉ là các trường hợp cần phân biệt, không phải các mã được phép tự tạo.
+
+Nếu không nhận được HTTP response, phải ghi HTTP Status là N/A.
+
+Không được gán một HTTP code giả cho lỗi DNS, TLS hoặc timeout.
+
+11.4. Response diagnostics
+
+Khi server trả về response lỗi:
+
+* Lưu response summary đã lọc bí mật.
+* Có thể lưu một đoạn response body giới hạn kích thước nếu an toàn.
+* Giữ nguyên mã lỗi và các thông tin cần thiết để xác định nguyên nhân.
+* Không lưu toàn bộ response lớn không cần thiết.
+* Không log raw authentication payload.
+* Không ghi token, password, cookie hoặc dữ liệu cá nhân nhạy cảm.
+
+Nếu response chứa secret, phải sanitize trước khi lưu.
+
+Không để Activity Log trở thành nơi lưu thông tin đăng nhập.
+
+11.5. Example log format
+
+Ví dụ minh họa cấu trúc log, không phải kết quả thử nghiệm thực tế:
+
+[11:32:08] APP STORE ENGINE
+Engine: ExperimentalProvider
+Stage: Session Initialization
+Method: POST
+Endpoint: [SANITIZED ENDPOINT]
+HTTP Status: 401
+Duration: 824 ms
+Result: FAILED
+Error Code: AUTH_REJECTED
+Reason: Server rejected the authentication request.
+Next Action: Inspect supported authentication flow.
+
+Ví dụ một bước khác:
+
+[11:32:12] PUBLIC METADATA
+Engine: Public API
+Stage: Lookup
+Method: GET
+HTTP Status: 200
+Response Type: application/json
+Parsing: PASS
+Metadata: Available
+Binary URL: Not Provided
+Result: PARTIAL
+Reason: Metadata is available but no binary download source was returned.
+
+Ví dụ download:
+
+[11:32:15] BINARY DOWNLOAD
+Engine: ExperimentalProvider
+Stage: Download Initialization
+HTTP Status: N/A
+Result: BLOCKED
+Reason: No verified binary download endpoint.
+Next Action: Investigate supported download source.
+
+Các ví dụ trên chỉ mô tả format. Không được ghi chúng thành log thật nếu request chưa xảy ra.
+
+11.6. Result statuses
+
+Dùng trạng thái nhất quán:
+
+* PASS
+* PARTIAL
+* FAIL
+* BLOCKED
+* NOT_SUPPORTED
+* NOT_TESTED
+* UNVERIFIED
+* CANCELLED
+
+Không đánh đồng PARTIAL với PASS.
+
+Không đánh đồng HTTP 200 với authentication thành công.
+
+Không đánh đồng authentication thành công với download thành công.
+
+Không đánh đồng ZIP validation với Apple signature verification.
+
+11.7. Activity Log UI
+
+Kiểm tra giao diện LogViewerView hiện tại.
+
+Nếu cần, cải thiện để người dùng dễ tìm lỗi:
+
+* Nhận diện các trạng thái.
+* Hiển thị timestamp.
+* Hiển thị stage.
+* Hiển thị HTTP code.
+* Hiển thị error reason.
+* Xem chi tiết một event.
+* Liên kết các event bằng Correlation ID.
+* Copy log đã sanitize.
+* Clear log nếu hệ thống hiện tại hỗ trợ.
+
+Không thiết kế lại toàn bộ UI nếu không cần thiết.
+
+Hoàn thiện localization tiếng Việt và tiếng Anh.
+
+⸻
+
+12. FIX FROM ACTUAL ACTIVITY LOGS
+
+Đây là bước bắt buộc sau mỗi lần thử nghiệm có lỗi.
+
+Quy trình:
+
+1. Thực hiện thử nghiệm.
+2. Mở hoặc đọc Activity Log.
+3. Xác định event thất bại.
+4. Đọc error code và HTTP status thực tế.
+5. Kiểm tra response summary đã lọc.
+6. Đối chiếu với source.
+7. Xác định lỗi thuộc nhóm nào:
+    * Application bug.
+    * Authentication failure.
+    * Session failure.
+    * License restriction.
+    * Server rejection.
+    * Unsupported endpoint.
+    * Network failure.
+    * TLS issue.
+    * Parsing error.
+    * Platform restriction.
+    * Missing environment capability.
+8. Sửa lỗi nếu có cơ sở.
+9. Viết hoặc cập nhật test.
+10. Chạy lại thử nghiệm khi có thể.
+11. So sánh log trước và sau khi sửa.
+
+Không sửa code bằng cách đoán mò.
+
+Không xóa error handling chỉ để request không còn báo lỗi.
+
+Không biến mọi response thành PASS.
+
+Không lặp lại request vô hạn.
+
+Có retry limit, backoff phù hợp và xử lý rate limit.
+
+Nếu lỗi đến từ server hoặc giới hạn nền tảng, không được tuyên bố đã sửa bằng cách thay đổi UI.
+
+Nếu cần thao tác của người dùng hoặc môi trường thật, chuẩn bị hướng dẫn cụ thể và ghi rõ trạng thái chưa kiểm thử.
+
+⸻
+
+13. DEVICE PROFILE AND COMPATIBILITY
+
+Kiểm tra:
+
+* DeviceProfile.
+* DeviceProfileStore.
+* CompatibilityChecker.
+* IPAInspector.
+* DeviceProfileView.
+* AppDetailView.
+
+Yêu cầu:
+
+1. Phân biệt Physical Device và Simulated Device.
+2. Không coi UIDevice.current.model == "iPhone" là model iPhone cụ thể.
+3. Không dùng identifierForVendor làm Apple Device Identity.
+4. Không tự tạo hardware identifier.
+5. Không đánh dấu capability là verified nếu chỉ do người dùng nhập.
+6. Có provenance cho dữ liệu được xác minh.
+7. Không biến UNKNOWN thành PASS.
+8. Không biến UNKNOWN thành INCOMPATIBLE.
+9. Kiểm tra arm64, arm64e và arm64e.x1.
+10. Kiểm tra MinimumOSVersion.
+11. Kiểm tra UIDeviceFamily.
+12. Kiểm tra UIRequiredDeviceCapabilities.
+13. Kiểm tra CFBundleSupportedPlatforms.
+
+Phải phân biệt profile mô phỏng với dữ liệu thiết bị thật.
+
+Có thể đối chiếu dữ liệu môi trường thực tế đã được cung cấp, nhưng không được tự nhận diện phần cứng nếu không có nguồn mapping đáng tin cậy.
+
+Kiểm tra lý do giới hạn simulated profile ở iOS 27.0 trở lên. Không tự ý thay đổi yêu cầu cũ nếu chưa hiểu mục đích.
+
+Deployment Target phải giữ nguyên iOS 16.
+
+⸻
+
+14. IPA INSPECTOR AND INTEGRITY
+
+Kiểm tra:
+
+* ZIP structure.
+* Unsafe paths.
+* Duplicate entries.
+* ZIP bombs.
+* CRC.
+* Info.plist.
+* Bundle ID.
+* Executable.
+* Mach-O.
+* Fat binaries.
+* Architectures.
+* File size limits.
+* Cancellation.
+* Memory usage.
+* Error handling.
+
+Phải phân biệt:
+
+1. ZIP CRC validation.
+2. File integrity.
+3. Cryptographic hash.
+4. Apple code signature.
+5. CodeDirectory.
+6. CMS signature.
+7. Provisioning profile.
+8. FairPlay encryption.
+
+Không tuyên bố IPA được Apple xác minh chỉ vì CRC PASS.
+
+Nếu chưa kiểm tra được Apple code signature, phải hiển thị NOT VERIFIED.
+
+Không giải mã FairPlay hoặc DRM.
+
+Chỉ đánh dấu IPA download thành công khi:
+
+* Có file thực tế.
+* File không phải dữ liệu giả.
+* File được lưu thành công.
+* File vượt qua các bước kiểm tra tương ứng.
+* Kết quả được ghi vào Activity Log.
+
+⸻
+
+15. LOCALIZATION — ENGLISH AND VIETNAMESE
+
+Kiểm tra toàn bộ giao diện:
+
+* App Store.
+* Search.
+* App Details.
+* Metadata.
+* Compatibility.
+* Device Profile.
+* Download Manager.
+* Download Details.
+* Login.
+* 2FA.
+* Anisette Server.
+* Activity Log.
+* Login Logs.
+* Alerts.
+* Errors.
+* Empty states.
+* Progress.
+* Export.
+* Settings.
+
+Yêu cầu:
+
+1. Hoàn thiện tiếng Việt.
+2. Hoàn thiện tiếng Anh.
+3. Không để sót chuỗi giao diện.
+4. Không hardcode text cần localization trong SwiftUI.
+5. Sử dụng String Catalog đúng cách.
+6. Kiểm tra Localizable.xcstrings.
+7. Kiểm tra target membership.
+8. Kiểm tra fallback.
+9. Kiểm tra ngôn ngữ khi người dùng thay đổi.
+10. Không dịch sai thuật ngữ kỹ thuật.
+
+Quy ước:
+
+English	Vietnamese
+Compatibility	Tương thích
+Compatibility Checker	Trình kiểm tra tương thích
+Device Profile	Hồ sơ thiết bị
+Simulated Device	Thiết bị mô phỏng
+Physical Device	Thiết bị thật
+Unknown	Chưa xác định
+Verified	Đã xác minh
+Metadata	Siêu dữ liệu
+Authentication	Xác thực
+Architecture	Kiến trúc
+Integrity	Tính toàn vẹn
+Download	Tải xuống
+Experimental	Thử nghiệm
+Unverified	Chưa xác minh
+Blocked	Bị chặn
+Not Supported	Không được hỗ trợ
+
+Giữ nguyên IPA, App Store, Bundle ID, Info.plist, Mach-O, Anisette và 2FA khi cần thiết.
+
+Không dịch identifier, class, enum hoặc API trong code.
+
+Kiểm tra catalog trùng lặp trong Resources/Localization, en.lproj và vi.lproj.
+
+Không xóa file localization nếu chưa xác định nó không được sử dụng.
+
+⸻
+
+16. TEST SUITE
+
+Kiểm tra toàn bộ XCTest hiện có.
+
+Không chỉ đếm số test methods.
+
+Nhóm test cần đánh giá:
+
+* Authentication.
+* Session.
+* 2FA.
+* Keychain.
+* AES-GCM.
+* Anisette.
+* URL validation.
+* Network.
+* Search.
+* Metadata.
+* Experiment A.
+* Experiment B.
+* Experimental Engine.
+* Device Profile.
+* Compatibility.
+* IPAInspector.
+* Mach-O.
+* CRC.
+* Download Queue.
+* Progress.
+* Cancellation.
+* Retry.
+* Partial cleanup.
+* Export.
+* Logging.
+* Secret sanitization.
+* HTTP error mapping.
+* Response parsing.
+* Correlation ID.
+* Localization.
+
+Phân biệt:
+
+* Unit test.
+* Integration test.
+* UI test.
+* Mock test.
+* Live test.
+* Manual real-device test.
+
+Không tuyên bố mock test chứng minh Apple Authentication hoặc IPA Download thực tế.
+
+Nếu có Xcode, chạy test bằng xcodebuild test với scheme và destination phù hợp.
+
+Nếu không có Xcode:
+
+* Chạy Linux core tests.
+* Chạy Swift syntax parsing.
+* Chạy localization validation.
+* Chạy project structure validation.
+* Chạy các script hiện có.
+* Ghi rõ các test chưa thể thực hiện.
+
+Không giả định Codespaces có Xcode hoặc iOS SDK.
+
+Không sửa test chỉ để làm test PASS giả tạo.
+
+⸻
+
+17. XCODE AND CI AUDIT
+
+Kiểm tra:
+
+* iOS Deployment Target: 16.0.
+* Swift Language Mode: 5.
+* Package dependencies.
+* Package.resolved nếu có.
+* Xcode scheme.
+* App target.
+* Test target.
+* PBXBuildFile.
+* PBXFileReference.
+* PBXSourcesBuildPhase.
+* PBXResourcesBuildPhase.
+* Target membership.
+* Asset catalogs.
+* String Catalog.
+* Build configurations.
+* Code signing settings.
+
+Kiểm tra:
+
+* .github/workflows/experimental.yml
+* .github/workflows/release.yml
+* .github/workflows/upload.yml
+
+Xác định chính xác:
+
+* Workflow nào chạy khi push.
+* Workflow nào chạy thủ công.
+* Workflow nào build.
+* Workflow nào test.
+* Workflow nào chỉ kiểm tra source.
+* Workflow nào tạo unsigned IPA.
+* Workflow nào tạo archive.
+* Workflow nào thực sự upload artifact.
+
+Sửa tài liệu nếu mô tả workflow sai.
+
+Không thay đổi workflow chỉ để báo cáo đẹp hơn.
+
+Không thêm credentials hoặc secrets.
+
+Không chạy live authentication bằng tài khoản người dùng trong CI.
+
+⸻
+
+18. IMPLEMENTATION RULES
+
+Sau khi audit và nghiên cứu, triển khai những thay đổi có cơ sở kỹ thuật.
+
+Ưu tiên:
+
+1. Fix bug thật.
+2. Fix race conditions.
+3. Fix cancellation.
+4. Fix security issues.
+5. Cải thiện Experimental App Store Engine.
+6. Cải thiện Activity Log.
+7. Fix localization.
+8. Fix Device Profile logic.
+9. Fix IPA inspection limitations có thể giải quyết.
+10. Cải thiện tests.
+11. Cập nhật documentation.
+12. Cải thiện UI nếu cần.
+
+Không:
+
+* Tạo protocol chỉ để tăng số file.
+* Tạo mock download provider giả.
+* Tạo IPA giả.
+* Tạo progress giả.
+* Tạo login giả.
+* Tạo session giả.
+* Tạo license giả.
+* Tạo Device Identity giả.
+* Tự động coi HTTP 200 là authentication thành công.
+* Tự động coi download URL là IPA hợp lệ.
+* Bypass authentication, license hoặc DRM.
+
+Nếu chưa có phương án được xác minh, vẫn có thể giữ Experimental Engine ở trạng thái UNVERIFIED, nhưng phải có implementation thực sự có thể kiểm thử.
+
+Nếu một phần chưa đủ bằng chứng để chạy thật, ghi rõ giới hạn và không tự chế hành vi thay thế.
+
+Không phá vỡ StosSign.
+
+Không thay đổi chức năng đã hoạt động nếu không có lý do và test bảo vệ.
+
+Không tạo Activity Log mới.
+
+Không tạo file mới khi có thể mở rộng kiến trúc hiện tại hợp lý.
+
+⸻
+
+19. DOCUMENTATION
+
+Cập nhật nếu cần:
+
+* README.md.
+* README_vi.md.
+* Downloader/ROADMAP.md.
+* Downloader/AUTHENTICATION_RESEARCH.md.
+
+Tài liệu phải phản ánh source hiện tại.
+
+Cập nhật:
+
+* Kiến trúc Experimental Engine.
+* Phương án đang thử nghiệm.
+* Trạng thái xác minh.
+* Kết quả thực tế.
+* Activity Log.
+* Các lỗi đã phát hiện.
+* Các lỗi đã sửa.
+* Các blocker.
+* Cách kiểm tra lại.
+* Những chức năng chưa được triển khai.
+
+Không ghi tính năng đã hoàn thành nếu chỉ có UI hoặc mock.
+
+Không giữ thông tin cũ đã sai:
+
+* Working tree status.
+* Số lượng tests.
+* Workflow triggers.
+* Tính năng đã thay đổi.
+* Kết quả thử nghiệm cũ.
+* Các bước chưa thực hiện nhưng ghi như đã hoàn thành.
+
+Mọi tuyên bố phải có bằng chứng.
+
+⸻
+
+20. FINAL CHALLENGE — REAL IPA VERIFICATION
+
+Trước khi kết thúc, tự kiểm tra lại toàn bộ.
+
+Trả lời rõ:
+
+1. IPAForge có thể tải IPA thật chưa?
+2. Có App Store Authentication thực tế chưa?
+3. Có 2FA thực tế chưa?
+4. Có session restore thực tế chưa?
+5. Có license acquisition thực tế chưa?
+6. Có binary download thực tế chưa?
+7. Có IPA được tải từ Apple chưa?
+8. IPA đó có được IPAInspector kiểm tra chưa?
+9. Có Apple code signature verification chưa?
+10. Có thử nghiệm trên iPhone thật chưa?
+11. Có Xcode build thành công chưa?
+12. Có XCTest thực sự chạy chưa?
+13. Có lỗi bảo mật còn tồn tại không?
+14. Localization đã hoàn chỉnh chưa?
+15. Có tài liệu nào còn sai không?
+16. Experimental Engine hiện đang ở trạng thái nào?
+17. Activity Log có đủ thông tin để xác định nguyên nhân lỗi không?
+18. Đã thử sửa lỗi dựa trên log chưa?
+
+Nếu chưa có IPA thật được tải từ Apple và kiểm tra thành công, tuyệt đối không tuyên bố App Store IPA Downloader đã hoàn thành.
+
+App Store Download Result
+
+Chọn đúng trạng thái phù hợp:
+
+* SUCCESS: Đã tải IPA thật và kiểm tra thành công.
+* PARTIAL_SUCCESS: Một số bước thực sự thành công nhưng chưa hoàn thành download.
+* AUTHENTICATION_REQUIRED: Cần xác thực hợp lệ.
+* LICENSE_REQUIRED: Chưa có quyền tải hợp lệ.
+* IOS_COMPATIBILITY_BLOCKED: Chưa có phương án iOS được xác minh.
+* ENGINE_NOT_IMPLEMENTED: Chưa có download engine thực sự.
+* EXPERIMENTAL_UNVERIFIED: Đã triển khai phương án thử nghiệm nhưng chưa xác minh thành công.
+* NOT_TESTED: Chưa thực hiện được thử nghiệm thực tế.
+* FAILED: Thử nghiệm thất bại với lỗi cụ thể.
+
+⸻
+
+21. FINAL REPORT
+
+Xuất báo cáo có cấu trúc sau:
+
+A. Repository Audit
+
+* Branch và commit thực tế.
+* Working tree baseline.
+* Tổng số file.
+* Tổng số Swift source.
+* Các module.
+* Các file đã kiểm tra.
+* Các vấn đề phát hiện.
+* Các file không thể kiểm tra và lý do.
+
+B. Bug Report
+
+Severity	File	Bug	Evidence	Fix	Test
+
+C. Security Report
+
+Component	Finding	Risk	Evidence	Action
+
+D. App Store Research
+
+Approach	iOS Support	Authentication	License	Download	Evidence	Result
+
+E. Experimental Engine
+
+* Phương án được chọn.
+* Lý do lựa chọn.
+* Source tham khảo.
+* Những gì đã triển khai.
+* Những gì chưa xác minh.
+* Endpoint đã kiểm chứng.
+* Endpoint chưa kiểm chứng.
+* Các bước đã thử.
+* Kết quả thực tế.
+* Các blocker.
+* Tình trạng tích hợp UI.
+* Tình trạng bảo mật.
+
+F. Activity Log Results
+
+Time	Engine	Stage	HTTP Status	Result	Error Reason
+
+Đưa ra các lỗi quan trọng nhất và giải thích cách đã xử lý.
+
+Không tự tạo log minh họa rồi báo cáo như log thực tế.
+
+G. Implementation
+
+* File đã thêm.
+* File đã sửa.
+* File đã xóa (nếu có).
+* Dependency đã thay đổi.
 * Xcode integration.
-* Những phần chưa triển khai.
+* Localization.
+* Bug fixes.
+* UI changes.
 
-G. Tests
+H. Test Report
 
-* XCTest.
-* Linux checks.
-* Xcode build.
-* Workflow.
-* Simulator.
-* Real-device test.
+Test	Result	Environment	Evidence
 
-H. Activity Log
-
-Ảnh hưởng tới hệ thống log và các trạng thái đã ghi.
+Phân biệt test thực tế và test chưa thể chạy.
 
 I. Remaining Blockers
 
-Những vấn đề còn tồn tại.
+Nêu rõ:
+
+* Việc cần người dùng thao tác.
+* Việc cần iPhone thật.
+* Việc cần Xcode.
+* Việc cần quyền truy cập hợp lệ.
+* Việc chưa có tài liệu hoặc bằng chứng.
+* Việc bị giới hạn bởi nền tảng hoặc server.
 
 J. Final Verdict
 
-Chọn một:
+Đánh giá trung thực:
 
-* SUCCESS: Tải IPA thực tế thành công và đã xác minh.
-* PARTIAL SUCCESS: Một số bước thành công nhưng chưa tải được IPA.
-* AUTHENTICATION REQUIRED: Apple yêu cầu xác thực hợp lệ.
-* LICENSE REQUIRED: Cần cấp quyền tải hợp lệ.
-* IOS COMPATIBILITY BLOCKED: Chưa có phương án hoạt động được trên iOS.
-* ENGINE NOT IMPLEMENTED: Chưa có engine tải thực tế.
-* FAILED: Thử nghiệm thất bại vì lỗi cụ thể.
-* NOT TESTED: Chưa thể thực hiện thử nghiệm thực tế.
-
-Không tự chọn SUCCESS nếu không có bằng chứng.
+* Mức độ hoàn thiện IPAForge.
+* Mức độ hoàn thiện Experimental Engine.
+* Khả năng tải IPA thực tế.
+* Mức độ an toàn.
+* Những việc còn thiếu.
+* Kết luận thử thách.
 
 ⸻
 
-QUY TẮC LÀM VIỆC CUỐI CÙNG
+22. ABSOLUTE RULES
 
-* Không commit.
-* Không push.
-* Không xóa thay đổi của người dùng.
-* Không ghi đè file chưa commit.
-* Không tạo tính năng giả.
-* Không tạo dữ liệu giả.
-* Không giả lập thành công.
-* Không bỏ qua blocker.
-* Không tăng Deployment Target.
-* Không phá vỡ Download Queue.
-* Không tạo hệ thống Activity Log thứ hai.
-* Không làm lại những phần đã hoàn thành.
-* Không chỉ dừng ở việc viết báo cáo nếu đã tìm được phương án triển khai hợp lệ.
+1. Không commit.
+2. Không push.
+3. Không xóa thay đổi của người dùng.
+4. Không ghi đè file chưa commit.
+5. Không reset hoặc clean repository.
+6. Không tạo chức năng giả.
+7. Không tạo dữ liệu giả.
+8. Không giả lập thành công.
+9. Không bỏ qua blocker.
+10. Không tăng Deployment Target khỏi iOS 16.
+11. Không phá vỡ StosSign.
+12. Không dùng Developer Portal session làm App Store session.
+13. Không tạo Device Identity giả.
+14. Không bypass Apple authentication.
+15. Không bypass license.
+16. Không bypass FairPlay/DRM.
+17. Không log credentials.
+18. Không sử dụng tài khoản người dùng trong CI.
+19. Không tuyên bố test đã chạy nếu chưa chạy.
+20. Không tuyên bố tải IPA thành công nếu chưa có file IPA thật.
+21. Không coi HTTP 200 là thành công của toàn bộ quy trình.
+22. Không tạo Activity Log thứ hai.
+23. Không tự bịa endpoint hoặc response.
+24. Không tự động thực hiện thao tác nhạy cảm bằng tài khoản người dùng.
+25. Không ép buộc chọn phương án thắng cuộc.
+26. Không dừng ở nghiên cứu nếu có phương án đủ cơ sở để triển khai thử nghiệm an toàn.
+27. Không bỏ qua việc đọc Activity Log và phân tích lỗi sau khi thử nghiệm.
+28. Không tuyên bố đã xác minh những gì mới chỉ được suy luận.
 
-Hãy suy nghĩ rộng, nghiên cứu sâu, đưa ra nhiều giả thuyết, tự phản biện, loại bỏ những hướng yếu và chỉ giữ lại phương án có bằng chứng tốt nhất. Sau đó triển khai Swift thực tế và thử nghiệm nghiêm túc.
+⸻
 
-Đích đến: IPAForge tải được IPA thật với số thao tác xác thực ít nhất có thể. Nếu không thể, hãy chứng minh chính xác vì sao không thể ở thời điểm hiện tại.
+23. EXECUTION ORDER
+
+Thực hiện theo thứ tự:
+
+1. Preserve source và ghi baseline.
+2. Audit toàn bộ repository.
+3. Audit architecture và bugs.
+4. Audit security.
+5. Research App Store authentication và download.
+6. Research các project liên quan.
+7. So sánh và lựa chọn phương án.
+8. Triển khai Experimental Engine độc lập với StosSign.
+9. Tích hợp vào App Store UI.
+10. Tích hợp với Activity Log hiện có.
+11. Chạy anonymous experiments.
+12. Chạy các thử nghiệm khác khi có đủ cơ sở và quyền phù hợp.
+13. Đọc Activity Log.
+14. Sửa lỗi dựa trên bằng chứng.
+15. Chạy lại tests.
+16. Hoàn thiện localization.
+17. Kiểm tra Xcode và CI.
+18. Cập nhật tài liệu.
+19. Thực hiện Final Challenge.
+20. Xuất Final Report.
+
+Không dừng ở báo cáo nếu đã tìm được bug có thể sửa và có thể kiểm thử.
+
+Không dừng ở việc thêm Experimental Engine mà chưa kiểm tra khả năng hoạt động.
+
+Nếu gặp blocker cần người dùng thực hiện thao tác trên iPhone, chuẩn bị hướng dẫn cụ thể và dừng trước thao tác cần credentials hoặc xác nhận của người dùng.
+
+Nếu môi trường không hỗ trợ Xcode hoặc iOS SDK, phải nói rõ và thực hiện các kiểm tra thay thế có thể thực hiện.
+
+Ưu tiên bằng chứng kỹ thuật, khả năng kiểm thử và tính trung thực hơn số lượng code được tạo ra.
+
+Bắt đầu từ PHASE 0 và tiếp tục cho đến khi hoàn thành toàn bộ công việc có thể thực hiện an toàn trong môi trường hiện tại.

@@ -48,18 +48,80 @@ struct AppStoreSearchView: View {
         guard !searchQuery.isEmpty, !isLoading else { return }
         isLoading = true
         errorMessage = nil
+        let correlationID = UUID()
+        var requestDiagnostics: [AppStoreRequestDiagnostics] = []
         Task {
             do {
                 results = try await environment.appStore.search(
-                    searchQuery, country: environment.country
+                    searchQuery,
+                    country: environment.country,
+                    onDiagnostics: { requestDiagnostics.append($0) }
                 )
-                environment.logger.log(.info, "App Store search completed.")
+                for diagnostics in requestDiagnostics {
+                    logSearchDiagnostics(
+                        diagnostics,
+                        parsing: "PASS",
+                        result: "PASS",
+                        reason: "Received \(results.count) App Store catalog records.",
+                        correlationID: correlationID
+                    )
+                }
+                environment.logger.log(
+                    .info,
+                    "App Store search completed | Result count: \(results.count).",
+                    correlationID: correlationID
+                )
             } catch {
                 errorMessage = error.localizedDescription
-                environment.logger.log(.error, "App Store search failed.")
+                let parsing = (error as? AppStoreServiceError) == .invalidResponse ? "FAIL" : "NOT RUN"
+                let reason = LogSanitizer.sanitize(error.localizedDescription)
+                for diagnostics in requestDiagnostics {
+                    logSearchDiagnostics(
+                        diagnostics,
+                        parsing: parsing,
+                        result: "FAIL",
+                        reason: reason,
+                        correlationID: correlationID
+                    )
+                }
+                if requestDiagnostics.isEmpty {
+                    let nsError = error as NSError
+                    environment.logger.log(
+                        .error,
+                        "App Store search failed | HTTP Status: N/A | Error Domain/Code: \(nsError.domain)/\(nsError.code) | Reason: \(reason).",
+                        correlationID: correlationID
+                    )
+                }
             }
             isLoading = false
         }
+    }
+
+    private func logSearchDiagnostics(
+        _ diagnostics: AppStoreRequestDiagnostics,
+        parsing: String,
+        result: String,
+        reason: String,
+        correlationID: UUID
+    ) {
+        let stage = URL(string: diagnostics.endpoint)?.lastPathComponent == "lookup"
+            ? "Metadata Lookup"
+            : "Public Search"
+        let level: LogLevel = result == "PASS" ? .success : .error
+        let details = diagnostics.activityLogMessage(
+            engine: "Public App Store API",
+            stage: stage,
+            parsing: parsing,
+            validation: result,
+            result: result,
+            reason: reason,
+            nextAction: result == "PASS" ? "None." : "Check the reported HTTP or network error before retrying."
+        )
+        environment.logger.log(
+            level,
+            "App Store search | \(details)",
+            correlationID: correlationID
+        )
     }
 }
 

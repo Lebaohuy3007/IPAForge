@@ -121,7 +121,7 @@ struct DeviceProfileView: View {
                 } header: {
                     Text("Compatibility profile")
                 } footer: {
-                    Text("Profiles are local settings. Capability and architecture checks stay Unknown until those values are verified and entered.")
+                    Text("Manually entered capabilities and architectures remain Unknown because this app cannot verify a simulated profile's hardware.")
                 }
 
                 Section {
@@ -155,7 +155,7 @@ struct DeviceProfileView: View {
                             CompatibilityReportView(report: CompatibilityChecker().evaluate(
                                 requirements: inspection.compatibilityRequirements,
                                 profile: store.selectedProfile
-                            ))
+                            ), minimumOSVersion: inspection.minimumOSVersion)
                         }
                         .padding(.vertical, 4)
                     }
@@ -290,38 +290,70 @@ struct DeviceProfileView: View {
 
 struct CompatibilityReportView: View {
     let report: CompatibilityReport
+    var minimumOSVersion: String? = nil
+
+    private var minimumOSFinding: CompatibilityFinding? {
+        report.findings.first { $0.criterion == .minimumOS }
+    }
+
+    private var status: CompatibilityStatus {
+        minimumOSFinding?.status ?? .unknown
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            HStack {
-                Text("\(report.status.title) for \(report.profileName)")
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(color(for: report.status))
-                Spacer()
-                Text("SIMULATED")
-                    .font(.caption2.weight(.bold))
-                    .foregroundStyle(.orange)
-            }
-            Text("\(report.model) · iOS \(report.osVersion)")
-                .font(.caption)
-                .foregroundStyle(.secondary)
-            ForEach(report.findings) { finding in
-                HStack(alignment: .top, spacing: 6) {
-                    Image(systemName: symbol(for: finding.status))
-                        .foregroundStyle(color(for: finding.status))
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(finding.criterion.title)
-                            .font(.caption.weight(.semibold))
-                        Text(finding.detail)
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
+            Text(verbatim: "\(report.model) • iOS \(report.osVersion)")
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(color(for: status))
+
+            HStack(alignment: .top, spacing: 6) {
+                Image(systemName: symbol(for: status))
+                    .foregroundStyle(color(for: status))
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Minimum OS")
+                        .font(.caption.weight(.semibold))
+                    minimumOSDescription
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                 }
             }
+
+            Text("This simulated profile checks only Minimum OS. It does not verify real-device compatibility or enable IPA downloads.")
+                .font(.caption)
+                .foregroundStyle(.secondary)
         }
         .padding(10)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(Color(uiColor: .secondarySystemBackground), in: RoundedRectangle(cornerRadius: 10))
+    }
+
+    @ViewBuilder
+    private var minimumOSDescription: some View {
+        if let minimumOSVersion,
+           let requiredVersion = SemanticOSVersion(minimumOSVersion),
+           let profileVersion = SemanticOSVersion(report.osVersion) {
+            if profileVersion >= requiredVersion {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Minimum OS requirement is met.")
+                    requiredVersionLabel(minimumOSVersion)
+                }
+            } else {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Minimum OS requirement is not met.")
+                    requiredVersionLabel(minimumOSVersion)
+                }
+            }
+        } else {
+            Text("Minimum iOS version is unavailable.")
+        }
+    }
+
+    private func requiredVersionLabel(_ version: String) -> some View {
+        HStack(spacing: 4) {
+            Text("Required iOS version:")
+            Text(verbatim: version)
+        }
+        .foregroundStyle(.secondary)
     }
 
     private func color(for status: CompatibilityStatus) -> Color {

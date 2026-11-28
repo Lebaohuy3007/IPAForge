@@ -11,7 +11,7 @@
 | 18.7.9 | Đã thử nghiệm |
 | Phiên bản khác | Chưa xác minh |
 
-> **Tình trạng hiện tại:** IPAForge tìm kiếm App Store và có đăng nhập Apple ID riêng cho Developer Portal qua StosSign. App Store Login và tải IPA trực tiếp chưa được tích hợp vì chưa xác minh được Device Identity hợp lệ trong app iOS. Hồ sơ iOS 27 bên dưới chỉ là dữ liệu mô phỏng để kiểm tra tương thích, không phải Simulator hay thông tin thiết bị dùng để xác thực.
+> **Tình trạng hiện tại:** IPAForge tìm kiếm metadata công khai của App Store và có đăng nhập Apple ID riêng cho Developer Portal qua StosSign. App Store Login và tải IPA trực tiếp chưa được tích hợp. Mục Compatibility chỉ so sánh Minimum OS với iPhone 17 Pro/iOS 27.0 mô phỏng; không xác minh đầy đủ khả năng tương thích thiết bị và không bật tải IPA.
 
 ## Tính năng hiện có
 
@@ -20,41 +20,23 @@
 * Hiển thị vùng App Store dạng chỉ đọc và dùng vùng đó khi tìm kiếm.
 * Tự chọn tiếng Việt khi storefront App Store là Việt Nam và tiếng Anh ở các vùng khác; có thể đổi thủ công giữa tiếng Việt và tiếng Anh trong Cài đặt.
 * Xem thông tin ứng dụng: icon, Bundle ID, nhà phát triển và phiên bản.
-* Tạo và lưu nhiều Device Profile mô phỏng từ iOS 27 trở lên.
-* Kiểm tra tương thích từ metadata hoặc IPA cục bộ; thiếu dữ liệu được đánh dấu Unknown.
-* Đọc CRC của ZIP, `Payload/*.app/Info.plist`, bundle/version, MinimumOSVersion, UIDeviceFamily, capability, platform và Mach-O architecture trong IPA đã chọn.
-* Quản lý và tùy chỉnh Anisette Server.
+* So sánh Minimum OS của ứng dụng với iPhone 17 Pro/iOS 27.0 mô phỏng; kết quả chỉ áp dụng cho yêu cầu iOS tối thiểu, không phải xác nhận tương thích đầy đủ.
+* Quản lý Anisette Server. Trước khi cấp phát, IPAForge thông báo server được chọn sẽ nhận identifier Anisette dùng lâu dài, `adi_pb` và một số dữ liệu trao đổi cấp phát với Apple. Người vận hành có thể đọc và lưu dữ liệu gửi qua server; có thể thu hồi quyền đã cấp.
 * Đăng nhập Apple ID vào Developer Portal, hỗ trợ xác minh 2FA. Đây không phải phiên đăng nhập để tải từ App Store.
 * Lưu và khôi phục an toàn phiên Developer Portal; đây không phải phiên App Store.
 * Theo dõi nhật ký đăng nhập và hoạt động.
 * Hỗ trợ kiểm thử và build tự động qua GitHub Actions.
 * Chạy thử nghiệm API công khai không cần đăng nhập; kết quả hai thử nghiệm được ghi trong Activity Log.
 
-## Kiểm tra Swift trên Codespaces
+## Kiểm tra
 
-Codespace có Swift 6.4.3 cho `x86_64-unknown-linux-gnu`, cài qua Swiftly tại `/home/codespace/.local/share/swiftly/bin`. `which swift` tìm thấy đường dẫn này khi chạy ngoài sandbox; shell sandbox có thể không đưa Swiftly vào `PATH`. Script bên dưới thử cả `PATH` lẫn đường dẫn Swiftly mặc định.
+Trong môi trường Linux Codespaces, Swift 6.4.3 và `swiftc` có sẵn. `swiftc -frontend -parse` phân tích cú pháp toàn bộ file `.swift` thành công; `bash Scripts/test-linux-core.sh` biên dịch phần logic Swift thuần và chạy thành công 17 assertions. Script này không build ứng dụng iOS và không thay thế XCTest.
 
-```sh
-which swift
-swift --version
-bash Scripts/test-linux-core.sh
-```
-
-Linux script biên dịch trực tiếp `Models.swift`, `DeviceProfile.swift` và `CompatibilityChecker.swift` ở Swift 6 mode, rồi chạy 17 assertion cho logic thuần Swift. `DeviceProfileStore` được tách sang file riêng vì nó cần Combine; script không build IPAForge iOS và không thay thế XCTest.
+Repository không có `Package.swift`, nên không phải Swift Package độc lập và không chạy `swift test`. Xcode project có khai báo các Swift Package dependency, nhưng XCTest, build iOS và Simulator cần Xcode/iOS SDK nên chưa được xác minh trong môi trường Linux. Kiểm tra thêm gồm `git diff --check`, YAML workflow, JSON của String Catalog, XML Privacy Manifest và target membership trong Xcode project.
 
 Các thay đổi hiện còn ở working tree. Vì yêu cầu không commit/push, GitHub Actions chưa được chạy trên chính những thay đổi này; lần chạy Actions của một commit khác không xác nhận được chúng.
 
-Trong 23 test mới của Device Profile / Compatibility / IPA inspection / Download queue / public App Store API:
-
-| Test trong `Tests/IPAForgeTests.swift` | Số test | Môi trường |
-| --- | ---: | --- |
-| `testDefaultProfileIsAnIOS27SimulatedProfile`, `testVersionComparisonAndProfileValidation`; sáu test `CompatibilityCheckerTests` | 8 | Logic tương đương đã chạy trong Linux harness; XCTest methods vẫn thuộc target Xcode |
-| `testProfilesPersistAndRestoreSelectedModelAndVersion`, `testMultipleProfilesCanBeSelectedAndLastProfileCannotBeDeleted` | 2 | `DeviceProfileStore` dùng Combine; XCTest của app |
-| Năm test `IPAInspectorTests` cho IPA hợp lệ, thiếu Payload/Info.plist, plist/executable sai, Mach-O sai và CRC hỏng | 5 | Foundation + ZIPFoundation; chưa chạy trong XCTest của môi trường hiện tại |
-| Bốn test `DownloadServiceTests` cho progress/cancel, validate/save, retry và timeout/xoá partial IPA | 4 | `DownloadService` dùng Combine và app Documents; cần XCTest trên Apple platform |
-| Ba test HTTP status, JSON sai, network failure và `AppStoreExperimentServiceTests.testAnonymousExperimentReportsMetadataAndBlockedAuthentication` | 4 | XCTest dùng `MockURLProtocol`; không gọi Apple thật và không xác minh đăng nhập/tải IPA thật |
-
-Các test Anisette, Keychain/Security, UI và tích hợp với iOS của bộ cũ vẫn cần Xcode. Full XCTest target và iOS build chưa được xác nhận. Xem [bảng trạng thái kiểm thử](./Downloader/ROADMAP.md).
+Các test dùng `MockURLProtocol` chỉ kiểm tra logic ứng dụng, không xác minh xác thực Apple hay tải IPA thật. Xem [bảng trạng thái kiểm thử](./Downloader/ROADMAP.md).
 
 ## Giới hạn App Store Downloader
 
@@ -64,6 +46,7 @@ Các test Anisette, Keychain/Security, UI và tích hợp với iOS của bộ c
 
 - [ApplePackage](https://github.com/Lakr233/ApplePackage) là Swift Package MIT, manifest khai báo iOS 15+, nhưng yêu cầu Swift 6.2 và dùng SAP-signed App Store authentication. Source `DeviceIdentifier.system()` chủ động lỗi trên iOS; package đề xuất GUID ngẫu nhiên đã lưu, trái yêu cầu không tự tạo Device Identifier. Chưa tích hợp và chưa xác minh đăng nhập thực trên iOS.
 - [ipatool](https://github.com/majd/ipatool) là dự án Go MIT với API App Store login/2FA và download. Bản iOS dành cho thiết bị jailbreak; issue của v2.8.1 báo lỗi Unicorn ARM64 trước khi xác thực trên iPhone jailbreak. Không phải Swift SDK và chưa có đường đã xác minh cho IPAForge iOS thông thường.
+- [Crumb](https://github.com/boierito/Crumb) và [iPadN](https://github.com/mengangs/ipadn) hiện tuyên bố hỗ trợ đăng nhập và tải App Store trên iOS không jailbreak. IPAForge chưa tự xác minh các luồng đó. Thông báo license của họ nêu GPL, upstream không có license và quyền phân phối một số runtime có nguồn gốc Apple chưa rõ; vì vậy chưa tích hợp mã vào project MIT này.
 - [ipaverse](https://github.com/bahattinkoc/ipaverse) tham khảo được quy trình GSA/SRP-6a, 2FA, PET-to-Store, license và download, nhưng là app macOS dùng IOKit/`ifconfig`; mã nguồn còn có UUID ngẫu nhiên làm định danh dự phòng. Không thể sao chép thẳng vào target iOS theo yêu cầu không tạo identity giả.
 - GSA/SRP-6a và SAP-signed authentication là hai đường triển khai khác nhau trong các nguồn đã xem. ApplePackage hiện không triển khai GSA/SRP-6a. Chi tiết blocker, phạm vi và các kiểm tra còn thiếu được ghi ở [Downloader/ROADMAP.md](./Downloader/ROADMAP.md).
 - [SideStore](https://github.com/SideStore/SideStore) và [AltStore](https://github.com/altstoreio/AltStore) dùng nền tảng Apple signing/sideloading riêng; cả hai README công bố AGPLv3. Không sao chép mã của hai dự án vào project MIT này. Tài liệu SideStore khuyến nghị Anisette v3 và nhấn mạnh không gửi account info đến Anisette server; app hiện chỉ áp dụng nguyên tắc tách biệt đó, chưa triển khai protocol.
@@ -85,11 +68,11 @@ xcodebuild test \
 
 Thiết bị đã thử: iOS 18.7.9 (theo xác nhận của người dùng; không nêu model thiết bị). Đây là thông tin thử nghiệm thủ công, không đồng nghĩa mọi chức năng đã hoàn thiện hoặc IPA đã được ký.
 
-CI cần được xác nhận bằng lần chạy workflow gần nhất trên GitHub Actions. Workflow Experimental Build dùng Xcode 27.2 trên runner `xcode-27`; runner phải có runtime iOS Simulator tương thích.
+Workflow Experimental Build dùng Xcode 27.2 trên runner `xcode-27`; runner cần có runtime iOS Simulator tương thích khi bật test. CI chưa được chạy trên working tree này.
 
 ## GitHub Actions
 
-- **Experimental Build**: tự chạy khi push lên bất kỳ branch nào, hoặc chạy thủ công qua workflow dispatch. Mặc định bỏ qua unit tests để tạo IPA nhanh; khi chạy thủ công, có thể bật input `run_tests` để chạy test Simulator. Version trong app lấy theo `MARKETING_VERSION` khai báo trong Xcode (hiện là `1.0.0`); build number là GitHub Actions run number. Workflow upload artifact `IPAForge-1.0.0-<build>-Unsigned` chứa IPA unsigned cùng version. Đây chưa phải bản cài đặt đã ký.
+- **Experimental Build**: chỉ chạy thủ công qua workflow dispatch. Mặc định bỏ qua unit tests; có thể bật input `run_tests` để chạy test Simulator. Version trong app lấy theo `MARKETING_VERSION` khai báo trong Xcode (hiện là `1.0.0`); build number là GitHub Actions run number. Workflow upload artifact `IPAForge-1.0.0-Unsigned` chứa IPA unsigned. Đây chưa phải bản cài đặt đã ký.
 - Chưa có workflow kiểm thử App Store Login. Không chỉnh workflow `experimental.yml` cho nhiệm vụ này; build app hiện tại không thể xác minh đăng nhập App Store thật.
 - **Release Build**: chạy khi push tag `v*` hoặc workflow dispatch với `release_tag`; test, archive Release unsigned và tạo GitHub Release. Artifact tên `AppStoreIPA-Release`, file đính kèm là unsigned `.xcarchive.zip`, không phải IPA.
 - Chưa cần certificate/secret để compile unsigned. Không thêm private key, certificate hay mật khẩu vào repository.

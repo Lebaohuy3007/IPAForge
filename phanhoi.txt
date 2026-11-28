@@ -1,0 +1,25 @@
+Phần giao diện App Store -> Details -> Compatibilly ghi là:
+Compatibility 
+<cái bảng>
+<chữ màu theo code và xoá Unknown for iOS 27 iPhone | Simulated> iPhone 17 Pro • iOS 27.0
+<tích xanh, tích đỏ, dấu ?> Minimum OS
+<mô tả theo theo code swift>
+<còn lại xoá bỏ>
+<mô tả>: Chusng tôi đang giả lập một chiếc iPhone chạy iOS 27 để tải ứng dụng này về.
+Xoá phần Profile -> Device Profile đi, app mặc định dùng: iPhone 17 Pro với các tiyf chọn tốt nhất để tair iPA về
+phần Profile -> PROJECT, Github Repository cho nó chữ màu xanh biển đi
+Cos vài chữ khi đổi ngôn ngữ nó vẫn ko thay đổi, sửa chúng
+Đây là phần Activity Log cho bạn nghiên cứu:
+[12:32:57] [INFO] Application launched.
+[12:33:05] [INFO] Experiment A | Experiment Started | Public App Store API.
+[12:33:05] [INFO] Experiment A | Authentication Mode: anonymous.
+[12:33:05] [WARNING] Experiment A | App Store session unavailable; no account was used.
+[12:33:09] [SUCCESS] Experiment A | Public Search | HTTP 200 | PASS.
+[12:33:10] [SUCCESS] Experiment A | Public Metadata Request | HTTP 200 | PASS.
+[12:33:10] [WARNING] Experiment A | Binary access | NOT SUPPORTED by the documented public Search/Lookup API.
+[12:33:10] [INFO] Experiment A | IPA download and integrity | NOT TESTED; no public binary URL.
+[12:33:10] [WARNING] Experiment B | Authentication | NOT STARTED; iOS identity/authentication route is blocked. No credentials were requested or sent.
+[12:33:10] [INFO] Experiment B | 2FA, session restore, license, download, and IPA validation | NOT TESTED.
+[12:33:10] [INFO] Experiment A final result | Experiment A: public search and metadata passed; no public IPA download was found.
+[12:33:10] [WARNING] Experiment B final result | BLOCKED before sign-in; no live authentication was attempted.
+[12:34:36] [INFO] App Store search completed.
