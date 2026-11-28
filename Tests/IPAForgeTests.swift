@@ -1043,7 +1043,7 @@ final class DeviceProfileTests: XCTestCase {
     func testDefaultProfileIsAnIOS27SimulatedProfile() {
         let profile = DeviceProfile.defaultProfile
         XCTAssertEqual(profile.family, .iPhone)
-        XCTAssertEqual(profile.osVersion, "27.0")
+        XCTAssertEqual(profile.osVersion, "27.2")
         XCTAssertTrue(profile.isSimulated)
         XCTAssertNil(profile.availableCapabilities)
         XCTAssertNil(profile.supportedArchitectures)

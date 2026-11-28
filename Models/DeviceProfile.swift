@@ -28,10 +28,10 @@ struct DeviceProfile: Codable, Equatable, Identifiable {
 
     static let defaultProfile = DeviceProfile(
         id: UUID(uuidString: "E986CB58-3501-4B4D-9F5A-2B9B56A9D270")!,
-        name: "iOS 27 iPhone",
-        model: "iPhone 17 Pro",
+        name: "iOS 27.2 iPhone",
+        model: "iPhone 18 Pro",
         family: .iPhone,
-        osVersion: "27.0",
+        osVersion: "27.2",
         availableCapabilities: nil,
         supportedArchitectures: nil
     )
@@ -39,7 +39,7 @@ struct DeviceProfile: Codable, Equatable, Identifiable {
     static func modelOptions(for family: DeviceProfileFamily) -> [String] {
         switch family {
         case .iPhone:
-            return ["Generic iPhone", "iPhone 17 Pro", "iPhone 17", "iPhone Air"]
+            return ["Generic iPhone", "iPhone 18 Pro", "iPhone 17 Pro", "iPhone 17", "iPhone Air"]
         case .iPad:
             return ["Generic iPad", "iPad Pro", "iPad Air", "iPad mini"]
         }
@@ -95,7 +95,7 @@ enum DeviceProfileError: LocalizedError, Equatable {
         switch self {
         case .emptyName: return "Enter a name for this device profile."
         case .emptyModel: return "Choose or enter a device model."
-        case .invalidOSVersion: return "Enter an OS version such as 27.0 or 27.1."
+        case .invalidOSVersion: return "Enter an OS version such as 27.2 or 27.3."
         case .requiresIOS27: return "Device profiles in this tool must use iOS 27.0 or later."
         case .invalidCapability: return "Capabilities must be non-empty identifiers without spaces."
         case .invalidArchitecture: return "Enter valid architecture names such as arm64."

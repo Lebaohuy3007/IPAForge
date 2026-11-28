@@ -24,7 +24,7 @@ private struct Checks {
     private mutating func checkDefaultProfileIsSimulatedIOS27() {
         let profile = DeviceProfile.defaultProfile
         expect(profile.family == .iPhone, "default family is iPhone")
-        expect(profile.osVersion == "27.0", "default profile starts at iOS 27.0")
+        expect(profile.osVersion == "27.2", "default profile starts at iOS 27.2")
         expect(profile.isSimulated, "profile is explicitly simulated")
         expect(profile.availableCapabilities == nil, "unverified capabilities remain unknown")
     }

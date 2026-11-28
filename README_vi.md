@@ -11,7 +11,7 @@
 | 18.7.9 | Đã thử nghiệm |
 | Phiên bản khác | Chưa xác minh |
 
-> **Tình trạng hiện tại:** IPAForge tìm kiếm metadata công khai của App Store và có đăng nhập Apple ID riêng cho Developer Portal qua StosSign. App Store Login và tải IPA trực tiếp chưa được tích hợp. Mục Compatibility chỉ so sánh Minimum OS với iPhone 17 Pro/iOS 27.0 mô phỏng; không xác minh đầy đủ khả năng tương thích thiết bị và không bật tải IPA.
+> **Tình trạng hiện tại:** IPAForge tìm kiếm metadata công khai của App Store và có đăng nhập Apple ID riêng cho Developer Portal qua StosSign. App Store Login và tải IPA trực tiếp chưa được tích hợp. Mục Compatibility chỉ so sánh Minimum OS với iPhone 18 Pro/iOS 27.2 mô phỏng; không xác minh đầy đủ khả năng tương thích thiết bị và không bật tải IPA.
 
 ## Tính năng hiện có
 
@@ -20,7 +20,7 @@
 * Hiển thị vùng App Store dạng chỉ đọc và dùng vùng đó khi tìm kiếm.
 * Tự chọn tiếng Việt khi storefront App Store là Việt Nam và tiếng Anh ở các vùng khác; có thể đổi thủ công giữa tiếng Việt và tiếng Anh trong Cài đặt.
 * Xem thông tin ứng dụng: icon, Bundle ID, nhà phát triển và phiên bản.
-* So sánh Minimum OS của ứng dụng với iPhone 17 Pro/iOS 27.0 mô phỏng; kết quả chỉ áp dụng cho yêu cầu iOS tối thiểu, không phải xác nhận tương thích đầy đủ.
+* So sánh Minimum OS của ứng dụng với iPhone 18 Pro/iOS 27.2 mô phỏng; kết quả chỉ áp dụng cho yêu cầu iOS tối thiểu, không phải xác nhận tương thích đầy đủ.
 * Quản lý Anisette Server. Trước khi cấp phát, IPAForge thông báo server được chọn sẽ nhận identifier Anisette dùng lâu dài, `adi_pb` và một số dữ liệu trao đổi cấp phát với Apple. Người vận hành có thể đọc và lưu dữ liệu gửi qua server; có thể thu hồi quyền đã cấp.
 * Đăng nhập Apple ID vào Developer Portal, hỗ trợ xác minh 2FA. Đây không phải phiên đăng nhập để tải từ App Store.
 * Lưu và khôi phục an toàn phiên Developer Portal; đây không phải phiên App Store.

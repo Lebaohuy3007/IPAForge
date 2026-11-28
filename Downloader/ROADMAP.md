@@ -71,7 +71,7 @@ The current project is an Xcode iOS app with deployment target **iOS 16.0** and 
 | `AuthenticationService.swift`, `StosSignAuthenticationProvider.swift` | Sign in to Apple Developer Portal and load Developer Teams. Its session is separate from App Store session cookies, DSID, storefront, password token, and pod data. | IMPLEMENTED (Developer Portal only) |
 | `AppStoreDownloadService.swift` | Provider boundary currently throws `directEngineUnavailable`. It does not authenticate, acquire a license, or fetch an IPA. | BLOCKED |
 | `DownloadService.swift` | Queue state, provider cancellation, byte-based progress, retry-as-new-task, temporary file cleanup, IPA inspection, and save-after-validation are implemented. No production provider can currently start a real transfer. | PARTIALLY IMPLEMENTED |
-| Device Profile and compatibility | App Details now uses a fixed simulated iPhone 17 Pro / iOS 27.0 profile and displays only the Minimum OS result. The Profile screen no longer exposes the custom Device Profile editor. | IMPLEMENTED (fixed simulated minimum-OS check) |
+| Device Profile and compatibility | App Details now uses a fixed simulated iPhone 18 Pro / iOS 27.2 profile and displays only the Minimum OS result. The Profile screen no longer exposes the custom Device Profile editor. | IMPLEMENTED (fixed simulated minimum-OS check) |
 | IPA validation | ZIP entry paths and size are bounded; ZIP entries are streamed and CRC checked; `Payload/*.app/Info.plist`, bundle metadata, and Mach-O architecture are inspected. No package is extracted to an untrusted path. | IMPLEMENTED; no current follow-up syntax/typecheck/runtime result |
 | GitHub Actions | Workflows were read and left unchanged. | NOT TESTED |
 
@@ -144,7 +144,7 @@ The blockers are concrete:
 
 #### DeviceProfile and compatibility
 
-- A local `DeviceProfile` preset defaults to iPhone 17 Pro / iOS 27.0; it has no connection to Apple authentication.
+- A local `DeviceProfile` preset defaults to iPhone 18 Pro / iOS 27.2; it has no connection to Apple authentication.
 - App Details compares the catalog Minimum OS against that fixed preset. The overall Unknown banner and checks whose metadata is unavailable are hidden; the Profile screen no longer links to the custom profile editor.
 - The compatibility checker compares minimum OS, `UIDeviceFamily`, required/prohibited capabilities, `CFBundleSupportedPlatforms`, and Mach-O architecture. Any failed requirement yields Incompatible; incomplete or malformed metadata yields Unknown; Compatible is only returned when all criteria are known and pass.
 - The public iTunes catalog currently provides Minimum OS but not the other device requirements. App Details therefore evaluates that one criterion and hides the overall Unknown result instead of implying a complete device-compatibility check. The local IPA inspector still reads additional fields rather than guessing missing metadata.

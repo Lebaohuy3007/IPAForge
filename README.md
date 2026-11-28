@@ -20,7 +20,7 @@ SwiftUI app for iOS 16+ to browse the App Store, configure Anisette endpoints, a
 * Show the App Store storefront as read-only and use it for searches.
 * Automatically choose Vietnamese for the Vietnam App Store storefront and English for other regions; manually switch between Vietnamese and English in Settings.
 * View app icons, bundle IDs, developers, and versions.
-* Compare an app's Minimum OS metadata with a simulated iPhone 17 Pro running iOS 27.0. This is not a complete device compatibility check and does not enable IPA downloads.
+* Compare an app's Minimum OS metadata with a simulated iPhone 18 Pro running iOS 27.2. This is not a complete device compatibility check and does not enable IPA downloads.
 * Manage Anisette servers. Before provisioning, IPAForge discloses that the selected server receives a persistent Anisette identifier, `adi_pb`, and some Apple provisioning exchange values. The server operator can read and retain values sent through it; approval can be revoked.
 * Sign in to Apple's Developer Portal with an Apple ID and complete two-factor verification. This is not an App Store download session.
 * Securely save and restore the Developer Portal session.

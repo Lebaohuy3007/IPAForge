@@ -53,9 +53,9 @@ jobs:
             build/DerivedData/ModuleCache.noindex
             build/DerivedData/SourcePackages
             ~/Library/Caches/org.swift.swiftpm
-          key: xcode-${{ runner.os }}-${{ runner.arch }}-27.2-${{ hashFiles('AppStoreIPADownloader.xcodeproj/project.pbxproj', 'AppStoreIPADownloader.xcodeproj/xcshareddata/xcschemes/**', '**/Package.resolved') }}-${{ hashFiles('**/*.swift') }}
+          key: xcode-${{ runner.os }}-${{ runner.arch }}-27.2-${{ github.sha }}
           restore-keys: |
-            xcode-${{ runner.os }}-${{ runner.arch }}-27.2-${{ hashFiles('AppStoreIPADownloader.xcodeproj/project.pbxproj', 'AppStoreIPADownloader.xcodeproj/xcshareddata/xcschemes/**', '**/Package.resolved') }}-
+            xcode-${{ runner.os }}-${{ runner.arch }}-27.2-
       - name: Run unit tests
         if: ${{ inputs.run_tests }}
         run: |
@@ -118,4 +118,4 @@ jobs:
             build/DerivedData/ModuleCache.noindex
             build/DerivedData/SourcePackages
             ~/Library/Caches/org.swift.swiftpm
-          key: xcode-${{ runner.os }}-${{ runner.arch }}-27.2-${{ hashFiles('AppStoreIPADownloader.xcodeproj/project.pbxproj', 'AppStoreIPADownloader.xcodeproj/xcshareddata/xcschemes/**', '**/Package.resolved') }}-${{ hashFiles('**/*.swift') }}
+          key: xcode-${{ runner.os }}-${{ runner.arch }}-27.2-${{ github.sha }}
